@@ -3,9 +3,9 @@
 ## Render
 
 ```bash
-npx snap-x render --out snap-output/
-# or single format:
-npx snap-x render --format og --out snap-output/
+npx snap-x render designs/*.mjs --out snap-output/
+# or a single file:
+npx snap-x render designs/og.mjs --out snap-output/
 ```
 
 Expected output:

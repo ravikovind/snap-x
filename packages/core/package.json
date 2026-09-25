@@ -1,27 +1,26 @@
 {
   "name": "@snap-x/core",
-  "version": "0.3.0",
-  "description": "Satori-based social image pack generator — OG, cover, thumbnail, poster, readme-card. No browser required.",
+  "version": "0.4.0",
+  "description": "Render-only Satori pipeline: any self-contained .mjs design file → PNG. No browser, no config, no auto-detection — write the file, render it.",
   "type": "module",
   "main": "src/index.mjs",
   "bin": {
     "snap-x": "./src/cli.mjs"
   },
   "files": [
-    "src/",
-    "default-designs/"
+    "src/"
   ],
   "exports": {
     ".": "./src/index.mjs",
     "./render": "./src/render.mjs",
-    "./check": "./src/check.mjs"
+    "./check": "./src/check.mjs",
+    "./fonts": "./src/fonts.mjs"
   },
   "scripts": {
     "start": "node src/cli.mjs"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
-    "gray-matter": "^4.0.3",
     "satori": "^0.33.5"
   },
   "keywords": ["og-images", "satori", "social-cards", "snap-x", "claude-skill", "mcp"],

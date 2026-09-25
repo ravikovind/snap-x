@@ -6,10 +6,23 @@
 
 import path from "path";
 
-const UNSUPPORTED_DISPLAY = new Set(["block", "inline", "inline-block", "grid", "inline-flex"]);
+const UNSUPPORTED_DISPLAY = new Set([
+  "block",
+  "inline",
+  "inline-block",
+  "grid",
+  "inline-flex",
+]);
 const UNSUPPORTED_PROPS = ["zIndex", "z-index"];
 
-export async function checkDesign(designPath) {
+/**
+ * @param {string} designPath
+ * @param {object} [opts]
+ * @param {object[]} [opts.fonts]  Resolved Satori fonts — when provided, the tree is actually
+ *   rendered through Satori to catch runtime-only errors (bad image data, unsupported values)
+ *   that pure structural checks miss. Omitted → structural checks only (no network needed).
+ */
+export async function checkDesign(designPath, { fonts } = {}) {
   const errors = [];
   const warnings = [];
 
@@ -22,9 +35,9 @@ export async function checkDesign(designPath) {
 
   // Check exports
   if (!mod.FORMAT) {
-    errors.push('Missing: export const FORMAT = { width, height }');
+    errors.push("Missing: export const FORMAT = { width, height }");
   } else {
-    if (!mod.FORMAT.width)  errors.push("FORMAT.width is required");
+    if (!mod.FORMAT.width) errors.push("FORMAT.width is required");
     if (!mod.FORMAT.height) errors.push("FORMAT.height is required");
   }
 
@@ -36,9 +49,7 @@ export async function checkDesign(designPath) {
   // Resolve tree
   let tree;
   try {
-    tree = typeof mod.default === "function"
-      ? mod.default({ title: "Test", description: "", domain: "", tags: [], stack: [], theme: "dark", font: "Inter", themeOverride: {} })
-      : mod.default;
+    tree = typeof mod.default === "function" ? await mod.default() : mod.default;
   } catch (err) {
     errors.push(`Design function threw: ${err.message}`);
     return { errors, warnings };
@@ -52,6 +63,22 @@ export async function checkDesign(designPath) {
   // Traverse tree
   traverseNode(tree, errors, warnings, "root");
 
+  // Actual Satori render — catches errors structural checks can't see
+  // (bad image data URIs, invalid font weights, malformed SVG paths, etc.)
+  if (fonts && errors.length === 0 && mod.FORMAT?.width && mod.FORMAT?.height) {
+    try {
+      const satori = (await import("satori")).default;
+      await satori(tree, {
+        width: mod.FORMAT.width,
+        height: mod.FORMAT.height,
+        fonts,
+        embedFont: true,
+      });
+    } catch (err) {
+      errors.push(`Satori render failed: ${err.message}`);
+    }
+  }
+
   return { errors, warnings };
 }
 
@@ -63,7 +90,9 @@ function traverseNode(node, errors, warnings, path) {
 
   // display must be flex (or absent, which Satori treats as flex)
   if (style.display && UNSUPPORTED_DISPLAY.has(style.display)) {
-    errors.push(`${path}: display:"${style.display}" not supported — use "flex"`);
+    errors.push(
+      `${path}: display:"${style.display}" not supported — use "flex"`,
+    );
   }
 
   // Unsupported props

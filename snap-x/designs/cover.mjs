@@ -1,18 +1,19 @@
 export const FORMAT = { width: 1500, height: 500, name: "cover.png" };
+export const FONTS  = [{ family: "Saira", weights: [400, 700, 900] }];
 
-export default function (config) {
-  const accent = config.themeOverride?.accent ?? "#eb1d25";
-  const accentMuted = config.themeOverride?.accentMuted ?? "rgba(235,29,37,0.18)";
-  const borderAccent = config.themeOverride?.borderAccent ?? "rgba(235,29,37,0.28)";
+export default function () {
+  const accent = "#eb1d25";
+  const accentMuted = "rgba(235,29,37,0.25)";
+  const borderAccent = "rgba(235,29,37,0.30)";
   const bg = "#080808";
   const text = "rgba(255,255,255,0.95)";
   const textMuted = "rgba(255,255,255,0.45)";
   const textDim = "rgba(255,255,255,0.15)";
 
   const steps = [
-    { n: "01", label: "init",   desc: "Scaffold" },
-    { n: "02", label: "check",  desc: "Validate" },
-    { n: "03", label: "render", desc: "Generate" },
+    { n: "01", title: "Write .mjs",    desc: "Self-contained, agent or human" },
+    { n: "02", title: "snap-x check",  desc: "Validate" },
+    { n: "03", title: "snap-x render", desc: "Generate" },
   ];
 
   return {
@@ -73,7 +74,7 @@ export default function (config) {
                         children: [
                           { type: "div", props: { style: { color: borderAccent, fontSize: 12, fontWeight: 700, width: 22, flexShrink: 0, display: "flex" }, children: [s.n] } },
                           { type: "div", props: { style: { display: "flex", flexDirection: "column", gap: 3, flex: 1 }, children: [
-                            { type: "div", props: { style: { color: text, fontSize: 24, fontWeight: 800, lineHeight: 1, display: "flex" }, children: [`snap-x ${s.label}`] } },
+                            { type: "div", props: { style: { color: text, fontSize: 24, fontWeight: 800, lineHeight: 1, display: "flex" }, children: [s.title] } },
                             { type: "div", props: { style: { color: textMuted, fontSize: 14, display: "flex" }, children: [s.desc] } },
                           ]}},
                           { type: "div", props: { style: { color: accent, fontSize: 16, fontWeight: 900, display: "flex" }, children: ["→"] } },

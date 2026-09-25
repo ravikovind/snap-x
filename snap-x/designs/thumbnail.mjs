@@ -1,9 +1,10 @@
 export const FORMAT = { width: 1280, height: 720, name: "thumbnail.png" };
+export const FONTS  = [{ family: "Saira", weights: [400, 700, 900] }];
 
-export default function (config) {
-  const accent = config.themeOverride?.accent ?? "#eb1d25";
-  const accentMuted = config.themeOverride?.accentMuted ?? "rgba(235,29,37,0.18)";
-  const borderAccent = config.themeOverride?.borderAccent ?? "rgba(235,29,37,0.28)";
+export default function () {
+  const accent = "#eb1d25";
+  const accentMuted = "rgba(235,29,37,0.25)";
+  const borderAccent = "rgba(235,29,37,0.30)";
   const bg = "#080808";
   const text = "rgba(255,255,255,0.95)";
   const textMuted = "rgba(255,255,255,0.45)";
@@ -60,7 +61,7 @@ export default function (config) {
                       { type: "div", props: { style: { color: accent, fontSize: 76, fontWeight: 900, lineHeight: 0.95, letterSpacing: "-0.04em", display: "flex" }, children: ["automated."] } },
                     ]}},
                     { type: "div", props: { style: { color: textMuted, fontSize: 17, lineHeight: 1.55, display: "flex", flexWrap: "wrap" }, children: ["One command. No browser. Pure Node.js.\nAdd a .mjs file — get a PNG."] } },
-                    { type: "div", props: { style: { display: "flex", gap: 8 }, children: ["init", "check", "render"].map(cmd => ({
+                    { type: "div", props: { style: { display: "flex", gap: 8 }, children: ["check", "render"].map(cmd => ({
                       type: "div", props: { style: { background: "rgba(255,255,255,0.06)", border: `1px solid ${borderAccent}`, borderRadius: 6, padding: "5px 14px", display: "flex" }, children: [
                         { type: "div", props: { style: { color: accent, fontSize: 12, fontWeight: 700, display: "flex" }, children: ["> "] } },
                         { type: "div", props: { style: { color: text, fontSize: 12, fontWeight: 600, display: "flex" }, children: [`snap-x ${cmd}`] } },

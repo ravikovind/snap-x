@@ -9,8 +9,8 @@ Answer these for the full pack:
 1. **Hook** — What is the single most important thing to communicate? This goes on every card.
 2. **Copy per format** — For each format, what exact text goes where?
 3. **Visual direction** — Any layout or style changes from the defaults? (centered vs left-aligned, large title vs balanced, etc.)
-4. **Color override** — If the project has a brand accent, note the hex.
-5. **Font** — Confirmed font family name for Google Fonts.
+4. **Colors** — The brand accent hex (and any other colors) to hardcode directly into each design file.
+5. **Fonts** — Confirmed Google Font family name(s) and weights — this becomes each file's `FONTS` export.
 
 ## Per-format specs (fill these in snap-plan.md)
 

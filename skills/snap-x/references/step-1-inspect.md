@@ -19,7 +19,8 @@ Read the project directory. Answer all 8 questions before writing anything.
 - `README.md` — first heading, first paragraph, badges
 - `app/globals.css` or `styles/globals.css` — font vars, color vars
 - `next.config.*` — framework detection
-- Any `snap-x.config.json` if it already exists (use as baseline)
+
+There's no config file to fall back on — snap-x has no auto-detection layer. Whatever you find here gets hardcoded directly into the design files in Step 3.
 
 ## Output
 

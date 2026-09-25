@@ -1,9 +1,10 @@
 export const FORMAT = { width: 1280, height: 640, name: "readme-card.png" };
+export const FONTS  = [{ family: "Saira", weights: [400, 700, 900] }];
 
-export default function (config) {
-  const accent = config.themeOverride?.accent ?? "#eb1d25";
-  const accentMuted = config.themeOverride?.accentMuted ?? "rgba(235,29,37,0.18)";
-  const borderAccent = config.themeOverride?.borderAccent ?? "rgba(235,29,37,0.28)";
+export default function () {
+  const accent = "#eb1d25";
+  const accentMuted = "rgba(235,29,37,0.25)";
+  const borderAccent = "rgba(235,29,37,0.30)";
   const bg = "#080808";
   const surface = "#0f0f0f";
   const text = "rgba(255,255,255,0.95)";
@@ -11,9 +12,9 @@ export default function (config) {
   const textDim = "rgba(255,255,255,0.15)";
 
   const steps = [
-    { n: "01", cmd: "snap-x init",   desc: "Scaffold config + design files" },
-    { n: "02", cmd: "snap-x check",  desc: "Validate Satori CSS rules" },
-    { n: "03", cmd: "snap-x render", desc: "Generate PNGs — any format, any size" },
+    { n: "01", cmd: "Write design.mjs", desc: "Self-contained, any format" },
+    { n: "02", cmd: "snap-x check",     desc: "Validate Satori CSS rules" },
+    { n: "03", cmd: "snap-x render",    desc: "Generate PNGs — any format, any size" },
   ];
 
   return {

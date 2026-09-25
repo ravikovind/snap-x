@@ -11,7 +11,7 @@
     "build": "npm run build --workspaces",
     "test": "npm test --workspaces --if-present"
   },
-  "keywords": ["og-images", "social-images", "playwright", "html-templates", "claude-skill", "mcp"],
+  "keywords": ["og-images", "social-images", "satori", "claude-skill", "mcp"],
   "author": "VoltVave Innovations",
   "license": "MIT",
   "repository": {

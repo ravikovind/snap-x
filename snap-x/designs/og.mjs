@@ -1,9 +1,10 @@
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
+export const FONTS  = [{ family: "Saira", weights: [400, 700, 900] }];
 
-export default function (config) {
-  const accent = config.themeOverride?.accent ?? "#eb1d25";
-  const accentMuted = config.themeOverride?.accentMuted ?? "rgba(235,29,37,0.18)";
-  const borderAccent = config.themeOverride?.borderAccent ?? "rgba(235,29,37,0.28)";
+export default function () {
+  const accent = "#eb1d25";
+  const accentMuted = "rgba(235,29,37,0.25)";
+  const borderAccent = "rgba(235,29,37,0.30)";
   const bg = "#080808";
   const surface = "#111111";
   const text = "rgba(255,255,255,0.95)";
@@ -11,11 +12,7 @@ export default function (config) {
   const textDim = "rgba(255,255,255,0.20)";
 
   const lines = [
-    { prompt: "$", cmd: "npx snap-x init", out: null },
-    { prompt: " ", cmd: null, out: "✔  snap-x.config.json" },
-    { prompt: " ", cmd: null, out: "✔  snap-x/designs/og.mjs" },
-    { prompt: " ", cmd: null, out: "✔  snap-x/designs/cover.mjs" },
-    { prompt: "$", cmd: "npx snap-x render", out: null },
+    { prompt: "$", cmd: "npx snap-x render designs/*.mjs", out: null },
     { prompt: " ", cmd: null, out: "✔  og.png        (67 KB)" },
     { prompt: " ", cmd: null, out: "✔  cover.png     (66 KB)" },
     { prompt: " ", cmd: null, out: "✔  poster.png   (124 KB)" },

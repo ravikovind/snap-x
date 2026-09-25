@@ -2,15 +2,16 @@
  * render.mjs
  * Loads a design .mjs file → Satori (SVG) → resvg (PNG).
  *
- * Design files export:
+ * Design files are fully self-contained and export:
  *   export const FORMAT = { width, height, name? }
- *   export default  tree (object) | function(config) → object
+ *   export const FONTS  = [{ family, weights? }]   // optional, defaults to Inter 400/700/900
+ *   export default  tree (object) | function() → object   // no arguments
  */
 
 import path from "path";
 import fs from "fs/promises";
 
-export async function renderDesign(designPath, outDir, config, fonts) {
+export async function renderDesign(designPath, outDir, fonts) {
   const mod = await import(`${designPath}?t=${Date.now()}`);
 
   if (!mod.FORMAT) throw new Error(`${path.basename(designPath)}: missing export FORMAT`);
@@ -20,7 +21,7 @@ export async function renderDesign(designPath, outDir, config, fonts) {
   const outName = name ?? path.basename(designPath, ".mjs") + ".png";
 
   // Static tree or factory function (supports async)
-  const tree = typeof mod.default === "function" ? await mod.default(config) : mod.default;
+  const tree = typeof mod.default === "function" ? await mod.default() : mod.default;
 
   const satori = (await import("satori")).default;
   const { Resvg } = await import("@resvg/resvg-js");

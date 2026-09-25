@@ -7,11 +7,11 @@ description: Turn any project into a full branded image pack — OG cards, thumb
 
 You built it. Now frame it.
 
-`/snap-x` generates a complete branded image pack by writing Satori design trees and rendering them — no browser, pure Node.js.
+`/snap-x` generates a complete branded image pack by writing self-contained Satori design files and rendering them — no browser, pure Node.js.
 
-**Formats:** Any size, any name — add a `.mjs` file, get a PNG.
+**Formats:** Any size, any name — write a `.mjs` file, get a PNG.
 
-Default designs (from `snap-x init`): OG (1200×630) · Thumbnail (1280×720) · Cover (1500×500) · Poster (1080×1920) · README card (1280×640)
+Suggested defaults: OG (1200×630) · Thumbnail (1280×720) · Cover (1500×500) · Poster (1080×1920) · README card (1280×640)
 
 Custom examples: LinkedIn cover (1584×396) · App Store screenshot (1290×2796) · Twitter header (1500×500) · Discord banner (960×540) — or any dimension you need.
 
@@ -21,33 +21,21 @@ Custom examples: LinkedIn cover (1584×396) · App Store screenshot (1290×2796)
 
 ```
 /snap-x
-/snap-x --theme light
-/snap-x --format og
-/snap-x --title "My App" --desc "One-line pitch"
 /snap-x --font "Saira"
 ```
 
-| Option | Values | Default |
-|---|---|---|
-| `--format` | any design filename stem (e.g. `og`, `linkedin-cover`, `app-screenshot`) | all |
-| `--theme` | `dark`, `light` | `dark` |
-| `--title` | string | inferred from project |
-| `--desc` | string | inferred from project |
-| `--domain` | string | inferred from project |
-| `--tags` | comma-separated | inferred from project |
-| `--font` | Google Font name | inferred or `Inter` |
-| `--out` | directory path | `snap-output/` |
+There's no `--format`, `--title`, `--desc`, `--theme` flag surface — those are decisions you make while writing the design files, not CLI options. `--font` is a suggestion for the default font family to use across the pack; nothing stops you from picking a different one per file.
 
 ---
 
 ## Architecture
 
-snap-x uses a **Satori pipeline** — no browser, pure Node.js:
+snap-x is **render-only** — it has no config, no auto-detection, no scaffolding. It does exactly one thing: turn a self-contained `.mjs` file into a PNG. Everything else is your job:
 
-1. Claude inspects the project and plans the design
-2. Claude writes **Satori JSX trees** to `snap-x/designs/*.mjs`
-3. `snap-x check` validates the trees (Satori CSS rules)
-4. `snap-x render` runs Satori → SVG → resvg → PNG
+1. Inspect the project and plan the design
+2. Write self-contained **Satori JSX trees** to `designs/*.mjs` — no config object, no external state
+3. `snap-x check designs/*.mjs` validates the trees (Satori CSS rules + an actual render attempt)
+4. `snap-x render designs/*.mjs --out <dir>` runs Satori → SVG → resvg → PNG
 
 Design files are plain `.mjs` — version-controllable, editable, re-renderable any time.
 
@@ -65,21 +53,21 @@ Design files are plain `.mjs` — version-controllable, editable, re-renderable 
 
 ## Design file format
 
-### Standard (sync)
+Every file exports `FORMAT`, optionally `FONTS`, and a default export that takes **no arguments** — nothing is passed in, so hardcode everything the file needs directly.
 
-Design files are standalone — no imports from `@snap-x/core`. Define colors inline from `config.themeOverride`:
+### Standard (sync)
 
 ```js
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
+export const FONTS  = [{ family: "Inter", weights: [400, 700, 900] }]; // optional — omit to default to Inter 400/700/900
 
-export default function (config) {
-  const accent      = config.themeOverride?.accent      ?? "#6366f1";
-  const accentMuted = config.themeOverride?.accentMuted ?? "rgba(99,102,241,0.25)";
-  const borderAccent= config.themeOverride?.borderAccent?? "rgba(99,102,241,0.35)";
+export default function () {
+  const accent      = "#6366f1"; // whatever brand color you found while inspecting — no config, just hardcode it
+  const accentMuted = "rgba(99,102,241,0.25)";
+  const borderAccent= "rgba(99,102,241,0.35)";
   const bg          = "#000000";
   const text        = "rgba(255,255,255,0.95)";
   const textMuted   = "rgba(255,255,255,0.50)";
-  const { title, description, domain, tags, stack } = config;
 
   return {
     type: "div",
@@ -93,7 +81,7 @@ export default function (config) {
 
 ### With local assets (async)
 
-When the project has logos, partner badges, or product images, make the function async:
+When the project has logos, partner badges, or product images, make the function async — still zero arguments:
 
 ```js
 import fs from "fs/promises";
@@ -105,10 +93,8 @@ async function loadBase64(filePath, mime) {
   return `data:${mime};base64,${buf.toString("base64")}`;
 }
 
-export default async function (config) {
-  const accent = config.themeOverride?.accent ?? "#6366f1";
-  // ... other colors
-
+export default async function () {
+  const accent = "#6366f1";
   const logo  = await loadBase64("./public/logo.png", "image/png");
   const badge = await loadBase64("./public/partner-badge.svg", "image/svg+xml");
 
@@ -125,7 +111,7 @@ export default async function (config) {
 }
 ```
 
-### Static tree (baked values)
+### Static tree (no function needed)
 
 ```js
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
@@ -161,64 +147,46 @@ Design files are plain JavaScript — use any icon source:
 
 **Icon pack** (install anything):
 ```js
-import { getIcon } from "my-icon-pack"; // user's choice
+import { getIcon } from "my-icon-pack"; // your choice
 ```
 
 ---
 
 ## Fonts
 
-Any Google Font works via `--font` or in `snap-x.config.json`. snap-x downloads and caches all 4 weights automatically (Regular 400, Medium 500, Bold 700, ExtraBold 800).
+Declare exactly what each file needs via `FONTS` — any Google Font, any weights:
 
-```bash
-snap-x render --font "Saira"
-snap-x render --font "Space Grotesk"
-snap-x render --font "DM Mono"
+```js
+export const FONTS = [
+  { family: "Saira", weights: [400, 700, 900] },
+  { family: "JetBrains Mono", weights: [400] }, // a second family, if the design needs one — just another entry
+];
 ```
 
-Use `fontWeight` freely in your design — all weights are loaded.
+Omit `FONTS` entirely to default to Inter 400/700/900. Each file in a batch declares its own fonts independently — `og.mjs` can use Saira while `poster.mjs` uses Space Grotesk in the same `snap-x render` call. Fonts are fetched and deduped across the batch; an unavailable font falls back to Inter with a warning rather than failing the render.
+
+Use `fontWeight` freely as long as it's one of the weights you declared.
 
 ---
 
-## Theme tokens
+## Colors
 
-Colors are defined inline in each design file from `config.themeOverride`. Standard set:
-
-| Variable | Description |
-|---|---|
-| `accent` | Brand accent color |
-| `accentMuted` | Accent with low opacity (glows, fills) |
-| `borderAccent` | Accent border color |
-| `bg` | Background color |
-| `text` | Primary text |
-| `textMuted` | Secondary / muted text |
-
-All are overridable via `themeOverride` in `snap-x.config.json`:
-
-```json
-{
-  "themeOverride": {
-    "accent": "#eb1d25",
-    "accentMuted": "rgba(235,29,37,0.25)",
-    "borderAccent": "rgba(235,29,37,0.30)"
-  }
-}
-```
+There's no theme system, no `themeOverride`, no config to merge. Pick real values while inspecting the project (brand accent from CSS, or a sensible default) and hardcode them directly in each design file — as plain consts, same as the accent/text example above. Each file is independent, so nothing stops one format using different colors than another if that's the right call.
 
 ---
 
 ## Customization surface
 
-Everything is customizable. Here's what Claude controls when writing design files:
+Everything is customizable, and none of it goes through a shared schema:
 
 | Layer | How |
 |---|---|
 | Layout | Full Satori tree — any composition of flex containers |
-| Colors | `themeOverride` in config or hardcoded in design |
-| Typography | Font via `--font`; `fontWeight`, `fontSize`, `letterSpacing` per element |
+| Colors | Hardcode hex/rgba values per file, based on what you found inspecting the project |
+| Typography | `FONTS` export — any Google Font(s)/weights, per file; `fontWeight`, `fontSize`, `letterSpacing` per element |
 | Icons | Emoji, inline SVG paths, or any icon package |
 | Logos & images | `async` function + `fs.readFile` → base64 `<img>` nodes |
-| Copy | All config fields: `title`, `description`, `domain`, `tags`, `stack` |
+| Copy | Baked directly into the tree — you already read the real project |
 | Per-format design | Each `.mjs` is independent — poster ≠ OG ≠ cover |
 | Output filename | Set `FORMAT.name` |
 | Canvas size | Set `FORMAT.width` / `FORMAT.height` |
@@ -246,7 +214,7 @@ Scan the project and answer the 8-question rubric. Understand the brand: colors,
 
 **Read:** `references/step-2-plan.md`
 
-Write `<out>/snap-plan.md`. Decide layout, copy, icons, assets, and visual choices for each format. Commit to the creative direction.
+Write `<out>/snap-plan.md`. Decide layout, copy, icons, assets, colors, and fonts for each format. Commit to the creative direction.
 
 **Gate:** `snap-plan.md` exists with per-format specs.
 
@@ -256,17 +224,15 @@ Write `<out>/snap-plan.md`. Decide layout, copy, icons, assets, and visual choic
 
 **Read:** `references/step-3-design.md`
 
-Write `snap-x/designs/*.mjs` — one file per format needed. Format names and dimensions are **not fixed** — choose what fits the project:
+Write `designs/*.mjs` — one file per format needed, each self-contained (FORMAT, optional FONTS, zero-argument default export). Format names and dimensions are **not fixed** — choose what fits the project:
 
-- Use the 5 defaults when broad social coverage is needed
+- Use the 5 suggested defaults when broad social coverage is needed
 - Add `linkedin-cover.mjs` (1584×396), `app-screenshot.mjs` (1290×2796), or any custom size
 - Skip formats that don't apply — a CLI tool doesn't need a poster
 
-`--format` matches by filename stem: `--format linkedin-cover` renders `linkedin-cover.mjs`.
-
 Each file is a valid Satori tree. Follow the Satori rules above. Use async functions when loading local assets.
 
-Run `npx snap-x check` after writing. Fix any errors before proceeding.
+Run `npx snap-x check designs/*.mjs` after writing. Fix any errors before proceeding.
 
 **Gate:** `snap-x check` passes with zero errors.
 
@@ -276,7 +242,7 @@ Run `npx snap-x check` after writing. Fix any errors before proceeding.
 
 **Read:** `references/step-4-render.md`
 
-Run `npx snap-x render`, verify output images, write `share-copy.txt` with placement instructions.
+Run `npx snap-x render designs/*.mjs --out <dir>`, verify output images, write `share-copy.txt` with placement instructions.
 
 **Gate:** All PNGs exist. `share-copy.txt` tells the user exactly where each image goes.
 
@@ -297,4 +263,4 @@ snap-x ships an MCP server at `packages/mcp/`:
 }
 ```
 
-MCP tools: `generate_images`, `init_config`, `list_formats`
+MCP tools: `render_designs`, `check_designs`, `list_formats`. The calling agent writes the `.mjs` files itself (following the same conventions as this skill) and hands their paths to these tools — the MCP server, like the CLI, only renders and validates.

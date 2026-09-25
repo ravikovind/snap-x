@@ -2,13 +2,17 @@
 /**
  * snap-x MCP Server
  *
- * Exposes snap-x image generation as MCP tools.
+ * Exposes snap-x's render-only Satori pipeline as MCP tools.
  * Compatible with Cursor, Windsurf, Claude Desktop, and any MCP client.
  *
+ * There's no config or auto-detection here: the calling agent writes
+ * self-contained .mjs design files (FORMAT, optional FONTS, a zero-arg
+ * default export) and hands their paths to these tools to render.
+ *
  * Tools:
- *   - generate_images    build the full image pack for a project
- *   - init_config        scaffold snap-x.config.json + templates
- *   - list_formats       list available formats with dimensions
+ *   - render_designs   render one or more .mjs design files to PNG
+ *   - check_designs    validate one or more .mjs design files
+ *   - list_formats     common social-image dimensions, for reference only
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -17,20 +21,17 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { execFile } from "child_process";
-import { promisify } from "util";
+import { renderDesign, checkDesign, resolveFonts, resetFontCache, collectFontsSpec } from "@snap-x/core";
 import path from "path";
 import fs from "fs/promises";
 
-const execFileAsync = promisify(execFile);
-
-// Formats reference
-const FORMATS = {
-  og:        { width: 1200, height: 630,  description: "Open Graph / Twitter card" },
-  cover:     { width: 1500, height: 500,  description: "GitHub / Twitter banner" },
-  thumbnail: { width: 1280, height: 720,  description: "YouTube / blog thumbnail" },
-  poster:    { width: 1080, height: 1920, description: "Instagram story / vertical" },
-  readme:    { width: 1280, height: 640,  description: "GitHub README card" },
+// Reference only — not read by render_designs/check_designs, which accept any FORMAT.
+const REFERENCE_FORMATS = {
+  og:           { width: 1200, height: 630,  description: "Open Graph / Twitter card" },
+  cover:        { width: 1500, height: 500,  description: "GitHub / Twitter banner" },
+  thumbnail:    { width: 1280, height: 720,  description: "YouTube / blog thumbnail" },
+  poster:       { width: 1080, height: 1920, description: "Instagram story / vertical" },
+  "readme-card": { width: 1280, height: 640, description: "GitHub README card" },
 };
 
 // ─── Server setup ─────────────────────────────────────────────────────────────
@@ -45,70 +46,45 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
     {
-      name: "generate_images",
+      name: "render_designs",
       description:
-        "Generate a full social image pack (OG, cover, thumbnail, poster, README card) for a project directory using snap-x. Uses Playwright (HTML templates) or Satori (--fast mode).",
+        "Render one or more self-contained Satori .mjs design files to PNG (pure Node.js, no browser). Each file must export FORMAT ({width, height, name?}) and a default export (a Satori tree object, or a zero-argument function returning one). Optionally exports FONTS ([{family, weights?}]) — defaults to Inter 400/700/900 if omitted.",
       inputSchema: {
         type: "object",
         properties: {
-          projectDir: {
-            type: "string",
-            description: "Absolute path to the project directory. Defaults to current working directory.",
-          },
-          formats: {
+          files: {
             type: "array",
-            items: { type: "string", enum: ["og", "cover", "thumbnail", "poster", "readme"] },
-            description: "Which formats to generate. Defaults to all.",
+            items: { type: "string" },
+            description: "Absolute paths to the .mjs design files to render.",
           },
           outDir: {
             type: "string",
-            description: "Output directory for generated images. Defaults to ./snap-output.",
-          },
-          title: { type: "string", description: "Override project title." },
-          description: { type: "string", description: "Override project description." },
-          domain: { type: "string", description: "Override domain/brand name." },
-          tags: {
-            type: "array",
-            items: { type: "string" },
-            description: "Override tags (max 3).",
-          },
-          theme: {
-            type: "string",
-            enum: ["dark", "light"],
-            description: "Visual theme. Defaults to dark.",
-          },
-          font: { type: "string", description: "Google Font family name. Defaults to Inter." },
-          fast: {
-            type: "boolean",
-            description: "Use Satori fallback (no browser required). Defaults to false.",
+            description: "Output directory for the rendered PNGs. Defaults to ./snap-output next to the first file.",
           },
         },
-        required: [],
+        required: ["files"],
       },
     },
     {
-      name: "init_config",
+      name: "check_designs",
       description:
-        "Scaffold snap-x.config.json and HTML templates in a project directory. Safe to run — won't overwrite existing files unless force=true.",
+        "Validate one or more Satori .mjs design files before rendering: structural rules (display:flex only, no z-index/position:fixed/grid) plus an actual Satori render attempt to catch runtime-only errors.",
       inputSchema: {
         type: "object",
         properties: {
-          projectDir: {
-            type: "string",
-            description: "Absolute path to the project directory.",
-          },
-          force: {
-            type: "boolean",
-            description: "Overwrite existing config and templates. Defaults to false.",
+          files: {
+            type: "array",
+            items: { type: "string" },
+            description: "Absolute paths to the .mjs design files to check.",
           },
         },
-        required: [],
+        required: ["files"],
       },
     },
     {
       name: "list_formats",
       description:
-        "List all available snap-x image formats with their dimensions and use cases.",
+        "Common social-image dimensions, for reference when deciding what to design. snap-x itself has no fixed format list — any FORMAT {width, height} is valid.",
       inputSchema: {
         type: "object",
         properties: {},
@@ -124,113 +100,81 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   if (name === "list_formats") {
-    const lines = Object.entries(FORMATS).map(
-      ([id, f]) => `• ${id.padEnd(10)} ${f.width}×${f.height}  ${f.description}`
+    const lines = Object.entries(REFERENCE_FORMATS).map(
+      ([id, f]) => `• ${id.padEnd(12)} ${f.width}×${f.height}  ${f.description}`
     );
     return {
       content: [
         {
           type: "text",
-          text: `snap-x formats:\n\n${lines.join("\n")}\n\nAll formats are generated by default. Use the "formats" parameter to select specific ones.`,
+          text: `Common social-image dimensions (reference only — any size works):\n\n${lines.join("\n")}`,
         },
       ],
     };
   }
 
-  if (name === "init_config") {
-    const projectDir = args.projectDir ?? process.cwd();
-    const force = args.force ?? false;
+  if (name === "check_designs") {
+    const files = args.files ?? [];
+    if (files.length === 0) {
+      return { content: [{ type: "text", text: "No files provided." }], isError: true };
+    }
 
     try {
-      const cliArgs = ["snap-x", "init"];
-      if (force) cliArgs.push("--force");
-      cliArgs.push("--project", projectDir);
+      resetFontCache();
+      const fontsSpec = await collectFontsSpec(files);
+      const fonts = await resolveFonts(fontsSpec);
 
-      const { stdout, stderr } = await execFileAsync("npx", cliArgs, {
-        cwd: projectDir,
-        timeout: 30_000,
-      });
+      const results = [];
+      let allOk = true;
+      for (const f of files) {
+        const result = await checkDesign(f, { fonts });
+        if (result.errors.length === 0) {
+          results.push(`✅  ${path.basename(f)}`);
+        } else {
+          allOk = false;
+          results.push(`❌  ${path.basename(f)}`, ...result.errors.map((e) => `     • ${e}`));
+        }
+        results.push(...result.warnings.map((w) => `     ⚠  ${w}`));
+      }
 
-      return {
-        content: [
-          {
-            type: "text",
-            text: `snap-x init completed for ${projectDir}\n\n${stdout}${stderr ? `\nWarnings:\n${stderr}` : ""}`,
-          },
-        ],
-      };
+      return { content: [{ type: "text", text: results.join("\n") }], isError: !allOk };
     } catch (err) {
-      return {
-        content: [{ type: "text", text: `Error running snap-x init: ${err.message}` }],
-        isError: true,
-      };
+      return { content: [{ type: "text", text: `Error checking designs: ${err.message}` }], isError: true };
     }
   }
 
-  if (name === "generate_images") {
-    const projectDir = args.projectDir ?? process.cwd();
-    const outDir = args.outDir ?? path.join(projectDir, "snap-output");
-    const fast = args.fast ?? false;
-
-    // Build CLI args
-    const cliArgs = ["snap-x", "build"];
-
-    if (args.formats?.length) {
-      // Run once per format (CLI supports single format at a time)
-      // We'll pass a single format and loop if needed
+  if (name === "render_designs") {
+    const files = args.files ?? [];
+    if (files.length === 0) {
+      return { content: [{ type: "text", text: "No files provided." }], isError: true };
     }
-    if (args.title)       cliArgs.push("--title", args.title);
-    if (args.description) cliArgs.push("--desc", args.description);
-    if (args.domain)      cliArgs.push("--domain", args.domain);
-    if (args.tags?.length) cliArgs.push("--tags", args.tags.join(","));
-    if (args.theme)       cliArgs.push("--theme", args.theme);
-    if (args.font)        cliArgs.push("--font", args.font);
-    if (outDir)           cliArgs.push("--out", outDir);
-    if (fast)             cliArgs.push("--fast");
-    if (args.formats?.length === 1) cliArgs.push("--format", args.formats[0]);
-    cliArgs.push("--project", projectDir);
+    const outDir = args.outDir ?? path.join(path.dirname(files[0]), "snap-output");
 
     try {
-      const { stdout, stderr } = await execFileAsync("npx", cliArgs, {
-        cwd: projectDir,
-        timeout: 120_000,
-      });
+      await fs.mkdir(outDir, { recursive: true });
 
-      // List generated files
-      let generatedFiles = [];
-      try {
-        const files = await fs.readdir(outDir);
-        generatedFiles = files.filter((f) => f.endsWith(".png"));
-      } catch {}
+      resetFontCache();
+      const fontsSpec = await collectFontsSpec(files);
+      const fonts = await resolveFonts(fontsSpec);
+
+      const outPaths = [];
+      for (const f of files) {
+        outPaths.push(await renderDesign(f, outDir, fonts));
+      }
 
       return {
         content: [
           {
             type: "text",
             text: [
-              `snap-x build completed.`,
-              `Output directory: ${outDir}`,
-              generatedFiles.length > 0
-                ? `\nGenerated files:\n${generatedFiles.map((f) => `  • ${f}`).join("\n")}`
-                : "",
-              stdout ? `\nOutput:\n${stdout}` : "",
-              stderr ? `\nWarnings:\n${stderr}` : "",
-            ]
-              .filter(Boolean)
-              .join("\n"),
+              `Rendered ${outPaths.length} file(s) to ${outDir}`,
+              ...outPaths.map((p) => `  • ${path.basename(p)}`),
+            ].join("\n"),
           },
         ],
       };
     } catch (err) {
-      const hint = err.message.includes("install-browser")
-        ? "\n\nTip: Run `npx snap-x install-browser` to install Playwright Chromium, or pass fast=true to use Satori instead."
-        : "";
-      return {
-        content: [
-          { type: "text", text: `Error running snap-x build: ${err.message}${hint}` },
-        ],
-        isError: true,
-      };
+      return { content: [{ type: "text", text: `Error rendering designs: ${err.message}` }], isError: true };
     }
   }
 

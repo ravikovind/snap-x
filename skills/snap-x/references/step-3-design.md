@@ -1,6 +1,6 @@
 # Step 3: Write the design files
 
-Write one `.mjs` file per format in `snap-x/designs/`. Each file is a Satori tree.
+Write one `.mjs` file per format in `designs/`. Each file is a self-contained Satori tree: no imports from `@snap-x/core`, no config object, no themes module — that module doesn't exist. Hardcode everything the file needs directly, using the colors/fonts/copy you decided in Step 2.
 
 ## Satori rules — must follow
 
@@ -15,53 +15,44 @@ Write one `.mjs` file per format in `snap-x/designs/`. Each file is a Satori tre
 | Width/height | Root node must have explicit `width` and `height` matching FORMAT. |
 | `flexWrap: "wrap"` | Use for text that might overflow. |
 
-## Import paths from snap-x/designs/
+## Icons
+
+No `icons.mjs` helper exists — use emoji, or paste an inline SVG path from any icon library (Lucide, Heroicons, Phosphor):
 
 ```js
-// Themes (color tokens)
-import { getTheme } from "../../node_modules/@snap-x/core/src/themes/index.mjs";
-// OR use relative path if installed locally:
-// import { getTheme } from "../../../packages/core/src/themes/index.mjs";
-
-// Lucide icons (returns a Satori svg node)
-import { lucideIcon } from "../../node_modules/@snap-x/core/src/icons.mjs";
-```
-
-Available icons: `Zap`, `Globe`, `Layers`, `Rocket`, `ArrowUpRight`
-
-## Theme tokens
-
-```js
-const t = getTheme("dark"); // or "light", "midnight", "forest", "minimal"
-t.bg            // background color
-t.text          // primary text
-t.textMuted     // secondary text (rgba)
-t.accent        // brand accent (red by default)
-t.accentMuted   // accent at low opacity
-t.borderAccent  // accent border
-t.fontDisplay   // font family string
+{
+  type: "svg",
+  props: {
+    width: 24, height: 24, viewBox: "0 0 24 24", fill: "none",
+    stroke: accent, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
+    children: [{ type: "path", props: { d: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" } }],
+  },
+}
 ```
 
 ## File template
 
 ```js
-import { getTheme } from "../../node_modules/@snap-x/core/src/themes/index.mjs";
-import { lucideIcon } from "../../node_modules/@snap-x/core/src/icons.mjs";
-
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
+export const FONTS  = [{ family: "Saira", weights: [400, 700, 900] }]; // the font(s) you confirmed in Step 2; omit to default to Inter
 
-export default function (config) {
-  const t = { ...getTheme(config.theme), ...(config.themeOverride ?? {}) };
-  const { title, description, domain, tags, stack } = config;
+export default function () {
+  // hardcode the values you found in Step 1/2 — no config object is passed in
+  const bg          = "#000000";
+  const text        = "rgba(255,255,255,0.95)";
+  const textMuted   = "rgba(255,255,255,0.50)";
+  const accent      = "#eb1d25";
+  const accentMuted = "rgba(235,29,37,0.25)";
+  const borderAccent= "rgba(235,29,37,0.30)";
 
   return {
     type: "div",
     props: {
       style: {
         width: 1200, height: 630,
-        background: t.bg,
+        background: bg,
         display: "flex",
-        fontFamily: t.fontDisplay,
+        fontFamily: "Saira",
         position: "relative",
         overflow: "hidden",
       },
@@ -75,10 +66,11 @@ export default function (config) {
 
 ## After writing all files
 
-Run `npx snap-x check` and fix every error before proceeding to Step 4.
+Run `npx snap-x check designs/*.mjs` and fix every error before proceeding to Step 4.
 
 Common fixes:
 - `display:"block"` → `display:"flex"`
 - `position:"fixed"` → `position:"absolute"`
 - Missing `children: []` on leaf nodes → add empty array
 - Children not array → wrap in `[]`
+- "Satori render failed" → usually a `fontWeight` not declared in `FONTS`, or a bad image data URI

@@ -1,109 +1,89 @@
 #!/usr/bin/env node
 /**
- * snap-x CLI
+ * snap-x CLI — render-only.
  *
- *   snap-x init [--force]                scaffold snap-x.config.json + designs/
- *   snap-x check [--format X]            validate design .mjs files
- *   snap-x render [--format X] [--out]   render designs → PNGs via Satori
+ *   snap-x render <paths...> [--out <dir>]   design .mjs → PNG via Satori
+ *   snap-x check  <paths...>                 validate design .mjs files
+ *
+ * <paths...> accept a literal file, a directory (expands to every .mjs
+ * inside), or a glob with a single trailing `*` (e.g. designs/*.mjs).
+ * Design files are self-contained: no config, no auto-detection — they
+ * export FORMAT, optionally FONTS, and a zero-argument default export.
  */
 
 import path from "path";
 import fs from "fs/promises";
-import { existsSync } from "fs";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DEFAULT_DESIGNS_DIR = path.resolve(__dirname, "../default-designs");
+import { existsSync, statSync } from "fs";
 
 const rawArgs = process.argv.slice(2);
-const SUBCMDS = ["init", "check", "render"];
-const sub = rawArgs[0] && SUBCMDS.includes(rawArgs[0]) ? rawArgs[0] : "render";
-const args = SUBCMDS.includes(rawArgs[0]) ? rawArgs.slice(1) : rawArgs;
+const SUBCMDS = ["render", "check"];
+const sub = rawArgs[0] && SUBCMDS.includes(rawArgs[0]) ? rawArgs[0] : null;
+const args = sub ? rawArgs.slice(1) : rawArgs;
 
 const get = (f) => { const i = args.indexOf(f); return i !== -1 ? args[i + 1] ?? null : null; };
-const has = (f) => args.includes(f);
+const patterns = args.filter((a, i) => !a.startsWith("--") && args[i - 1] !== "--out");
 
 console.log("\n  snap-x\n");
 
-if (sub === "init")   await runInit();
-if (sub === "check")  await runCheck();
-if (sub === "render") await runRender();
+if (!sub) {
+  console.error("  Usage: snap-x <render|check> <paths...> [--out <dir>]\n");
+  process.exit(1);
+}
 
-// ─── init ────────────────────────────────────────────────────────────────────
+const files = await resolveDesignFiles(patterns);
+if (files.length === 0) {
+  console.error("  No design files matched. Pass a file, a directory, or a glob like designs/*.mjs\n");
+  process.exit(1);
+}
 
-async function runInit() {
-  const force = has("--force");
-  const projectDir = get("--project") ?? process.cwd();
+if (sub === "render") await runRender(files);
+if (sub === "check")  await runCheck(files);
 
-  const configPath = path.join(projectDir, "snap-x.config.json");
-  if (!existsSync(configPath) || force) {
-    let detected = {};
-    try {
-      const { detectProject } = await import("./adapters/index.mjs");
-      detected = await detectProject(projectDir);
-    } catch {}
+// ─── render ──────────────────────────────────────────────────────────────────
 
-    const config = {
-      title: detected.name || "My Project",
-      description: detected.description || "A short description.",
-      domain: detected.domain || "myproject.com",
-      tags: detected.tags?.length ? detected.tags : ["Open Source"],
-      stack: detected.stack?.length ? detected.stack : [],
-      theme: "dark",
-      font: detected.fontDisplay || "Inter",
-      outDir: "./snap-output",
-      formats: ["og", "cover", "thumbnail", "poster", "readme"],
-    };
-    await fs.writeFile(configPath, JSON.stringify(config, null, 2) + "\n");
-    console.log("  Created: snap-x.config.json");
-  } else {
-    console.log("  Skipped: snap-x.config.json (use --force to overwrite)");
+async function runRender(files) {
+  const outDir = path.resolve(get("--out") ?? "./snap-output");
+  await fs.mkdir(outDir, { recursive: true });
+
+  const { resolveFonts, resetFontCache, collectFontsSpec } = await import("./fonts.mjs");
+  resetFontCache();
+
+  const fontsSpec = await collectFontsSpec(files);
+  const fonts = await resolveFonts(fontsSpec);
+
+  console.log(`\n  Rendering ${files.length} file(s) → ${outDir}/\n`);
+
+  const { renderDesign } = await import("./render.mjs");
+  for (const f of files) {
+    await renderDesign(f, outDir, fonts);
   }
 
-  const designDest = path.join(projectDir, "snap-x", "designs");
-  await fs.mkdir(designDest, { recursive: true });
-
-  for (const file of await fs.readdir(DEFAULT_DESIGNS_DIR)) {
-    if (!file.endsWith(".mjs")) continue;
-    const dest = path.join(designDest, file);
-    if (!existsSync(dest) || force) {
-      await fs.copyFile(path.join(DEFAULT_DESIGNS_DIR, file), dest);
-      console.log(`  Created: snap-x/designs/${file}`);
-    } else {
-      console.log(`  Skipped: snap-x/designs/${file} (use --force)`);
-    }
-  }
-
-  console.log(`
-  Done. Edit snap-x.config.json, then customize snap-x/designs/*.mjs.
-
-  Run: npx snap-x check   (validate)
-  Run: npx snap-x render  (generate PNGs)
-`);
+  console.log(`\n  Done.\n`);
 }
 
 // ─── check ───────────────────────────────────────────────────────────────────
 
-async function runCheck() {
-  const projectDir = get("--project") ?? process.cwd();
-  const formatFilter = get("--format");
-  const designDir = resolveDesignDir(projectDir);
+async function runCheck(files) {
+  const { resolveFonts, resetFontCache, collectFontsSpec } = await import("./fonts.mjs");
+  resetFontCache();
 
-  const files = await getDesignFiles(designDir, formatFilter);
-  if (files.length === 0) {
-    console.error("  No design files found. Run: npx snap-x init\n");
-    process.exit(1);
+  let fonts;
+  try {
+    const fontsSpec = await collectFontsSpec(files);
+    fonts = await resolveFonts(fontsSpec);
+  } catch (err) {
+    console.log(`  ⚠  Could not load fonts (${err.message}) — checking structure only, skipping Satori render check.\n`);
   }
 
   const { checkDesign } = await import("./check.mjs");
   let allOk = true;
 
   for (const f of files) {
-    const result = await checkDesign(f.path);
+    const result = await checkDesign(f, { fonts });
     if (result.errors.length === 0) {
-      console.log(`  ✅  ${f.name}`);
+      console.log(`  ✅  ${path.basename(f)}`);
     } else {
-      console.log(`  ❌  ${f.name}`);
+      console.log(`  ❌  ${path.basename(f)}`);
       result.errors.forEach((e) => console.log(`       • ${e}`));
       allOk = false;
     }
@@ -112,112 +92,44 @@ async function runCheck() {
     }
   }
 
-  if (!allOk) {
-    console.log("\n  Fix errors above before rendering.\n");
-    process.exit(1);
-  }
-  console.log("\n  All designs valid.\n");
-}
-
-// ─── render ──────────────────────────────────────────────────────────────────
-
-async function runRender() {
-  const projectDir = get("--project") ?? process.cwd();
-  const formatFilter = get("--format");
-  const designDir = resolveDesignDir(projectDir);
-
-  const config = await loadConfig(projectDir);
-  const outDir = path.resolve(projectDir, get("--out") ?? config.outDir ?? "./snap-output");
-
-  console.log(`  Project : ${config.title}`);
-  console.log(`  Font    : ${config.font}`);
-  console.log(`  Theme   : ${config.theme}`);
-  console.log(`  Output  : ${outDir}\n`);
-
-  const files = await getDesignFiles(designDir, formatFilter);
-  if (files.length === 0) {
-    console.error("  No design files found. Run: npx snap-x init\n");
-    process.exit(1);
-  }
-
-  const { getFonts, resetFontCache } = await import("./fonts.mjs");
-  resetFontCache();
-  const fonts = await getFonts(config.font, [400, 700, 900]);
-
-  let allFonts = fonts;
-  if (config.monoFont) {
-    const { loadGoogleFont } = await import("./fonts.mjs");
-    const [r, b] = await Promise.all([
-      loadGoogleFont(config.monoFont, 400),
-      loadGoogleFont(config.monoFont, 700),
-    ]);
-    allFonts = [
-      ...fonts,
-      { name: config.monoFont, data: r, weight: 400, style: "normal" },
-      { name: config.monoFont, data: b, weight: 700, style: "normal" },
-    ];
-  }
-
-  console.log(`  Generating ${files.length} image(s)…\n`);
-  await fs.mkdir(outDir, { recursive: true });
-
-  const { renderDesign } = await import("./render.mjs");
-  for (const f of files) {
-    await renderDesign(f.path, outDir, config, allFonts);
-  }
-
-  console.log(`\n  Done. Images saved to ${outDir}/\n`);
+  console.log(allOk ? "\n  All designs valid.\n" : "\n  Fix errors above before rendering.\n");
+  if (!allOk) process.exit(1);
 }
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
-function resolveDesignDir(projectDir) {
-  const userDir = path.join(projectDir, "snap-x", "designs");
-  return existsSync(userDir) ? userDir : DEFAULT_DESIGNS_DIR;
-}
+/** Expands literal files, directories, and single-`*`-wildcard globs into a flat list of .mjs paths. */
+async function resolveDesignFiles(patterns) {
+  const out = [];
+  for (const p of patterns) {
+    const abs = path.resolve(p);
 
-async function getDesignFiles(designDir, formatFilter) {
-  const all = await fs.readdir(designDir);
-  return all
-    .filter((f) => f.endsWith(".mjs"))
-    .filter((f) => {
-      if (!formatFilter) return true;
-      const stem = f.replace(/\.mjs$/, "");
-      return stem === formatFilter || f === `${formatFilter}.mjs`;
-    })
-    .map((f) => ({ name: f, path: path.join(designDir, f) }));
-}
-
-async function loadConfig(projectDir) {
-  const configPath = path.join(projectDir, "snap-x.config.json");
-  try {
-    const raw = await fs.readFile(configPath, "utf-8");
-    const file = JSON.parse(raw);
-    return {
-      ...file,
-      title: get("--title") ?? file.title ?? "Untitled",
-      description: get("--desc") ?? file.description ?? "",
-      domain: get("--domain") ?? file.domain ?? "",
-      theme: get("--theme") ?? file.theme ?? "dark",
-      font: get("--font") ?? file.font ?? "Inter",
-    };
-  } catch {
-    try {
-      const { detectProject } = await import("./adapters/index.mjs");
-      const d = await detectProject(projectDir);
-      return {
-        title: get("--title") ?? d.name ?? "Untitled",
-        description: get("--desc") ?? d.description ?? "",
-        domain: get("--domain") ?? d.domain ?? "",
-        tags: d.tags ?? [],
-        stack: d.stack ?? [],
-        theme: get("--theme") ?? "dark",
-        font: get("--font") ?? d.fontDisplay ?? "Inter",
-        outDir: "./snap-output",
-        themeOverride: d.themeOverride ?? {},
-      };
-    } catch {
-      return { title: "Untitled", description: "", domain: "", tags: [], stack: [], theme: "dark", font: "Inter", outDir: "./snap-output", themeOverride: {} };
+    if (p.includes("*")) {
+      const dir = path.dirname(abs);
+      const filePattern = path.basename(abs);
+      const re = new RegExp("^" + filePattern.split("*").map(escapeRegExp).join(".*") + "$");
+      const entries = existsSync(dir) ? await fs.readdir(dir) : [];
+      for (const entry of entries) {
+        if (entry.endsWith(".mjs") && re.test(entry)) out.push(path.join(dir, entry));
+      }
+      continue;
     }
+
+    if (!existsSync(abs)) continue;
+
+    if (statSync(abs).isDirectory()) {
+      const entries = await fs.readdir(abs);
+      for (const entry of entries) {
+        if (entry.endsWith(".mjs")) out.push(path.join(abs, entry));
+      }
+      continue;
+    }
+
+    out.push(abs);
   }
+  return [...new Set(out)];
+}
+
+function escapeRegExp(s) {
+  return s.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
 }
