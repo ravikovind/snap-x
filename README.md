@@ -148,20 +148,21 @@ After `snap-x init`, designs live in `./snap-x/designs/`. Each is a Satori tree:
 
 ```js
 // snap-x/designs/og.mjs
-import { getTheme } from "@snap-x/core/src/themes/index.mjs";
-import { lucideIcon } from "@snap-x/core/src/icons.mjs";
-import fs from "fs/promises";
-
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 
-export default async function (config) {
-  const t = { ...getTheme(config.theme), ...(config.themeOverride ?? {}) };
+export default function (config) {
+  const accent = config.themeOverride?.accent ?? "#6366f1";
+  const accentMuted = config.themeOverride?.accentMuted ?? "rgba(99,102,241,0.25)";
+  const borderAccent = config.themeOverride?.borderAccent ?? "rgba(99,102,241,0.35)";
+  const bg = "#000000";
+  const text = "rgba(255,255,255,0.95)";
+  const textMuted = "rgba(255,255,255,0.50)";
   const { title, description, domain, tags } = config;
 
   return {
     type: "div",
     props: {
-      style: { width: 1200, height: 630, background: t.bg, display: "flex" },
+      style: { width: 1200, height: 630, background: bg, display: "flex" },
       children: [
         // your layout here
       ],
@@ -199,17 +200,31 @@ snap-x downloads and caches the font automatically. All 4 weights (Regular, Medi
 
 ### Icons
 
-snap-x ships a built-in Lucide icon set, ready for Satori:
+Design files are plain JavaScript — use any icon source you like.
 
+**Emoji** (zero deps, works everywhere):
 ```js
-import { lucideIcon } from "@snap-x/core/src/icons.mjs";
-
-lucideIcon("Zap", { size: 24, color: "#eb1d25" })
-lucideIcon("Globe", { size: 16, color: t.textMuted })
-lucideIcon("ArrowRight", { size: 20, color: t.accent })
+{ type: "div", props: { style: { fontSize: 24, display: "flex" }, children: ["⚡"] } }
+{ type: "div", props: { style: { fontSize: 16, display: "flex" }, children: ["📍"] } }
 ```
 
-Available icons: `ArrowUpRight` · `ArrowRight` · `Check` · `CheckCircle` · `MapPin` · `Mail` · `MessageCircle` · `Rocket` · `Code` · `Zap` · `Star` · `Globe` · `Package` · `Users` · `TrendingUp` · `Shield` · `Terminal` · `Layers`
+**Inline SVG path** (pixel-perfect, any icon library):
+```js
+// paste any SVG path from Lucide, Heroicons, Phosphor, etc.
+{
+  type: "svg",
+  props: {
+    width: 24, height: 24, viewBox: "0 0 24 24", fill: "none",
+    stroke: accent, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
+    children: [{ type: "path", props: { d: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" } }],
+  },
+}
+```
+
+**Icon pack helper** (optional, install any package):
+```js
+import { getIcon } from "my-icon-pack"; // your choice
+```
 
 ### Local images & assets
 
@@ -266,7 +281,7 @@ Or apply overrides inside the design file itself for per-format control.
 | Layout & composition | Rewrite the `.mjs` tree entirely — it's just JavaScript |
 | Brand colors | `themeOverride` in config or hardcoded in the design |
 | Typography | `--font` flag for any Google Font; per-element `fontWeight`, `fontSize`, `letterSpacing` |
-| Icons | `lucideIcon()` — 18 built-in, add your own to `icons.mjs` |
+| Icons | Emoji, inline SVG paths, or any icon package — your choice |
 | Logos & images | `async` design + `fs.readFile` → base64 `<img>` |
 | Copy & content | All fields driven by `config` (title, description, tags, domain, stack) |
 | Per-format design | Each `.mjs` is independent — poster can look completely different from OG |

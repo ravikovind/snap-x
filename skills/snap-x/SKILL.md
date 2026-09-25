@@ -63,19 +63,24 @@ Design files are plain `.mjs` — version-controllable, editable, re-renderable 
 
 ### Standard (sync)
 
-```js
-import { getTheme } from "../../../node_modules/@snap-x/core/src/themes/index.mjs";
-import { lucideIcon } from "../../../node_modules/@snap-x/core/src/icons.mjs";
+Design files are standalone — no imports from `@snap-x/core`. Define colors inline from `config.themeOverride`:
 
+```js
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 
 export default function (config) {
-  const t = { ...getTheme(config.theme), ...(config.themeOverride ?? {}) };
+  const accent      = config.themeOverride?.accent      ?? "#6366f1";
+  const accentMuted = config.themeOverride?.accentMuted ?? "rgba(99,102,241,0.25)";
+  const borderAccent= config.themeOverride?.borderAccent?? "rgba(99,102,241,0.35)";
+  const bg          = "#000000";
+  const text        = "rgba(255,255,255,0.95)";
+  const textMuted   = "rgba(255,255,255,0.50)";
   const { title, description, domain, tags, stack } = config;
+
   return {
     type: "div",
     props: {
-      style: { width: 1200, height: 630, background: t.bg, display: "flex" },
+      style: { width: 1200, height: 630, background: bg, display: "flex" },
       children: [ ... ]
     }
   };
@@ -84,11 +89,10 @@ export default function (config) {
 
 ### With local assets (async)
 
-When the project has logos, partner badges, product images, or SVG icon packs, use an async function to load and embed them:
+When the project has logos, partner badges, or product images, make the function async:
 
 ```js
 import fs from "fs/promises";
-import { getTheme } from "../../../node_modules/@snap-x/core/src/themes/index.mjs";
 
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 
@@ -98,19 +102,19 @@ async function loadBase64(filePath, mime) {
 }
 
 export default async function (config) {
-  const t = { ...getTheme(config.theme), ...(config.themeOverride ?? {}) };
+  const accent = config.themeOverride?.accent ?? "#6366f1";
+  // ... other colors
 
-  // Load any local PNG, JPG, or SVG from the project
-  const logo = await loadBase64("./public/logo.png", "image/png");
+  const logo  = await loadBase64("./public/logo.png", "image/png");
   const badge = await loadBase64("./public/partner-badge.svg", "image/svg+xml");
 
   return {
     type: "div",
     props: {
-      style: { width: 1200, height: 630, background: t.bg, display: "flex" },
+      style: { width: 1200, height: 630, background: "#000", display: "flex" },
       children: [
-        { type: "img", props: { src: logo, width: 200, height: 60, style: { display: "flex", objectFit: "contain" } } },
-        { type: "img", props: { src: badge, width: 160, height: 48, style: { display: "flex", objectFit: "contain" } } },
+        { type: "img", props: { src: logo,  width: 200, height: 60,  style: { display: "flex", objectFit: "contain" } } },
+        { type: "img", props: { src: badge, width: 160, height: 48,  style: { display: "flex", objectFit: "contain" } } },
       ]
     }
   };
@@ -131,19 +135,30 @@ export default {
 
 ## Icons
 
-Use the built-in Lucide icon set:
+Design files are plain JavaScript — use any icon source:
 
+**Emoji** (zero deps):
 ```js
-import { lucideIcon } from "../../../node_modules/@snap-x/core/src/icons.mjs";
-
-lucideIcon("Zap", { size: 24, color: t.accent })
-lucideIcon("Globe", { size: 16, color: t.textMuted })
-lucideIcon("ArrowRight", { size: 20, color: "#ffffff" })
+{ type: "div", props: { style: { fontSize: 24, display: "flex" }, children: ["⚡"] } }
+{ type: "div", props: { style: { fontSize: 16, display: "flex" }, children: ["📍"] } }
 ```
 
-**Available icons:** `ArrowUpRight` · `ArrowRight` · `Check` · `CheckCircle` · `MapPin` · `Mail` · `MessageCircle` · `Rocket` · `Code` · `Zap` · `Star` · `Globe` · `Package` · `Users` · `TrendingUp` · `Shield` · `Terminal` · `Layers`
+**Inline SVG path** (any icon library — Lucide, Heroicons, Phosphor, etc.):
+```js
+{
+  type: "svg",
+  props: {
+    width: 24, height: 24, viewBox: "0 0 24 24", fill: "none",
+    stroke: accent, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
+    children: [{ type: "path", props: { d: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" } }],
+  },
+}
+```
 
-Default options: `{ size: 24, color: "currentColor", strokeWidth: 2 }`
+**Icon pack** (install anything):
+```js
+import { getIcon } from "my-icon-pack"; // user's choice
+```
 
 ---
 
@@ -163,22 +178,27 @@ Use `fontWeight` freely in your design — all weights are loaded.
 
 ## Theme tokens
 
-`getTheme(name)` returns these tokens, all overridable via `themeOverride` in config:
+Colors are defined inline in each design file from `config.themeOverride`. Standard set:
 
-| Token | Description |
+| Variable | Description |
 |---|---|
-| `t.bg` | Background color |
-| `t.text` | Primary text |
-| `t.textMuted` | Secondary / muted text |
-| `t.accent` | Brand accent color |
-| `t.accentMuted` | Accent with low opacity (for glows, fills) |
-| `t.borderAccent` | Accent border color |
-| `t.fontDisplay` | Font family string |
+| `accent` | Brand accent color |
+| `accentMuted` | Accent with low opacity (glows, fills) |
+| `borderAccent` | Accent border color |
+| `bg` | Background color |
+| `text` | Primary text |
+| `textMuted` | Secondary / muted text |
 
-Apply per-project overrides:
+All are overridable via `themeOverride` in `snap-x.config.json`:
 
-```js
-const t = { ...getTheme(config.theme), ...(config.themeOverride ?? {}) };
+```json
+{
+  "themeOverride": {
+    "accent": "#eb1d25",
+    "accentMuted": "rgba(235,29,37,0.25)",
+    "borderAccent": "rgba(235,29,37,0.30)"
+  }
+}
 ```
 
 ---
@@ -192,7 +212,7 @@ Everything is customizable. Here's what Claude controls when writing design file
 | Layout | Full Satori tree — any composition of flex containers |
 | Colors | `themeOverride` in config or hardcoded in design |
 | Typography | Font via `--font`; `fontWeight`, `fontSize`, `letterSpacing` per element |
-| Icons | `lucideIcon()` — inline SVG nodes, any size/color |
+| Icons | Emoji, inline SVG paths, or any icon package |
 | Logos & images | `async` function + `fs.readFile` → base64 `<img>` nodes |
 | Copy | All config fields: `title`, `description`, `domain`, `tags`, `stack` |
 | Per-format design | Each `.mjs` is independent — poster ≠ OG ≠ cover |
