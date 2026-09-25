@@ -84,13 +84,3 @@ export function cover() {
     at(CX - 34, CY - 34, { width: 68, height: 68, alignItems: "center", justifyContent: "center", fontFamily: "Saira", fontSize: 24, fontWeight: 800, color: INK }, ["RK"]),
   ]);
 }
-
-// Debug layer for the QA overlay: LinkedIn avatar circle, mobile side crops, top/bottom chrome, safe area.
-export function qaLayer() {
-  const band = (l, t, w, h) => at(l, t, { width: w, height: h, background: "rgba(255,40,60,0.16)" });
-  return box({ position: "absolute", left: 0, top: 0, width: W, height: H }, [
-    band(0, 0, 200, H), band(1384, 0, 200, H), band(200, 0, 1184, 30), band(200, 366, 1184, 30),
-    at(160 - 115, 396 - 115, { width: 230, height: 230, borderRadius: 999, border: "2px solid rgba(255,40,60,0.9)", background: "rgba(255,40,60,0.14)" }),
-    at(380, 50, { width: 1004, height: 296, border: "1px dashed rgba(250,200,0,0.9)" }),
-  ]);
-}

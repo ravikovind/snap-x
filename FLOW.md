@@ -40,15 +40,18 @@ snap-x render <paths...> [--out <dir>]
         fs.writeFile(outDir/name)   write PNG
 ```
 
-`snap-x check <paths...>` also **warns** when the design's text contains characters none of the loaded fonts can draw (`glyphs.mjs`, via the parser Satori bundles) — they would render as blank boxes. It follows the same resolve → collect fonts → resolve fonts path, then for each file: validates structural Satori rules (display:flex only, no z-index/position:fixed/grid) and, if fonts loaded successfully, actually runs the tree through `satori()` to catch runtime-only errors (bad image data URIs, invalid font weights, malformed SVG paths) before you spend time on a full render.
+`snap-x guides <paths...>` reuses the same pipeline (`renderTree`) on the design wrapped in a zone overlay; `snap-x formats` prints the table in `formats.mjs`. `snap-x check <paths...>` also **warns** when the design's text contains characters none of the loaded fonts can draw (`glyphs.mjs`, via the parser Satori bundles) — they would render as blank boxes. It follows the same resolve → collect fonts → resolve fonts path, then for each file: validates structural Satori rules (display:flex only, no z-index/position:fixed/grid) and, if fonts loaded successfully, actually runs the tree through `satori()` to catch runtime-only errors (bad image data URIs, invalid font weights, malformed SVG paths) before you spend time on a full render.
 
 ---
 
 ## CLI reference
 
 ```
-snap-x check  <paths...>
-snap-x render <paths...> [--out <dir>]
+snap-x check   <paths...>
+snap-x render  <paths...> [--out <dir>]
+snap-x guides  <paths...> [--format <id>] [--out <dir>]    danger-zone overlay + mobile crop (default --out ./snap-guides)
+snap-x formats [id|WxH] [--json]                           platform formats, sizes, no-alpha rules, zones
+snap-x --help | --version
 ```
 
 `<paths...>` accepts any mix of:
@@ -58,7 +61,9 @@ snap-x render <paths...> [--out <dir>]
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--out` | `./snap-output` | Output directory (render only) |
+| `--out` | `./snap-output` (render) · `./snap-guides` (guides) | Output directory |
+| `--format` | inferred from `FORMAT` size | Format id for `guides` (see `snap-x formats`) |
+| `--json` | — | Machine-readable output for `formats` |
 
 Nothing else. No `--title`, `--font`, `--theme`, `--project` — a design file is self-contained, so there's nothing left for a flag to override.
 
@@ -71,7 +76,7 @@ A design file exports `FORMAT`, optionally `FONTS`, and a default export — a s
 ### Standard (sync)
 
 ```js
-export const FORMAT = { width: 1200, height: 630, name: "og.png" };
+export const FORMAT = { width: 1200, height: 630, name: "og.png" };            // alpha: false → opaque RGB PNG (App Store / Play)
 export const FONTS  = [{ family: "Saira", weights: [400, 700, 900] }]; // optional, defaults to Inter 400/700/900
 
 export default function () {
@@ -314,6 +319,11 @@ snap-x/
 │   │   │   ├── fonts.mjs         Google Fonts loader/cache, FONTS-spec resolution
 │   │   │   ├── fallback.mjs      per-design script fallback fonts (CJK, Arabic, …)
 │   │   │   ├── glyphs.mjs        which characters no loaded font can draw (used by check)
+│   │   │   ├── emoji.mjs         Twemoji SVGs for Satori's loadAdditionalAsset (memo + disk cache)
+│   │   │   ├── cache.mjs         shared best-effort disk cache (fonts, emoji)
+│   │   │   ├── formats.mjs       platform formats: sizes, no-alpha rules, placement zones (verified flag + source)
+│   │   │   ├── guides.mjs        overlay a format's zones on a design + mobile-crop preview
+│   │   │   ├── png.mjs           opaque RGB PNG encoder (for FORMAT.alpha: false)
 │   │   │   └── index.mjs         programmatic API (used by @snap-x/mcp)
 │   │   └── test/                 node:test suites (resolve, check, fonts, fallback, load, cli) + helpers.mjs — `npm test`
 │   └── mcp/                      MCP server — imports @snap-x/core directly; tools + `snap-x://design-guide` resource + `design_cards` prompt; test/ (node:test over stdio)

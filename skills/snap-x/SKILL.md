@@ -21,9 +21,9 @@ npx -y @snap-x/cli render designs/*.mjs --out <dir>
 | Step | Read | Gate |
 |---|---|---|
 | **1. Inspect** the source — copy, colors, fonts, **real logo/brand assets** | `references/step-1-inspect.md` | all 9 rubric answers; any logo you'll use is downloaded and looked at |
-| **2. Plan** — hook, copy per format, palette, fonts, assets, safe zones | `references/step-2-plan.md` | `snap-plan.md` written with per-format specs |
+| **2. Plan** — hook, copy per format, palette, fonts, assets, safe zones; pick sizes with `snap-x formats` | `references/step-2-plan.md`, `references/formats.md` | `snap-plan.md` written with per-format specs |
 | **3. Write** `designs/*.mjs` — one self-contained file per format | `references/step-3-design.md` | `snap-x check` passes with zero errors |
-| **4. Render, verify, deliver** — look at every PNG | `references/step-4-render.md` | every image viewed and clean; `share-copy.txt` written |
+| **4. Render, verify, deliver** — look at every PNG; `snap-x guides` for banners/thumbnails/stories | `references/step-4-render.md` | every image viewed and clean; `share-copy.txt` written |
 
 ## Non-negotiables
 
@@ -31,11 +31,11 @@ npx -y @snap-x/cli render designs/*.mjs --out <dir>
 - **Self-contained files.** Each design exports `FORMAT`, optionally `FONTS`, and a zero-argument default export (may be async). No config, nothing passed in — hardcode the brand's colors, fonts and copy.
 - **Satori rules.** Every container `display: "flex"`; `children` is an array; no `z-index`, CSS grid, animations or `position: "fixed"`; never an `undefined` style value.
 - **Real logos, never redrawn.** Find the official file (favicon, header logo, brand page), pick the variant for the card's background, save it in `assets/` with `SOURCES.md`. None found → a text wordmark. No third-party customer logos unless asked.
-- **Draw symbols, don't type them.** A glyph the font lacks renders as a blank box — emoji, `✔`, and sometimes `→`. `check` warns about these; use inline SVG or shapes instead.
+- **Emoji work; other symbols may not.** Emoji render as Twemoji images. A character the font lacks (`✓ ◷`, sometimes `→`) renders as a blank box — `check` warns; draw those as inline SVG or shapes.
 - **Sources disagree?** Prefer the README/manifest over API blurbs and say which you chose in the plan.
 - **Fit the text.** Headlines `whiteSpace: "nowrap"`, sized to the canvas (≈ 0.5 em per character for bold display type). Wrapped or clipped text means the size is wrong.
-- **Look before you deliver.** `check` passing ≠ looks right. Open every rendered PNG and fix what you see. Banners also get a danger-zone overlay and a mobile-crop render.
-- **Only the formats the project needs.** Common sizes: OG 1200×630 · README card 1280×640 · thumbnail 1280×720 · X/GitHub cover 1500×500 · LinkedIn cover 1584×396 · poster 1080×1920 · portrait post 1080×1350 — or any size.
+- **Look before you deliver.** `check` passing ≠ looks right. Open every rendered PNG and fix what you see. Never hand-write QA designs — `snap-x guides` draws the danger zones and the mobile crop.
+- **Right size, right place.** Only the formats the project needs; get sizes and rules from `snap-x formats` (YouTube, X, LinkedIn, Instagram, Play Store, App Store …). **Store graphics need `alpha: false`.** Banners, thumbnails and stories get a `snap-x guides` placement check.
 
 ## Output layout
 
@@ -44,11 +44,12 @@ npx -y @snap-x/cli render designs/*.mjs --out <dir>
   designs/*.mjs        the design files (helpers start with "_")
   assets/              logos + SOURCES.md
   *.png                the images (FORMAT.name)
+  guides/              placement overlays + mobile crops (`snap-x guides`)
   snap-plan.md         Step 2
   share-copy.txt       Step 4 — where each image goes, what's mock, asset sources
 ```
 
-Default `<out>` is `snap-output/` (use a timestamped folder if it exists). Real examples: [`examples/`](../../examples) in the repo.
+Default `<out>` is `snap-output/` (use a timestamped folder if it exists). Keep QA renders out of `designs/`. Real examples: [`examples/`](../../examples) in the repo.
 
 ## Agents without this skill (MCP)
 

@@ -2,7 +2,7 @@ Ravi Kovind — LinkedIn cover (built with snap-x from examples/ravikovind/plan.
 
 ravi-kovind-linkedin-cover.png       1584×396   → LinkedIn: Profile → banner → upload
 ravi-kovind-linkedin-cover@2x.png    3168×792   → same image at 2× (sharper on retina; keep the file under LinkedIn's 8 MB limit)
-qa-overlay.png                       debug view: red = avatar circle Ø230 at (160,396), side crops (x<200, x>1384), top/bottom chrome; dashed = safe area
-qa-mobile-crop.png                   1184×396   what a phone shows (centre crop) — name, title and stats stay fully visible
+guides/…guides.png                   placement check: red = avoid (profile photo, mobile crops, top/bottom edges), dashed = safe area
+guides/…mobile.png                   1184×396   what a phone shows (centre crop) — name, title and stats stay fully visible
 
-Regenerate:  npm run examples
+Regenerate:  npm run examples   (guides come from `snap-x guides`, configured in example.json)

@@ -51,7 +51,7 @@ export default () => ({ /* uses COLORS */ });
 
 ## Glyphs: draw, don't type, anything the font might lack
 
-A character the loaded fonts don't contain renders as a **blank box** — `snap-x check` *warns* about these (`no loaded font has: "✔" …`); don't ignore the warning. Emoji always fail; `✔ ✉ ◷ ★ ●` and even `→` / `↓` fail in some fonts (e.g. Poppins has none of those). Use instead:
+**Emoji work** — snap-x draws them as Twemoji images (fetched once, cached, works offline afterwards). Other characters the loaded fonts don't contain still render as a **blank box** and Satori doesn't error — `snap-x check` *warns* about them (`no loaded font has: "◷" …`); don't ignore the warning. `✓ ◷ ∎` and even `→` / `↓` fail in some fonts (e.g. Poppins has none of those). Use instead:
 - an inline SVG for arrows, stars, chevrons, icons; a CSS circle for bullets; numerals or letters in icon squares
 - only glyphs you have seen render — then verify in Step 4
 
@@ -67,7 +67,12 @@ A character the loaded fonts don't contain renders as a **blank box** — `snap-
 Oversized headlines wrap mid-word and shove everything off the canvas. For each headline line:
 - set `whiteSpace: "nowrap"` and size it so it fits: bold display type is roughly **0.5 em per character** (heavy condensed like Saira 900 ≈ 0.48, wide like Poppins 800 ≈ 0.52, with tight tracking). Longest line ≤ available width ÷ (0.5 × chars).
 - if it wraps or the layout collides after rendering, reduce the size — don't add more wrapping
+- `nowrap` collapses the space before an adjacent coloured `<span>`/text node ("your" + "HTML." → "yourHTML."): use `whiteSpace: "pre"` on that line, or put the pieces in a flex row with `gap`
 - long paragraphs: `flexWrap: "wrap"` plus a `maxWidth`
+
+## Sizes, platforms and alpha
+
+Pick sizes with `snap-x formats` and read `references/formats.md` for layout by platform (YouTube thumbnails, banners, Play Store and App Store screenshots …). **App Store and Google Play graphics need `alpha: false` in `FORMAT`** — `check` warns if it's missing.
 
 ## Logos and local assets
 

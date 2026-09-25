@@ -172,8 +172,7 @@ Build with snap-x (Satori → PNG). See `designs/`:
 - `_cover.mjs` — the whole composition as one builder (helper; skipped by `snap-x render` because of the `_` prefix)
 - `cover.mjs` → `ravi-kovind-linkedin-cover.png` (1584×396)
 - `cover-2x.mjs` → `ravi-kovind-linkedin-cover@2x.png` (3168×792, the same tree with `transform: scale(2)`)
-- `qa-overlay.mjs` → `qa-overlay.png` (danger zones drawn)
-- `qa-mobile.mjs` → `qa-mobile-crop.png` (centre 1184×396)
+- QA: `snap-x guides designs/cover.mjs` (configured in `example.json`) draws the LinkedIn danger zones and the mobile crop → `guides/…guides.png` and `guides/…mobile.png`
 
 Regenerate: `npm run examples`. **Never let an image model render the name or numbers.**
 
@@ -182,7 +181,7 @@ Regenerate: `npm run examples`. **Never let an image model render the name or nu
 ## 7. QA checklist (agent must verify before finishing)
 
 - [ ] Dimensions exactly `1584×396` (and `3168×792` for @2x).
-- [ ] QA overlay: a 230 px-diameter circle at `(160, 396)` and shaded bands for `x<200` and `x>1384`. Confirm **no text** falls inside any of them.
+- [ ] Guides overlay (`snap-x guides`): the profile-photo circle (Ø230 at `(160, 396)`) and the bands for `x<200` and `x>1384`. Confirm **no text** falls inside any of them.
 - [ ] Name is the most prominent element; readable at 50% zoom.
 - [ ] Yellow is the only accent; green appears once (the gradient ring).
 - [ ] Every element has an obvious purpose — nothing that needs explaining (§5.4 list is gone).
@@ -199,8 +198,8 @@ Regenerate: `npm run examples`. **Never let an image model render the name or nu
 examples/ravikovind/
   ravi-kovind-linkedin-cover.png       (1584×396)
   ravi-kovind-linkedin-cover@2x.png    (3168×792)
-  qa-overlay.png                       (debug view with danger zones drawn)
-  qa-mobile-crop.png                   (1184×396 phone view)
+  guides/…guides.png                   (danger zones drawn — `snap-x guides`)
+  guides/…mobile.png                   (1184×396 phone view — `snap-x guides`)
   designs/                             (source)
   share-copy.txt, build-notes.md
 ```

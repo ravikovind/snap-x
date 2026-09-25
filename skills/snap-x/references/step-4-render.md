@@ -17,14 +17,21 @@ Output names come from each file's `FORMAT.name`. Use `--out` to keep results wi
 - **Elements clipped by the canvas edge** (an orbit node, an icon half off-screen)
 - **Invisible logo** (dark on dark) or a stretched/blurry one
 - **Contrast** — muted text readable against its background
+- **Store graphics:** `FORMAT.alpha` is `false` (opaque PNG)
 - **Copy** matches the source exactly (names, numbers, spelling); nothing invented
 - **Brand** — colors, font and logo look like the brand's own
 
 Fix the design file and re-render until clean. Fix what you see, then look again — don't assume a re-render fixed it.
 
-### Banners / covers: two extra renders
+### Placement check: `snap-x guides`
 
-Add `qa-overlay.mjs` (the same composition with the danger zones drawn over it — avatar circle, side crops, top/bottom bands, safe area outlined) and `qa-mobile.mjs` (the centre crop a phone shows). Confirm no text lands in a danger zone and the name/title survive the mobile crop. Measure the text's pixel extent if it's close to a limit.
+For banners and covers (LinkedIn, X, YouTube channel art), YouTube thumbnails and stories, run:
+
+```bash
+npx -y @snap-x/cli guides designs/*.mjs --out guides/      # add --format <id> if the size isn't a known format
+```
+
+It writes `<name>.guides.png` (your design with the platform's danger zones in red — profile photo, duration badge, story UI, cropped edges — and the safe area dashed) and, where phones crop, `<name>.mobile.png` (what a phone shows). **View both.** No text may sit in a red zone, and the name/headline must survive the mobile crop. Decoration may go anywhere. Measure the text's pixel extent if it's close to a limit. (Don't hand-write QA designs or put them in `designs/` — `guides` replaces them.)
 
 ### `@2x` exports
 

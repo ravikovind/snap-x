@@ -9,8 +9,10 @@ Render a self-contained [Satori](https://github.com/vercel/satori) `.mjs` design
 ```bash
 npm install -g @snap-x/cli        # or skip installing: npx -y @snap-x/cli …
 
-snap-x check  designs/*.mjs       # validate (structure + a real render attempt)
+snap-x check  designs/*.mjs       # validate (structure, a real render, blank-box glyphs, store-alpha)
 snap-x render designs/*.mjs --out snap-output
+snap-x formats                    # YouTube, X, LinkedIn, Play Store, App Store … sizes + placement zones
+snap-x guides designs/*.mjs       # draw a platform's danger zones (+ mobile crop) over your designs
 ```
 
 Paths can be a file, a directory, or a `*` glob. Files starting with `_` are shared helpers and are never rendered (even when your shell expands the glob). `--out` defaults to `./snap-output`.
@@ -46,7 +48,9 @@ Everything the image needs lives in the file: colors, copy, fonts, size. There's
 
 **Rules (Satori):** every container needs `display: "flex"`; `children` is always an array; text is a string in `children`; no `z-index`, CSS grid, animations or `position: "fixed"`. `snap-x check` catches these.
 
-**Fonts:** any Google Font via `FONTS`, per file. Fonts are cached on disk (`$SNAP_X_CACHE_DIR`, else `~/.cache/snap-x/fonts`) so repeat renders are fast and work offline. CJK, Korean, Arabic, Hebrew, Thai, Devanagari and Bengali get an automatic Noto fallback. Emoji and symbols the font lacks (`✔`, and `→` in some fonts) render as blank boxes — `snap-x check` warns about them; draw them as SVG.
+**Fonts:** any Google Font via `FONTS`, per file. Fonts are cached on disk (`$SNAP_X_CACHE_DIR`, else `~/.cache/snap-x/fonts`) so repeat renders are fast and work offline. CJK, Korean, Arabic, Hebrew, Thai, Devanagari and Bengali get an automatic Noto fallback. Emoji work (drawn as Twemoji images, cached). Other symbols the font lacks (`✓`, and `→` in some fonts) render as blank boxes — `snap-x check` warns about them; draw them as SVG.
+
+**Any platform, not just OG.** `snap-x formats` lists sizes and rules for link previews, YouTube thumbnails and channel art, X/LinkedIn covers, Instagram posts and stories, Google Play graphics and screenshots, and App Store screenshots (`snap-x formats <id>` for notes and zones; sizes checked against official docs are marked verified). `snap-x guides` overlays a format's danger zones — profile photo, duration badge, cropped edges — on your design and renders the mobile crop, so you can *see* whether text is covered. **App Store and Google Play graphics must have no alpha channel:** set `alpha: false` in `FORMAT` for an opaque RGB PNG (`check` reminds you).
 
 **Logos and images:** make the export `async` and embed base64 `<img>` nodes. Resolve paths from the design file so it renders from any directory:
 
@@ -66,7 +70,7 @@ PNG, JPEG and SVG work. AVIF and WebP don't (convert to PNG), and an SVG contain
 { "mcpServers": { "snap-x": { "command": "npx", "args": ["@snap-x/mcp"] } } }
 ```
 
-Tools: `render_designs`, `check_designs`, `list_formats`. The agent writes the `.mjs` files; the server renders and validates them. For agents without the skill it also serves the design rules: a `snap-x://design-guide` resource and a `design_cards` prompt.
+Tools: `render_designs`, `check_designs`, `preview_guides`, `list_formats`. The agent writes the `.mjs` files; the server renders and validates them. For agents without the skill it also serves the design rules: a `snap-x://design-guide` resource and a `design_cards` prompt.
 
 ## Examples
 

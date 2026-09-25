@@ -1,6 +1,15 @@
 # Changelog
 
-## Unreleased — core 0.5.1 · cli 0.1.1 · mcp 0.3.0
+## Unreleased — core 0.6.0 · cli 0.2.0 · mcp 0.4.0
+
+- **Emoji support:** emoji (incl. flags and ZWJ sequences) are drawn as Twemoji images, fetched once and cached on disk (works offline afterwards). `check` no longer flags them
+- **Platform formats:** `snap-x formats` lists 19 formats — link previews, YouTube thumbnails / Shorts / channel art, X, LinkedIn, Instagram, Google Play, App Store — with sizes, notes, no-alpha rules and placement zones; 11 are checked against official documentation (source URLs shown), the rest are marked unverified
+- **`snap-x guides`:** overlays a format's danger zones (profile photo, duration badge, story UI, cropped edges) and the safe area on your design and renders the mobile crop (`<name>.guides.png`, `<name>.mobile.png`)
+- **`FORMAT.alpha: false`** writes an opaque RGB PNG (colour type 2). App Store and Google Play graphics must have no alpha channel; `check` warns when a store size is missing it
+- CLI: real `--help` and `--version`, flag parsing for `--format`; MCP: `list_formats` serves the real table (with `format` for details), new `preview_guides` tool, richer design guide
+- Skill: new `references/formats.md` (layout by platform incl. store screenshots), a website/brief-input pass from two more cold tests (Next.js CSS variables, brand-page assets, logo-vs-CSS colors, `whiteSpace: "pre"`, viewing SVGs, brief-only fallbacks), and QA via `snap-x guides` instead of hand-written designs
+
+## 0.5.1 · cli 0.1.1 · mcp 0.3.0
 
 - **`snap-x check` now warns about characters no loaded font can draw** (they render as blank boxes: emoji, `✔`, `→` in some fonts). Chars covered by the automatic script fallback are not flagged
 - **Fix: `_`-prefixed helper files are always skipped**, including when a shell expands `designs/*.mjs` into explicit paths (0.5.0 did not skip them at all)

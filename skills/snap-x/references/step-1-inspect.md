@@ -33,15 +33,16 @@ curl -sL "<css url>" | grep -oE 'font-family:[^;}]{1,60}' | sort | uniq -c | sor
 curl -sL "<css url>" | grep -oE '#[0-9a-fA-F]{6}\b' | sort | uniq -c | sort -rn | head  # dominant colors
 ```
 
-Also fetch the page text (WebFetch) for exact headline/feature copy, and **look at the `og:image`** (download + Read it) as a style reference — the new cards should feel like the same brand, not copy that image.
+Also get the exact headline and feature copy — with the WebFetch tool if you have it, or a quick text extract of the HTML: `python3 -c "import re,sys;print(re.sub(r'\s+',' ',re.sub(r'<(script|style)[^>]*>.*?</\1>|<[^>]+>',' ',open('index.html').read(),flags=re.S)))" | head -c 4000`. **Look at the `og:image`** (download + Read it) as a style reference — the new cards should feel like the same brand, not copy that image.
 
-**Brief only:** the user's words are the source. Ask for anything missing (name, one-line pitch, colors) rather than guessing.
+**Brief only** (no repo, no site): the user's words are the source. If you can't ask questions, decide sensibly, and write every assumption into `snap-plan.md`. Take tags/proof points only from the brief's own words; if there's no domain or URL, leave those elements out. No logo exists → a text wordmark in the brand font (a decorative illustration is fine; just don't present it as the logo). Derive the palette from the vibe: turn each named color into a concrete hex, pick text colors from it, and compute contrast (Step 3).
 
 ## Fonts and colors
 
 - Repo font: `--font-sans` in `globals.css`. If it's a `var(--font-…)` reference (Next.js `next/font`), the real family is in `app/layout.tsx` — e.g. `import { Space_Grotesk } from "next/font/google"` → `"Space Grotesk"`.
-- Site font: the `font-family` list above. A non-Google font → pick the closest Google Font and say so in the plan.
-- Accent: `--accent`, `--primary`, `--brand` (or the most frequent saturated hex). Use the brand's own palette — including its semantic colors for tags/pills — instead of inventing one.
+- Site font: the `font-family` list above. On Next.js sites the CSS says `font-family:var(--font-inter)` — read the real families from the CSS variables (`--font-sans`, `--font-mono`, …) instead. A non-Google font → pick the closest Google Font and say so in the plan.
+- Accent: prefer the **logo's or `mask-icon`'s color**, then the CSS accent variable (`--accent`, `--primary`, `--brand`). The most frequent hex is unreliable (demo swatches, syntax highlighting). When the logo and the CSS disagree (e.g. logo `#38bdf8` vs `--color-sky-400 #00bcfe`), use the logo's color and note it in the plan. Use the brand's own palette — including its semantic colors for tags/pills — instead of inventing one.
+- Theme: if the source has both light and dark, choose from `<html class="dark">`, the `og:image`, or the hero; note the choice.
 
 There's no config to fall back on: whatever you find here is hardcoded into the design files in Step 3.
 
@@ -58,7 +59,7 @@ Real logos make a card look like the brand's own. Look in this order and stop wh
 - `<link rel="icon" | "apple-touch-icon" | "mask-icon">` and `/site.webmanifest` → icon files (prefer `.svg`, else the largest `.png`)
 - `<img>` in the header/nav with `logo`/`brand` in `src` or `alt`; inline `<svg>` in the header
 - `"logo":` in JSON-LD; `og:image` (a *card*, not a logo — use only as a style reference)
-- brand/press pages: try `/brand`, `/press`, `/media-kit`, `/brand-assets` (often 404 — fine)
+- brand/press pages: try `/brand`, `/press`, `/media-kit`, `/brand-assets` (often 404 — fine). **If one returns 200, grep it for `.svg` / `.zip` / `.png` links** — that's where official logotype files live
 - links labelled "Brand assets" / "Press kit" / "Download logo", and CDN filenames like `Brand_Logo-Primary-Light.png`
 
 **Pick the right variant.** Logo files are usually named for their *background*: `Primary-Light` / `light` / `white` = light-coloured logo for **dark** backgrounds; `Primary-Dark` / `dark` = dark logo for **light** backgrounds. Match the card's background.
@@ -66,9 +67,9 @@ Real logos make a card look like the brand's own. Look in this order and stop wh
 **Save and record**
 - Download into `<examples-or-out>/assets/` next to the designs, e.g. `curl -sL -o assets/logo.png "<url>"`
 - Add `assets/SOURCES.md`: file → origin URL, plus "Logos and brand marks belong to their owners; used to demonstrate snap-x"
-- Look at the file (Read it) before using it — check it isn't a tiny 16px favicon or an all-black mark on a black card. **Too small?** Look for a vector or larger version on the project's homepage/docs site: `/logo.svg`, `/logo.dark.svg`, `/favicon.svg`, `/apple-touch-icon.png`, or the header `<img>`; if none, use a text wordmark
+- Look at the file (Read it) before using it — Read can't display SVG, so rasterise a copy to look at it (`convert in.svg out.png` with ImageMagick) or drop it into a scratch design as an `<img>` and render it — check it isn't a tiny 16px favicon or an all-black mark on a black card. **Too small?** Look for a vector or larger version on the project's homepage/docs site: `/logo.svg`, `/logo.dark.svg`, `/favicon.svg`, `/apple-touch-icon.png`, or the header `<img>`; if none, use a text wordmark
 
-**Format rules** (Satori `<img>`): PNG / JPEG / SVG work. **AVIF and WebP do not** — convert to PNG first (e.g. `sharp`, ImageMagick `magick in.avif out.png`). An **SVG that contains `<text>`** can't load webfonts when embedded — rasterise it once (`@resvg/resvg-js` with `font.fontFiles`) and save the PNG. Prefer ≥2× the display size.
+**Format rules** (Satori `<img>`): PNG / JPEG / SVG work. **AVIF and WebP do not** — convert to PNG first (e.g. `sharp`, ImageMagick `magick in.avif out.png`). An **SVG that contains `<text>`** (check: `grep -c '<text' file.svg`) can't load webfonts when embedded — rasterise it once (`@resvg/resvg-js` with `font.fontFiles`) and save the PNG. Prefer ≥2× the display size.
 
 **Don't**
 - redraw, recolour, stretch or "improve" a logo; if there's no official file, use a plain text wordmark in the brand font

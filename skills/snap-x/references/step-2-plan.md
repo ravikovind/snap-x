@@ -50,15 +50,13 @@ stack:       [2–4 real pills — tech, platform, license; skip pills if there'
 owner:       [optional — GitHub org or author]
 ```
 
-## Banners and profile covers: plan the safe zones
+## Formats and placement
 
-Platforms overlay UI on banners. Write the danger zones into the plan and keep text out of them.
+Read `references/formats.md`, then pick each format with `npx -y @snap-x/cli formats` (sizes, no-alpha rules, verified/unverified, and the danger zones for banners, covers, thumbnails and stories). Write the chosen ids and any placement rules into the plan, and plan the Step 4 placement check (`snap-x guides`) for every format that has zones.
 
-- **LinkedIn cover 1584×396:** the profile photo covers a circle ≈ Ø230 centred at (160, 396); mobile crops the sides (≈ x<200 and x>1384); keep the top/bottom ≈30 px clear. Safe content area ≈ x 380–1384, y 50–346. Keep decoration (not text) in the avatar zone.
-- **Stories / vertical posters:** leave roughly 250 px clear at the top and bottom for platform UI.
-- Other banners (X header, YouTube channel art): check the platform's current safe area before placing text.
+## When you can't ask questions
 
-For banners, also plan two QA renders (Step 4): a debug overlay showing the zones and a mobile-crop preview.
+Make the best decision the skill allows and write it down: an **Assumptions** list in `snap-plan.md` (palette choices, missing domain, derived tags, mock content). Never fill a gap with an invented fact.
 
 ## Gate
 
