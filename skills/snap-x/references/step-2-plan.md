@@ -1,50 +1,51 @@
 # Step 2: Plan the image pack
 
-Write `<out>/snap-plan.md` with this exact structure:
+Write `<out>/snap-plan.md`. Commit to a creative direction before touching any design files.
 
-```markdown
-# Snap Plan: [Project Name]
+## Planning rubric
 
-## Project
-[One sentence]
+Answer these for the full pack:
 
-## Strongest claim
-[The headline / tagline that will anchor the title field on all cards]
+1. **Hook** — What is the single most important thing to communicate? This goes on every card.
+2. **Copy per format** — For each format, what exact text goes where?
+3. **Visual direction** — Any layout or style changes from the defaults? (centered vs left-aligned, large title vs balanced, etc.)
+4. **Color override** — If the project has a brand accent, note the hex.
+5. **Font** — Confirmed font family name for Google Fonts.
 
-## Visual identity
-- Background: [exact value]
-- Text: [exact value]
-- Accent: [exact value]
-- Font: [display font, body font]
-- Theme: [dark / light / midnight / forest / minimal]
-- Overrides: [any per-color overrides if the built-in theme doesn't match]
+## Per-format specs (fill these in snap-plan.md)
 
-## Formats to generate
-- [ ] og — [title copy] / [description copy] / [tags]
-- [ ] thumbnail — [eyebrow] / [title] / [subtitle] / [tag]
-- [ ] cover — [name] / [tagline] / [domain]
-- [ ] poster — [eyebrow] / [title] / [subtitle] / [footer]
-- [ ] readme — [name] / [description] / [stack pills] / [stats]
+```
+### OG (1200×630)
+label:       [domain or short name]
+title:       [main headline — keep under 60 chars]
+description: [one line — keep under 100 chars]
+tags:        [2–3 pills]
+domain:      [bottom-right brand]
 
-## Share copy
-[1–2 sentences for the social post that accompanies these images]
+### Thumbnail (1280×720)
+eyebrow:  [domain or category]
+title:    [punchy, 3–6 words max]
+subtitle: [optional one-liner]
+tag:      [filled pill bottom-left]
+
+### Cover (1500×500)
+name:    [project name, left side]
+tagline: [right side — split at —, &, ·, or |]
+domain:  [below name]
+
+### Poster (1080×1920)
+eyebrow:  [short label]
+title:    [2–4 words, big]
+subtitle: [optional]
+footer:   [domain]
+
+### README card (1280×640)
+name:        [project name]
+description: [one line, ≤140 chars]
+stack:       [up to 6 pills]
+owner:       [optional — GitHub org or author]
 ```
 
-## Copy rules
+## Gate
 
-- **Title**: the project's actual headline — never generic SaaS filler
-- **Description**: the strongest supporting claim, ≤ 120 characters
-- **Tags**: 3 max, short (1–3 words each), from actual project keywords
-- **Domain**: exact domain or brand name as it appears on the site
-- **Eyebrow**: short label or domain — appears small above the title
-- **Footer**: typically the domain, appears at the bottom of poster
-
-## Tone-to-copy guidance
-
-| Tone | Title style | Description style |
-|---|---|---|
-| `bold` | All-caps or weight 900, short, punchy | One strong claim, no softening |
-| `minimal` | Sentence case, calm | Factual, no superlatives |
-| `branded` | Title case, uses project's own words | Pulls copy verbatim from project |
-
-Default: `branded` — always use the project's own language.
+`snap-plan.md` must exist with copy decided for every format before Step 3.

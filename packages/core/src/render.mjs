@@ -1,45 +1,36 @@
-import satori from "satori";
-import { Resvg } from "@resvg/resvg-js";
-import fs from "fs";
+/**
+ * render.mjs
+ * Loads a design .mjs file → Satori (SVG) → resvg (PNG).
+ *
+ * Design files export:
+ *   export const FORMAT = { width, height, name? }
+ *   export default  tree (object) | function(config) → object
+ */
+
 import path from "path";
-import { getFonts } from "./fonts.mjs";
+import fs from "fs/promises";
 
-/**
- * Render a Satori node tree to a PNG Buffer.
- * @param {object} node  - Satori JSX-compatible object tree
- * @param {object} opts  - { width, height, fonts? }
- */
-export async function renderPng(node, opts = {}) {
-  const { width = 1200, height = 630, fontFamily = "Inter", fontWeights = [400, 700, 900] } = opts;
-  const fonts = opts.fonts ?? (await getFonts(fontFamily, fontWeights));
-  const svg = await satori(node, { width, height, fonts });
-  return new Resvg(svg, { fitTo: { mode: "width", value: width } })
-    .render()
-    .asPng();
-}
+export async function renderDesign(designPath, outDir, config, fonts) {
+  const mod = await import(`${designPath}?t=${Date.now()}`);
 
-/**
- * Render multiple templates and save them to outDir.
- * @param {Array<{ name, node, width?, height? }>} items
- * @param {string} outDir
- * @param {object} opts
- */
-export async function renderAll(items, outDir, opts = {}) {
-  fs.mkdirSync(outDir, { recursive: true });
-  const results = [];
+  if (!mod.FORMAT) throw new Error(`${path.basename(designPath)}: missing export FORMAT`);
+  if (!mod.default) throw new Error(`${path.basename(designPath)}: missing default export`);
 
-  for (const item of items) {
-    const png = await renderPng(item.node, {
-      width: item.width,
-      height: item.height,
-      ...opts,
-    });
-    const outPath = path.join(outDir, item.name);
-    fs.writeFileSync(outPath, png);
-    const kb = Math.round(png.length / 1024);
-    console.log(`  ✅  ${item.name}  (${kb} KB)`);
-    results.push({ name: item.name, path: outPath, size: png.length });
-  }
+  const { width, height, name } = mod.FORMAT;
+  const outName = name ?? path.basename(designPath, ".mjs") + ".png";
 
-  return results;
+  // Static tree or factory function
+  const tree = typeof mod.default === "function" ? mod.default(config) : mod.default;
+
+  const satori = (await import("satori")).default;
+  const { Resvg } = await import("@resvg/resvg-js");
+
+  const svg = await satori(tree, { width, height, fonts, embedFont: true });
+  const png = new Resvg(svg, { fitTo: { mode: "width", value: width } }).render().asPng();
+
+  const outPath = path.join(outDir, outName);
+  await fs.writeFile(outPath, png);
+
+  console.log(`  ✅  ${outName}  (${Math.round(png.length / 1024)} KB)`);
+  return outPath;
 }

@@ -1,65 +1,26 @@
 # Step 1: Inspect the project
 
-Read the project directory to understand what you're framing.
+Read the project directory. Answer all 8 questions before writing anything.
 
-## Priority read order
+## Rubric
 
-1. `package.json` — name, description, keywords, version
-2. `README.md` — project name, one-liner, feature list, tech stack mentions
-3. `data/site.ts` or `lib/site.ts` or `config/site.ts` — site metadata (name, url, tagline)
-4. `app/page.tsx` or `index.html` — hero headline, tagline, CTA copy
-5. `globals.css` or `tailwind.config` — color palette, font families
+1. **Name** — What is the project called? (from package.json `name`, README h1, or directory name)
+2. **Description** — One sentence: what does it do? (package.json `description` or README first paragraph)
+3. **Domain / brand** — What URL or brand name goes at the bottom? (homepage field, custom domain, GitHub URL)
+4. **Tags** — 2–3 short labels. (keywords from package.json, tech stack, category)
+5. **Stack** — What tech is it built with? (dependencies in package.json, next.config.*, framework files)
+6. **Font** — Is there a custom font? Check `app/globals.css` or `styles/globals.css` for `--font-sans`. Fallback: Inter.
+7. **Accent color** — Is there a brand color? Check CSS for `--accent`, `--primary`, `--color-brand`. Fallback: use theme default.
+8. **Theme** — Dark or light? Look at the site's color scheme. Default: dark.
 
-## What to skip
+## What to read
 
-- `node_modules/`, `.next/`, `dist/`, `build/`
-- Lock files, test files, `.git/`
+- `package.json` — name, description, keywords, homepage, dependencies
+- `README.md` — first heading, first paragraph, badges
+- `app/globals.css` or `styles/globals.css` — font vars, color vars
+- `next.config.*` — framework detection
+- Any `snap-x.config.json` if it already exists (use as baseline)
 
-## The 7-question rubric
+## Output
 
-Answer all seven before moving to Step 2.
-
-```
-1. What is the project?
-   One sentence — what does it actually do?
-
-2. What is the strongest one-line claim?
-   The headline or tagline that earns attention.
-
-3. What visual identity does the project have?
-   Background color, primary text color, accent/brand color, font families.
-   Extract exact CSS values when possible.
-
-4. What domain or brand name appears most?
-   The URL, product name, or studio name to show on cards.
-
-5. What tags or keywords describe it best?
-   3–4 short labels (e.g. "Open Source", "Node.js", "AI", "Zoho Partner").
-
-6. What theme fits the project's personality?
-   dark / light / midnight / forest / minimal
-   Match to the project's own color choices — don't impose a theme.
-
-7. What formats are most valuable for this project?
-   - Always: og (every site needs an OG image)
-   - Developer tool / OSS: readme card
-   - Blog or content site: thumbnail
-   - Personal brand / studio: cover + poster
-   - All: generate all five unless the user specifies
-```
-
-## Color extraction
-
-Look for CSS custom properties, Tailwind config `colors`, or `globals.css`:
-
-```css
-:root {
-  --background: #000000;
-  --foreground: rgba(255,255,255,0.95);
-  --accent: #eb1d25;
-}
-```
-
-If no exact values, use the most common colors from background/color/border rules.
-
-Map to the nearest built-in theme (`dark`, `light`, `midnight`, `forest`, `minimal`) and note any overrides.
+Do not write anything yet. Carry the answers into Step 2.
