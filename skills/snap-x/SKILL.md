@@ -85,18 +85,18 @@ When the project has logos, partner badges, or product images, make the function
 
 ```js
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+// Resolve assets relative to THIS file, so it renders correctly from any working directory.
+const asset = async (rel, mime) =>
+  `data:${mime};base64,${(await fs.readFile(fileURLToPath(new URL(rel, import.meta.url)))).toString("base64")}`;
 
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 
-async function loadBase64(filePath, mime) {
-  const buf = await fs.readFile(filePath);
-  return `data:${mime};base64,${buf.toString("base64")}`;
-}
-
 export default async function () {
   const accent = "#6366f1";
-  const logo  = await loadBase64("./public/logo.png", "image/png");
-  const badge = await loadBase64("./public/partner-badge.svg", "image/svg+xml");
+  const logo  = await asset("../assets/logo.png", "image/png");
+  const badge = await asset("../assets/partner-badge.svg", "image/svg+xml");
 
   return {
     type: "div",
@@ -111,7 +111,7 @@ export default async function () {
 }
 ```
 
-Relative paths in `fs.readFile` resolve from the directory you **run `snap-x` in**, not from the design file — so run it from the project root (where `./public/logo.png` lives), or use absolute paths.
+Resolve asset paths from the **design file** with `import.meta.url` (e.g. `new URL("../assets/logo.png", import.meta.url)`), not `./relative` paths — those resolve from the directory you run `snap-x` in and break elsewhere. See `references/step-3-design.md` for the ready-made `asset()` helper.
 
 ### Static tree (no function needed)
 
@@ -179,6 +179,18 @@ There's no theme system, no `themeOverride`, no config to merge. Pick real value
 
 ---
 
+## Brand assets
+
+Cards look far better with the brand's own logo. Step 1 finds it; Step 3 embeds it.
+
+- **Where to look:** project `public/`/`assets/`/favicons/manifest icons; on a website — `<link rel="icon" | "apple-touch-icon">`, the header `<img>`/inline `<svg>`, JSON-LD `logo`, and `/brand`, `/press`, `/media-kit` pages. Full checklist: `references/step-1-inspect.md`.
+- **Pick the variant for the background** (`Primary-Light`/`white` = for dark cards; `Primary-Dark`/`dark` = for light cards).
+- **Format:** PNG/JPEG/SVG only. Convert AVIF/WebP to PNG; rasterise SVGs that contain text.
+- **Store** in `assets/` beside `designs/`, with `SOURCES.md` (origin URL + trademark note). Reference by `import.meta.url`.
+- **Never** redraw or distort a logo, or add third-party customer logos unprompted. No official file → text wordmark.
+
+---
+
 ## Customization surface
 
 Everything is customizable, and none of it goes through a shared schema:
@@ -208,9 +220,9 @@ Default: `snap-output/`. Use a timestamped directory `snap-output-YYYY-MM-DD-HHm
 
 **Read:** `references/step-1-inspect.md`
 
-Scan the project and answer the 8-question rubric. Understand the brand: colors, fonts, product description, audience. Look for local assets in `public/`, `assets/`, `static/` that could be embedded.
+Scan the project (or, for a website, fetch its HTML and CSS) and answer the 9-question rubric. Understand the brand: colors, fonts, product description, audience — **and find its real logo and brand assets** (favicon/icon files, header logo, `/brand` or press-kit pages; pick the variant that suits the card's background; download them into `assets/` with a `SOURCES.md`). Never redraw a logo; if none exists, use a text wordmark.
 
-**Gate:** All 8 questions answered before writing any design.
+**Gate:** All 9 questions answered before writing any design, and any logo you plan to use has been downloaded and looked at.
 
 ---
 

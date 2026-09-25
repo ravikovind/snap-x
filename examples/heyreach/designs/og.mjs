@@ -1,3 +1,10 @@
+import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+// Resolve assets relative to THIS file (not the cwd), so `snap-x render` works from anywhere.
+const asset = async (rel, mime) =>
+  `data:${mime};base64,${(await fs.readFile(fileURLToPath(new URL(rel, import.meta.url)))).toString("base64")}`;
+
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 export const FONTS = [{ family: "Poppins", weights: [400, 600, 700, 800] }];
 
@@ -32,13 +39,14 @@ const link = (label, tone) => box({ alignItems: "center", gap: 10, marginLeft: 3
   txt(label, { fontSize: 13, fontWeight: 600, padding: "3px 10px", borderRadius: 999, color: tone === "ok" ? "#31c48d" : MUTED, background: tone === "ok" ? "rgba(49,196,141,0.14)" : "rgba(255,255,255,0.06)" }),
 ]);
 
-export default function () {
+export default async function () {
+  const logo = await asset("../assets/logo-primary-light.png", "image/png");
   return box({ width: 1200, height: 630, background: "#07071c", fontFamily: "Poppins", position: "relative", overflow: "hidden", padding: "50px 64px", justifyContent: "space-between" }, [
     box({ position: "absolute", top: -260, right: -120, width: 900, height: 900, background: "radial-gradient(circle, rgba(127,129,255,0.34) 0%, rgba(127,129,255,0) 62%)" }),
     box({ position: "absolute", bottom: -340, left: -260, width: 800, height: 800, background: "radial-gradient(circle, rgba(245,71,104,0.16) 0%, rgba(245,71,104,0) 62%)" }),
 
     box({ flexDirection: "column", justifyContent: "space-between", width: 540 }, [
-      txt("heyreach", { fontSize: 32, fontWeight: 800, letterSpacing: "-0.03em", color: INK }),
+      { type: "img", props: { src: logo, width: 241, height: 46, style: { display: "flex" } } },
       box({ flexDirection: "column", gap: 20 }, [
         box({ flexDirection: "column" }, [
           txt("10x your", { fontSize: 66, fontWeight: 800, lineHeight: 1.04, letterSpacing: "-0.03em", color: INK, whiteSpace: "nowrap" }),

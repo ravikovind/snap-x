@@ -1,3 +1,10 @@
+import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+// Resolve assets relative to THIS file (not the cwd), so `snap-x render` works from anywhere.
+const asset = async (rel, mime) =>
+  `data:${mime};base64,${(await fs.readFile(fileURLToPath(new URL(rel, import.meta.url)))).toString("base64")}`;
+
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 export const FONTS = [
   { family: "Saira", weights: [400, 700, 900] },
@@ -15,21 +22,26 @@ const box = (style, children = []) => ({ type: "div", props: { style: { display:
 const txt = (text, style) => box(style, [text]);
 const mono = (text, style) => txt(text, { fontFamily: "JetBrains Mono", ...style });
 
-const wordmark = (size) => box({ alignItems: "center", gap: 10, fontSize: size, fontWeight: 900, letterSpacing: "-0.02em" }, [
-  box({ width: size * 0.36, height: size * 0.36, borderRadius: 999, background: GREEN }),
-  box({}, [txt("open", { color: INK }), txt("notifier", { color: GREEN_HI })]),
+const wordmark = (size, icon) => box({ alignItems: "center", gap: 18 }, [
+  box({ width: size * 3.4, height: size * 3.4, borderRadius: 999, border: `2px solid rgba(11,148,68,0.55)`, overflow: "hidden" }, [
+    { type: "img", props: { src: icon, width: size * 3.4 - 4, height: size * 3.4 - 4, style: { display: "flex" } } },
+  ]),
+  box({ flexDirection: "column", gap: 2 }, [
+    txt("Open Notifier", { fontSize: size, fontWeight: 900, letterSpacing: "-0.02em", color: INK }),
+    txt("open-notifier.io", { fontSize: 15, color: MUTED, letterSpacing: "0.04em" }),
+  ]),
 ]);
 
 const chip = (label) => txt(label, { padding: "6px 14px", borderRadius: 8, border: `1px solid ${BORDER}`, color: GREEN_HI, fontSize: 14, fontWeight: 700, letterSpacing: "0.06em" });
 
-export default function () {
+export default async function () {
+  const icon = await asset("../assets/icon.png", "image/png");
   return box({ width: 1200, height: 630, background: "#000", fontFamily: "Saira", position: "relative", overflow: "hidden", flexDirection: "column", justifyContent: "space-between", padding: "52px 64px 56px" }, [
     box({ position: "absolute", top: -260, right: -180, width: 820, height: 820, background: "radial-gradient(circle, rgba(11,148,68,0.28) 0%, rgba(11,148,68,0) 62%)" }),
     box({ position: "absolute", left: 0, top: 0, bottom: 0, width: 6, background: GREEN }),
 
     box({ alignItems: "center", justifyContent: "space-between" }, [
-      wordmark(30),
-      txt("open-notifier.io", { fontSize: 16, color: MUTED, letterSpacing: "0.04em" }),
+      wordmark(28, icon),
     ]),
 
     box({ flexDirection: "column" }, [

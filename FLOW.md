@@ -94,17 +94,17 @@ export default function () {
 
 ```js
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+// Resolve assets relative to THIS file, so it renders correctly from any working directory.
+const asset = async (rel, mime) =>
+  `data:${mime};base64,${(await fs.readFile(fileURLToPath(new URL(rel, import.meta.url)))).toString("base64")}`;
 
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 
-async function loadBase64(filePath, mime) {
-  const buf = await fs.readFile(filePath);
-  return `data:${mime};base64,${buf.toString("base64")}`;
-}
-
 export default async function () {
-  const logo  = await loadBase64("./public/logo.png", "image/png");
-  const badge = await loadBase64("./public/badge.svg", "image/svg+xml");
+  const logo  = await asset("../assets/logo.png", "image/png");
+  const badge = await asset("../assets/badge.svg", "image/svg+xml");
 
   return {
     type: "div",
@@ -205,16 +205,14 @@ import { getIcon } from "your-icon-pack";
 
 ## Local images & assets
 
-Load PNG, JPG, or SVG from disk and embed as base64 `<img>` nodes — unaffected by the render-only redesign, since this never depended on config.
+Load PNG, JPG, or SVG from disk and embed as base64 `<img>` nodes. Resolve the path from the design file (`new URL("../assets/logo.png", import.meta.url)`), not the cwd, so it renders identically from any directory. AVIF/WebP are not supported (convert to PNG); an SVG with `<text>` must be rasterised first (SVG text can't load webfonts when embedded).
 
 ```js
-import fs from "fs/promises";
-
-const buf = await fs.readFile("./public/logo.png");
-const src = `data:image/png;base64,${buf.toString("base64")}`;
-
-{ type: "img", props: { src, width: 200, height: 60, style: { display: "flex" } } }
+const logo = await asset("../assets/logo.png", "image/png"); // helper shown above
+{ type: "img", props: { src: logo, width: 231, height: 44, style: { display: "flex" } } } // width AND height, true aspect ratio
 ```
+
+**Brand assets** — the skill's Step 1 finds a project's logo/icon (repo files, favicons, manifest icons; or on a website: `<link rel="icon">`, header logo, `/brand`/`/press` pages), picks the variant for the card's background, and records origins in `assets/SOURCES.md`. See `skills/snap-x/references/step-1-inspect.md`.
 
 ---
 
@@ -249,7 +247,7 @@ The `/snap-x` skill is what actually decides content — core never does:
 ```
 Step 1 — Inspect project
   Read package.json, README, globals.css, public/assets
-  Identify: brand colors, fonts, tagline, stack, local images
+  Identify: brand colors, fonts, tagline, stack, and the real logo / brand assets (saved to assets/ + SOURCES.md)
 
 Step 2 — Plan the image pack
   Write snap-output/snap-plan.md

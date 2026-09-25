@@ -11,6 +11,7 @@ Answer these for the full pack:
 3. **Visual direction** — Any layout or style changes from the defaults? (centered vs left-aligned, large title vs balanced, etc.)
 4. **Colors** — The brand accent hex (and any other colors) to hardcode directly into each design file.
 5. **Fonts** — Confirmed Google Font family name(s) and weights — this becomes each file's `FONTS` export.
+6. **Brand assets** — Which logo/icon file (and which *variant* for the card's background) goes on which format, at what size, and where (header lockup, watermark, footer). Note the file's origin in `assets/SOURCES.md`. If none was found, say "text wordmark".
 
 ## Per-format specs (fill these in snap-plan.md)
 

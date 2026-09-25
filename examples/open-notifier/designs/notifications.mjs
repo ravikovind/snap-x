@@ -1,3 +1,10 @@
+import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+// Resolve assets relative to THIS file (not the cwd), so `snap-x render` works from anywhere.
+const asset = async (rel, mime) =>
+  `data:${mime};base64,${(await fs.readFile(fileURLToPath(new URL(rel, import.meta.url)))).toString("base64")}`;
+
 export const FORMAT = { width: 1080, height: 1350, name: "notifications.png" };
 export const FONTS = [
   { family: "Saira", weights: [400, 700, 900] },
@@ -15,9 +22,14 @@ const box = (style, children = []) => ({ type: "div", props: { style: { display:
 const txt = (text, style) => box(style, [text]);
 const mono = (text, style) => txt(text, { fontFamily: "JetBrains Mono", ...style });
 
-const wordmark = (size) => box({ alignItems: "center", gap: 12, fontSize: size, fontWeight: 900, letterSpacing: "-0.02em" }, [
-  box({ width: size * 0.36, height: size * 0.36, borderRadius: 999, background: GREEN }),
-  box({}, [txt("open", { color: INK }), txt("notifier", { color: GREEN_HI })]),
+const wordmark = (size, icon) => box({ alignItems: "center", gap: 18 }, [
+  box({ width: size * 3.4, height: size * 3.4, borderRadius: 999, border: `2px solid rgba(11,148,68,0.55)`, overflow: "hidden" }, [
+    { type: "img", props: { src: icon, width: size * 3.4 - 4, height: size * 3.4 - 4, style: { display: "flex" } } },
+  ]),
+  box({ flexDirection: "column", gap: 2 }, [
+    txt("Open Notifier", { fontSize: size, fontWeight: 900, letterSpacing: "-0.02em", color: INK }),
+    txt("open-notifier.io", { fontSize: 17, color: MUTED, letterSpacing: "0.04em" }),
+  ]),
 ]);
 
 const toast = (channel, title, body, when, hot) => box({ alignItems: "center", gap: 22, padding: "18px 28px", background: CARD, borderRadius: 20, border: `1px solid ${hot ? GREEN : BORDER}` }, [
@@ -37,14 +49,14 @@ const stat = (value, label) => box({ flexDirection: "column", alignItems: "cente
   txt(label, { fontSize: 15, fontWeight: 700, color: MUTED, letterSpacing: "0.14em" }),
 ]);
 
-export default function () {
+export default async function () {
+  const icon = await asset("../assets/icon.png", "image/png");
   return box({ width: 1080, height: 1350, background: "#000", fontFamily: "Saira", position: "relative", overflow: "hidden", flexDirection: "column", justifyContent: "space-between", padding: "76px 80px 64px" }, [
     box({ position: "absolute", top: -300, right: -320, width: 1100, height: 1100, background: "radial-gradient(circle, rgba(11,148,68,0.26) 0%, rgba(11,148,68,0) 62%)" }),
     box({ position: "absolute", left: 0, top: 0, right: 0, height: 6, background: GREEN }),
 
     box({ alignItems: "center", justifyContent: "space-between" }, [
-      wordmark(34),
-      txt("open-notifier.io", { fontSize: 18, color: MUTED, letterSpacing: "0.04em" }),
+      wordmark(32, icon),
     ]),
 
     box({ flexDirection: "column" }, [

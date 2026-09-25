@@ -9,4 +9,5 @@ notifications.png (1080×1350, 4:5 portrait)
   → Shows the product working: Push, Telegram, WhatsApp and Claude notifications arriving
 
 Regenerate:  npm run examples
+Assets: see assets/SOURCES.md for where each logo came from.
 Note: the four notifications on the portrait card are illustrative mock content.

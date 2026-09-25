@@ -64,9 +64,38 @@ export default function () {
 }
 ```
 
-## Local assets
+## Logos & local assets
 
-Async designs may `fs.readFile("./public/logo.png")` and embed it as a base64 `<img>` (see SKILL.md). Paths resolve from the directory you run `snap-x` in, so run it from the project root.
+Embed the files you saved in Step 1 as base64 `<img>` nodes. Resolve paths relative to the **design file** with `import.meta.url` — it works no matter where `snap-x` is run from (cwd-relative paths like `"./public/logo.png"` only work from one directory):
+
+```js
+import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+const asset = async (rel, mime) =>
+  `data:${mime};base64,${(await fs.readFile(fileURLToPath(new URL(rel, import.meta.url)))).toString("base64")}`;
+
+export const FORMAT = { width: 1200, height: 630, name: "og.png" };
+
+export default async function () {
+  const logo = await asset("../assets/logo.png", "image/png");   // assets/ sits next to designs/
+  return {
+    type: "div",
+    props: {
+      style: { width: 1200, height: 630, display: "flex", background: "#000" },
+      children: [
+        // width AND height are required; keep the file's aspect ratio (e.g. 1626×310 → 231×44)
+        { type: "img", props: { src: logo, width: 231, height: 44, style: { display: "flex" } } },
+      ],
+    },
+  };
+}
+```
+
+- Set both `width` and `height` from the file's real aspect ratio — never stretch a logo.
+- A dark logo on a dark card disappears: use the light variant, or put the mark on a ring/pill.
+- Round icons: wrap the `<img>` in a `borderRadius: 999`, `overflow: "hidden"` box (add a thin accent ring if it's near the background colour).
+- PNG/JPEG/SVG only (no AVIF/WebP), and SVGs with `<text>` must be rasterised first — see Step 1.
 
 ## After writing all files
 

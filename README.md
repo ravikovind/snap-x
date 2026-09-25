@@ -42,7 +42,7 @@ That's the whole surface. Everything else — what the image says, what it looks
 
 ### Another project: Open Notifier
 
-snap-x doesn't need a repo, just facts about a project. For [open-notifier.io](https://open-notifier.io) the skill read the live site's meta tags and stylesheet (brand green `#0b9444`, Saira, real copy) and produced two cards, in [`examples/open-notifier/`](examples/open-notifier):
+snap-x doesn't need a repo, just facts about a project. For [open-notifier.io](https://open-notifier.io) the skill read the live site's meta tags and stylesheet (brand green `#0b9444`, Saira, real copy), found its icon (`favicon.svg`) and produced two cards, in [`examples/open-notifier/`](examples/open-notifier):
 
 **OG card** — 1200×630
 
@@ -54,7 +54,7 @@ snap-x doesn't need a repo, just facts about a project. For [open-notifier.io](h
 
 ### And another: HeyReach
 
-Same idea for [heyreach.io](https://www.heyreach.io), read from the live site (copy, their Poppins font, their navy and periwinkle palette), in [`examples/heyreach/`](examples/heyreach):
+Same idea for [heyreach.io](https://www.heyreach.io), read from the live site (copy, their Poppins font, navy and periwinkle palette, and their real logo from their CDN), in [`examples/heyreach/`](examples/heyreach):
 
 **OG card** — 1200×630
 
@@ -195,26 +195,31 @@ export default {
 
 ```js
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+// Resolve assets relative to THIS file, so it renders correctly from any working directory.
+const asset = async (rel, mime) =>
+  `data:${mime};base64,${(await fs.readFile(fileURLToPath(new URL(rel, import.meta.url)))).toString("base64")}`;
 
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 
 export default async function () {
-  const logo = await fs.readFile("./public/logo.png");
-  const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
+  const logo = await asset("../assets/logo.png", "image/png"); // assets/ next to designs/
 
   return {
     type: "div",
     props: {
       style: { width: 1200, height: 630, background: "#000", display: "flex" },
       children: [
-        { type: "img", props: { src: logoSrc, width: 200, height: 60, style: { display: "flex" } } },
+        // width AND height are required — keep the file's aspect ratio
+        { type: "img", props: { src: logo, width: 200, height: 60, style: { display: "flex" } } },
       ],
     },
   };
 }
 ```
 
-Both PNG and SVG are confirmed working as embedded base64 `<img>` sources.
+PNG, JPEG and SVG work as embedded `<img>` sources (**not** AVIF/WebP — convert those to PNG; an SVG containing `<text>` should be rasterised first). Resolving paths with `import.meta.url` means the design renders the same from any directory. The `/snap-x` skill finds a project's real logo and brand assets for you (favicons, header logo, `/brand` pages) and saves them in `assets/` with a `SOURCES.md`.
 
 ---
 

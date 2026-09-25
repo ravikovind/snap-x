@@ -1,3 +1,10 @@
+import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+// Resolve assets relative to THIS file (not the cwd), so `snap-x render` works from anywhere.
+const asset = async (rel, mime) =>
+  `data:${mime};base64,${(await fs.readFile(fileURLToPath(new URL(rel, import.meta.url)))).toString("base64")}`;
+
 export const FORMAT = { width: 1080, height: 1350, name: "senders.png" };
 export const FONTS = [{ family: "Poppins", weights: [400, 600, 700, 800] }];
 
@@ -29,14 +36,15 @@ const stat = (value, label) => box({ flexDirection: "column", alignItems: "cente
   txt(label, { fontSize: 15, color: MUTED }),
 ]);
 
-export default function () {
+export default async function () {
+  const logo = await asset("../assets/logo-primary-light.png", "image/png");
   const senders = ["S", "M", "A", "J", "R", "K", "L", "D", "N", "T", "E", "P"];
   return box({ width: 1080, height: 1350, background: "#07071c", fontFamily: "Poppins", position: "relative", overflow: "hidden", flexDirection: "column", justifyContent: "space-between", padding: "64px 80px 60px" }, [
     box({ position: "absolute", top: -320, right: -300, width: 1100, height: 1100, background: "radial-gradient(circle, rgba(127,129,255,0.34) 0%, rgba(127,129,255,0) 62%)" }),
     box({ position: "absolute", bottom: -420, left: -320, width: 900, height: 900, background: "radial-gradient(circle, rgba(245,71,104,0.15) 0%, rgba(245,71,104,0) 62%)" }),
 
     box({ alignItems: "center", justifyContent: "space-between" }, [
-      txt("heyreach", { fontSize: 34, fontWeight: 800, letterSpacing: "-0.03em", color: INK }),
+      { type: "img", props: { src: logo, width: 283, height: 54, style: { display: "flex" } } },
       txt("heyreach.io", { fontSize: 18, color: MUTED }),
     ]),
 

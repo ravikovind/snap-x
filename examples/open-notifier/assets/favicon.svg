@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description><dc:creator>RealFaviconGenerator</dc:creator><dc:source>https://realfavicongenerator.net</dc:source></rdf:Description></rdf:RDF></metadata><defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Saira:wght@900&amp;display=swap');
+    </style>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0B9444" stop-opacity="0.12"></stop>
+      <stop offset="100%" stop-color="#0B9444" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs><circle cx="512" cy="512" r="512" fill="#000000"></circle><circle cx="512" cy="512" r="512" fill="url(#glow)"></circle><circle cx="710" cy="358" r="48" fill="#000000"></circle><circle cx="710" cy="358" r="42" fill="#0B9444" opacity="0.25"></circle><circle cx="710" cy="358" r="28" fill="#0B9444"></circle><text x="512" y="476" text-anchor="middle" font-family="'Saira', 'Arial Black', sans-serif" font-weight="900" font-size="155" fill="#F2F2F2" letter-spacing="-3">open</text><text x="512" y="642" text-anchor="middle" font-family="'Saira', 'Arial Black', sans-serif" font-weight="900" font-size="155" fill="#0B9444" letter-spacing="-3">notifier</text></svg>
