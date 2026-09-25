@@ -33,9 +33,10 @@ npx -y @snap-x/cli render designs/*.mjs --out <dir>
 - **Real logos, never redrawn.** Find the official file (favicon, header logo, brand page), pick the variant for the card's background, save it in `assets/` with `SOURCES.md`. None found → a text wordmark. No third-party customer logos unless asked.
 - **Emoji work; other symbols may not.** Emoji render as Twemoji images. A character the font lacks (`✓ ◷`, sometimes `→`) renders as a blank box — `check` warns; draw those as inline SVG or shapes.
 - **Sources disagree?** Prefer the README/manifest over API blurbs and say which you chose in the plan.
+- **Text never fights decoration.** Keep suns, shapes and phone mocks out from behind headlines (a shape covering letters is the most common defect) — check every overlap in the render.
 - **Fit the text.** Headlines `whiteSpace: "nowrap"`, sized to the canvas (≈ 0.5 em per character for bold display type). Wrapped or clipped text means the size is wrong.
 - **Look before you deliver.** `check` passing ≠ looks right. Open every rendered PNG and fix what you see. Never hand-write QA designs — `snap-x guides` draws the danger zones and the mobile crop.
-- **Right size, right place.** Only the formats the project needs; get sizes and rules from `snap-x formats` (YouTube, X, LinkedIn, Instagram, Play Store, App Store …). **Store graphics need `alpha: false`.** Banners, thumbnails and stories get a `snap-x guides` placement check.
+- **Right size, right place.** Only the formats the project needs; get sizes and rules from `snap-x formats` (YouTube, X, LinkedIn, Instagram, Play Store, App Store …). **Store graphics need `alpha: false`.** Formats that list placement zones (`snap-x formats <id>`: covers, channel art, thumbnails, stories) get a `snap-x guides` check; the rest are checked by eye.
 
 ## Output layout
 

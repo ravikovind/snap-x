@@ -14,6 +14,7 @@ Output names come from each file's `FORMAT.name`. Use `--out` to keep results wi
 
 - **Blank boxes** where a symbol/arrow/emoji should be → the font lacks the glyph (`check` warns about most); draw it as SVG (Step 3)
 - **Wrapped or clipped text** — headlines broken mid-word, text running off an edge, content pushed off the canvas → reduce sizes
+- **Text over decoration** — a sun, hill, blob or phone hiding letters or reducing contrast → move the shape, don't shrink the text
 - **Elements clipped by the canvas edge** (an orbit node, an icon half off-screen)
 - **Invisible logo** (dark on dark) or a stretched/blurry one
 - **Contrast** — muted text readable against its background
@@ -31,7 +32,7 @@ For banners and covers (LinkedIn, X, YouTube channel art), YouTube thumbnails an
 npx -y @snap-x/cli guides designs/*.mjs --out guides/      # add --format <id> if the size isn't a known format
 ```
 
-It writes `<name>.guides.png` (your design with the platform's danger zones in red — profile photo, duration badge, story UI, cropped edges — and the safe area dashed) and, where phones crop, `<name>.mobile.png` (what a phone shows). **View both.** No text may sit in a red zone, and the name/headline must survive the mobile crop. Decoration may go anywhere. Measure the text's pixel extent if it's close to a limit. (Don't hand-write QA designs or put them in `designs/` — `guides` replaces them.)
+It writes `<name>.guides.png` (your design with the platform's danger zones in red — profile photo, duration badge, story UI, cropped edges — and the safe area dashed) and, where phones crop, `<name>.mobile.png` (what a phone shows). A format with no zones (an App Store screenshot, a Play feature graphic, a plain OG card) prints "nothing to check" — that is not a failure; there's simply no platform overlay to worry about. **View both.** No text may sit in a red zone, and the name/headline must survive the mobile crop. Decoration may go anywhere. Measure the text's pixel extent if it's close to a limit. (Don't hand-write QA designs or put them in `designs/` — `guides` replaces them.)
 
 ### `@2x` exports
 

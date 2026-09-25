@@ -34,6 +34,7 @@ App Store screenshots and Google Play graphics (feature graphic, screenshots) **
 - a short headline (2–5 words) in the top ~15–20 %, then the app UI large below it, with a simple device frame
 - the same layout, colors and type across the whole set; the first three matter most (they show in search)
 - show the app in use (Apple's review guidelines ask for this — not just title art or a splash screen)
+- **Fill the screen.** A 1320×2868 shot shows a phone ≈ 900–1000 px wide and ≈ 2000 px tall, so the screen needs 8–10 rows/cards at readable size (type ≥ 30 px, rows ≥ 120 px). A half-empty screen looks unfinished — add real-looking rows, enlarge the cards, or crop the phone off the bottom edge so less screen shows.
 - **No real app UI yet?** Build a plainly generic, clearly-mock phone screen from shapes and label it mock in `share-copy.txt`. Never invent features or numbers. If the user has real screenshots, embed them (PNG) inside the frame — that's the best result.
 
 ```js

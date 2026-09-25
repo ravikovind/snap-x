@@ -43,6 +43,23 @@ title:    [2–4 words, big]
 subtitle: [optional]
 footer:   [domain]
 
+### YouTube thumbnail (1280×720)
+hook:     [≤ 4 huge words — what the video is]
+subject:  [one focal thing: face, object, emoji, or the type itself]
+brand:    [small logo, top-left; nothing in the bottom-right (duration badge)]
+
+### App Store / Play screenshot series (1320×2868 · 1080×1920; alpha: false)
+per shot: headline (2–5 words) · which app screen it shows · what the screen contains (8–10 real-looking rows)
+series:   same layout, colors and type across all shots; order = the story (the first three show in search)
+mock:     if there are no real screenshots, say the UI is a labelled mock
+
+### Play feature graphic (1024×500; alpha: false)
+headline: [short, left]   visual: [product/phone, right]   keep the centre readable — it's cropped in collections
+
+### LinkedIn cover (1584×396) · X header (1500×500)
+text:     [name/role/hook in the safe box only]   decoration: [rings, shapes — may sit in the avatar zone]
+check:    `snap-x guides` + the mobile crop
+
 ### README card (1280×640)
 name:        [project name]
 description: [one line, ≤140 chars]

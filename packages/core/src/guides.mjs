@@ -67,7 +67,7 @@ export async function renderGuides(designPath, outDir, fonts, { formatId } = {})
 
   if (!match) { console.log(`  –  ${stem}: no known format for ${width}×${height} (pass --format <id>; see \`snap-x formats\`)`); return []; }
   const { format, scale } = match;
-  if (!format.avoid && !format.safe && !format.mobileCrop) { console.log(`  –  ${stem}: ${format.id} has no placement zones to draw`); return []; }
+  if (!format.avoid && !format.safe && !format.mobileCrop) { console.log(`  –  ${stem}: nothing to check — ${format.id} has no placement zones (that's fine)`); return []; }
 
   const tree = await resolveTree(mod);
   const opts = { width, height, scale, fontFamily: fonts[0]?.name };

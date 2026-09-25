@@ -69,6 +69,7 @@ Oversized headlines wrap mid-word and shove everything off the canvas. For each 
 - if it wraps or the layout collides after rendering, reduce the size — don't add more wrapping
 - `nowrap` collapses the space before an adjacent coloured `<span>`/text node ("your" + "HTML." → "yourHTML."): use `whiteSpace: "pre"` on that line, or put the pieces in a flex row with `gap`
 - long paragraphs: `flexWrap: "wrap"` plus a `maxWidth`
+- **Keep text off decoration.** Suns, hills, blobs, rings and phone mocks are the usual culprits: a big shape behind a headline hides letters or kills contrast ("together" half-covered, cream text on an orange sun). Put decoration in its own region (a corner, the bottom edge), or keep it well behind and low-contrast, and check every text/shape overlap when you look at the render
 
 ## Sizes, platforms and alpha
 
@@ -97,7 +98,13 @@ export default async function () {
 
 ## Color and contrast
 
-Hardcode the brand's palette. Body text needs ≥ 4.5:1 against its background (large text ≥ 3:1); compute it if unsure — muted greys on black are the usual failure. Keep one accent dominant.
+Hardcode the brand's palette. Measure contrast instead of eyeballing it:
+
+```bash
+node -e "const L=h=>{const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:((v+.055)/1.055)**2.4);return .2126*c[0]+.7152*c[1]+.0722*c[2]};const r=(a,b)=>{const[x,y]=[L(a),L(b)].sort((p,q)=>q-p);return ((x+.05)/(y+.05)).toFixed(1)};console.log(r('#fff3e0','#0f2e1f')+':1')"   # text hex, background hex
+```
+
+Body text needs ≥ 4.5:1 against its background (large text ≥ 3:1); compute it if unsure — muted greys on black are the usual failure. Keep one accent dominant.
 
 ## Check, then fix
 
