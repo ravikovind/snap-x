@@ -1,4 +1,6 @@
 {
+  "name": "snap-x",
+  "description": "Claude Code plugins by Ravi Kovind — snap-x turns any project into a branded social image pack.",
   "owner": {
     "name": "Ravi Kovind",
     "url": "https://ravikovind.com"

@@ -2,9 +2,20 @@
   "name": "snap-x",
   "description": "Turn any project into a full image pack — OG cards, thumbnails, covers, posters. One command, pure Node.js, no headless browser.",
   "version": "0.1.0",
-  "author": "Ravi Kovind",
+  "author": {
+    "name": "Ravi Kovind",
+    "url": "https://ravikovind.com"
+  },
   "license": "MIT",
   "homepage": "https://github.com/ravikovind/snap-x",
   "repository": "https://github.com/ravikovind/snap-x",
-  "keywords": ["og-images", "social-images", "thumbnail", "cover", "satori", "claude-skill", "image-generation"]
+  "keywords": [
+    "og-images",
+    "social-images",
+    "thumbnail",
+    "cover",
+    "satori",
+    "claude-skill",
+    "image-generation"
+  ]
 }

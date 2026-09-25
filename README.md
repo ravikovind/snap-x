@@ -293,14 +293,21 @@ The calling agent is responsible for writing the `.mjs` files — snap-x only re
 
 ## Claude Code skill
 
-snap-x ships a `/snap-x` skill for [Claude Code](https://claude.ai/code).
+snap-x ships a `/snap-x` skill for [Claude Code](https://claude.ai/code). Install it as a plugin:
 
-Copy `skills/snap-x/` into your Claude Code skills directory, then:
+```
+/plugin marketplace add ravikovind/snap-x
+/plugin install snap-x@snap-x
+```
+
+Then:
 
 ```
 /snap-x
 /snap-x --font "Saira"
 ```
+
+(Prefer manual? Copy `skills/snap-x/` into `~/.claude/skills/`.)
 
 Claude inspects your project, plans the design, writes the `.mjs` design files, checks them, renders, and tells you exactly where to use each image.
 
