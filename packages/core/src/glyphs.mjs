@@ -15,11 +15,13 @@ function parseFont(data) {
 }
 
 // Whitespace, control characters, zero-width joiners and variation selectors never draw a glyph.
-const INVISIBLE = /[\p{White_Space}\p{Cc}​-‏⁠︀-️]/u;
+const INVISIBLE = new RegExp("[\\p{White_Space}\\p{Cc}\\u200b-\\u200f\\u2060\\ufe00-\\ufe0f]", "u");
+// Emoji (incl. flags and keycaps) are drawn as Twemoji images by the renderer (emoji.mjs), so they need no font glyph.
+const EMOJI = new RegExp("[\\p{Extended_Pictographic}\\p{Regional_Indicator}\\u20e3]", "u");
 
 /**
  * Characters in `text` that none of the loaded Satori `fonts` can draw and that the automatic script
- * fallback (CJK, Arabic, …) won't cover — they would render as blank boxes.
+ * fallback (CJK, Arabic, …) and the emoji renderer won't cover — they would render as blank boxes.
  * If a font can't be parsed we assume it covers everything (never warn on a guess).
  */
 export function findUncoveredChars(text, fonts) {
@@ -36,7 +38,7 @@ export function findUncoveredChars(text, fonts) {
 
   const missing = [];
   for (const ch of new Set([...text])) {
-    if (INVISIBLE.test(ch) || coveredByFallback(ch)) continue;
+    if (INVISIBLE.test(ch) || EMOJI.test(ch) || coveredByFallback(ch)) continue;
     if (!faces.some((face) => face.charToGlyphIndex(ch) > 0)) missing.push(ch);
   }
   return missing;

@@ -1,7 +1,7 @@
 {
   "name": "@snap-x/core",
-  "version": "0.5.1",
-  "description": "Engine for snap-x: renders self-contained Satori .mjs design files to PNG (renderer, font loader, checker). Use @snap-x/cli for the command.",
+  "version": "0.6.0",
+  "description": "Engine for snap-x: renders self-contained Satori .mjs design files to PNG (renderer, fonts, emoji, platform formats + placement guides, checker). Use @snap-x/cli for the command.",
   "author": {
     "name": "Ravi Kovind",
     "url": "https://ravikovind.com"

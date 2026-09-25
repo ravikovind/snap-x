@@ -3,49 +3,15 @@
  *
  * Two cache layers: an in-memory map (per process) and a persistent disk cache
  * so repeat runs — and offline runs — never touch the network for fonts already
- * fetched. Disk location: $SNAP_X_CACHE_DIR, else $XDG_CACHE_HOME/snap-x/fonts,
- * else ~/.cache/snap-x/fonts. Delete that directory to clear it. Disk caching is
- * strictly best-effort: any read/write problem silently falls back to the network.
+ * fetched (see cache.mjs for the location; delete that directory to clear it).
  */
 
-import fs from "fs/promises";
-import os from "os";
-import path from "path";
-import { createHash } from "crypto";
 import { loadDesignModule } from "./load.mjs";
+import { cachePath, readDisk, writeDisk } from "./cache.mjs";
 
 const cache = new Map();
 
-function cacheDir() {
-  return (
-    process.env.SNAP_X_CACHE_DIR ??
-    path.join(process.env.XDG_CACHE_HOME ?? path.join(os.homedir(), ".cache"), "snap-x", "fonts")
-  );
-}
-
-function diskPath(family, weight, text) {
-  const hash = createHash("sha256").update(`${family}\0${weight}\0${text ?? ""}`).digest("hex");
-  return path.join(cacheDir(), `${hash}.ttf`);
-}
-
-async function readDisk(file) {
-  try {
-    const b = await fs.readFile(file);
-    if (b.length === 0) return null;
-    return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
-  } catch {
-    return null;
-  }
-}
-
-async function writeDisk(file, arrayBuffer) {
-  try {
-    await fs.mkdir(path.dirname(file), { recursive: true });
-    const tmp = `${file}.${process.pid}.tmp`; // write-then-rename so concurrent runs never see a partial file
-    await fs.writeFile(tmp, Buffer.from(arrayBuffer));
-    await fs.rename(tmp, file);
-  } catch {}
-}
+const diskPath = (family, weight, text) => cachePath("ttf", family, weight, text);
 
 async function fetchCached(family, weight, text) {
   const file = diskPath(family, weight, text);

@@ -7,6 +7,7 @@
 import { loadDesignModule } from "./load.mjs";
 import { collectText } from "./fallback.mjs";
 import { findUncoveredChars } from "./glyphs.mjs";
+import { findFormat } from "./formats.mjs";
 
 const UNSUPPORTED_DISPLAY = new Set([
   "block",
@@ -64,6 +65,12 @@ export async function checkDesign(designPath, { fonts } = {}) {
 
   // Traverse tree
   traverseNode(tree, errors, warnings, "root");
+
+  // App Store / Google Play graphics must not have an alpha channel; resvg writes RGBA unless FORMAT.alpha === false.
+  const preset = mod.FORMAT?.width && mod.FORMAT?.height ? findFormat(mod.FORMAT.width, mod.FORMAT.height) : undefined;
+  if (preset?.alpha === false && mod.FORMAT.alpha !== false) {
+    warnings.push(`${mod.FORMAT.width}×${mod.FORMAT.height} is the ${preset.platform} size, which must have no alpha channel — add alpha: false to FORMAT.`);
+  }
 
   // Characters no loaded font can draw render as blank boxes (Satori doesn't error) — flag them.
   if (fonts?.length) {

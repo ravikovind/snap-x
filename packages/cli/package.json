@@ -1,6 +1,6 @@
 {
   "name": "@snap-x/cli",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "The snap-x command: render self-contained Satori .mjs design files to PNG. No browser, no config.",
   "author": {
     "name": "Ravi Kovind",
@@ -16,7 +16,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@snap-x/core": "^0.5.1"
+    "@snap-x/core": "^0.6.0"
   },
   "keywords": [
     "og-images",
