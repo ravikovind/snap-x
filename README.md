@@ -52,6 +52,18 @@ snap-x doesn't need a repo, just facts about a project. For [open-notifier.io](h
 
 ![open-notifier notifications](examples/open-notifier/notifications.png)
 
+### And another: HeyReach
+
+Same idea for [heyreach.io](https://www.heyreach.io), read from the live site (copy, their Poppins font, their navy and periwinkle palette), in [`examples/heyreach/`](examples/heyreach):
+
+**OG card** — 1200×630
+
+![heyreach og](examples/heyreach/og.png)
+
+**Senders card** — 1080×1350
+
+![heyreach senders](examples/heyreach/senders.png)
+
 ---
 
 ## How it works

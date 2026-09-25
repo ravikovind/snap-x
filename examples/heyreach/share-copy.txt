@@ -1,0 +1,12 @@
+HeyReach — example image pack (generated with /snap-x from https://www.heyreach.io)
+
+og.png (1200×630)
+  → <meta property="og:image"> / <meta name="twitter:image"> for link previews
+  → launch or case-study post header
+
+senders.png (1080×1350, 4:5 portrait)
+  → LinkedIn and Instagram feed posts, X portrait image
+  → Explains the pitch visually: many senders → one unified inbox → tagged warm leads
+
+Regenerate:  npm run examples
+Note: the inbox names and messages on the portrait card are fictional mock content. Stats (7,000+ companies, 4.7 on G2, 1000+ leads a week) come from the site.
