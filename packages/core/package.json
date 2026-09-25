@@ -2,6 +2,10 @@
   "name": "@snap-x/core",
   "version": "0.4.0",
   "description": "Render-only Satori pipeline: any self-contained .mjs design file → PNG. No browser, no config, no auto-detection — write the file, render it.",
+  "author": {
+    "name": "Ravi Kovind",
+    "url": "https://ravikovind.com"
+  },
   "type": "module",
   "main": "src/index.mjs",
   "bin": {

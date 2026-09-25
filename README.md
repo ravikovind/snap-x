@@ -317,4 +317,4 @@ Claude inspects your project, plans the design, writes the `.mjs` design files, 
 
 ## License
 
-MIT © [VoltVave Innovations](https://voltvave.com)
+MIT © [Ravi Kovind](https://ravikovind.com)

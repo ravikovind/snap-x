@@ -12,7 +12,7 @@
     "test": "npm test --workspaces --if-present"
   },
   "keywords": ["og-images", "social-images", "satori", "claude-skill", "mcp"],
-  "author": "VoltVave Innovations",
+  "author": "Ravi Kovind",
   "license": "MIT",
   "repository": {
     "type": "git",
