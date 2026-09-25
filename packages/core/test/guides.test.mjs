@@ -1,4 +1,4 @@
-import { test, before, after } from "node:test";
+import { test, before, after, mock } from "node:test";
 import assert from "node:assert/strict";
 import fs from "fs/promises";
 import path from "path";
@@ -60,6 +60,8 @@ test("mobileTree crops to the format's visible strip", () => {
 // ── end to end (needs Google Fonts for a real render; skipped offline) ──
 let dir, cache, inter = null;
 before(async () => {
+  // renderGuides logs progress lines (with emoji); stray stdout can corrupt node:test's event stream on some Node 22 builds
+  mock.method(console, "log", () => {});
   dir = await makeTmpDir();
   cache = await isolateCache();
   try { inter = [{ name: "Inter", weight: 400, style: "normal", data: await Promise.race([loadGoogleFont("Inter", 400), new Promise((_, r) => setTimeout(() => r(new Error("t")), 8000))]) }]; } catch {}
@@ -67,7 +69,7 @@ before(async () => {
 export default { type: "div", props: { style: { display: "flex", width: ${w}, height: ${h}, background: "#123", color: "#fff", fontFamily: "Inter", fontSize: 30 }, children: ["hello"] } };`;
   await writeFiles(dir, { "li.mjs": d(1584, 396, "li.png"), "odd.mjs": d(777, 333, "odd.png"), "og.mjs": d(1200, 630, "og.png") });
 });
-after(async () => { await fs.rm(dir, { recursive: true, force: true }); await cache.cleanup(); });
+after(async () => { mock.restoreAll(); await fs.rm(dir, { recursive: true, force: true }); await cache.cleanup(); });
 const gated = (name, fn) => test(name, async (t) => { if (!inter) return t.skip("Google Fonts unreachable"); await fn(); });
 const pngSize = async (p) => { const b = await fs.readFile(p); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
 
