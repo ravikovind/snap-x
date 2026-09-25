@@ -1,282 +1,54 @@
 ---
 name: snap-x
-description: Turn any project into a full branded image pack — OG cards, thumbnails, Twitter/X covers, Instagram posters, and GitHub README cards. Use when someone says "/snap-x", "generate images for this project", "make OG images", "create social images", or "snap this". Reads the project code directly — no live URL needed.
+description: Turn a project, a website URL or a written brief into branded images — OG/social cards, README cards, thumbnails, X/LinkedIn banners and covers, posters — by writing self-contained Satori design files and rendering them to PNG with snap-x (no browser). Use when the user says "/snap-x", "make OG images", "social images for this project/site", "GitHub social preview", "LinkedIn banner/cover", or "snap this". Finds the brand's real logo, colors and fonts.
 ---
 
 # /snap-x
 
-You built it. Now frame it.
+Write self-contained Satori `.mjs` design files, render them with `snap-x`, and deliver a branded image pack. snap-x only renders — **you** decide what the images say and look like.
 
-`/snap-x` generates a complete branded image pack by writing self-contained Satori design files and rendering them — no browser, pure Node.js.
+**Input:** a repo, a website URL, or a written brief. **Output:** PNGs (any size, any names) plus a plan and share notes.
 
-**Formats:** Any size, any name — write a `.mjs` file, get a PNG.
-
-Suggested defaults: OG (1200×630) · Thumbnail (1280×720) · Cover (1500×500) · Poster (1080×1920) · README card (1280×640)
-
-Custom examples: LinkedIn cover (1584×396) · App Store screenshot (1290×2796) · Twitter header (1500×500) · Discord banner (960×540) — or any dimension you need.
-
----
-
-## Invocation
-
-```
-/snap-x
-/snap-x --font "Saira"
+```bash
+npx @snap-x/cli check  designs/*.mjs
+npx @snap-x/cli render designs/*.mjs --out <dir>
 ```
 
-There's no `--format`, `--title`, `--desc`, `--theme` flag surface — those are decisions you make while writing the design files, not CLI options. `--font` is a suggestion for the default font family to use across the pack; nothing stops you from picking a different one per file.
+`/snap-x --font "Saira"` suggests a default font; every other choice (formats, colors, copy) is yours.
 
----
+## Workflow — do the steps in order, read each reference first
 
-## Architecture
+| Step | Read | Gate |
+|---|---|---|
+| **1. Inspect** the source — copy, colors, fonts, **real logo/brand assets** | `references/step-1-inspect.md` | all 9 rubric answers; any logo you'll use is downloaded and looked at |
+| **2. Plan** — hook, copy per format, palette, fonts, assets, safe zones | `references/step-2-plan.md` | `snap-plan.md` written with per-format specs |
+| **3. Write** `designs/*.mjs` — one self-contained file per format | `references/step-3-design.md` | `snap-x check` passes with zero errors |
+| **4. Render, verify, deliver** — look at every PNG | `references/step-4-render.md` | every image viewed and clean; `share-copy.txt` written |
 
-snap-x is **render-only** — it has no config, no auto-detection, no scaffolding. It does exactly one thing: turn a self-contained `.mjs` file into a PNG. Everything else is your job:
+## Non-negotiables
 
-1. Inspect the project and plan the design
-2. Write self-contained **Satori JSX trees** to `designs/*.mjs` — no config object, no external state
-3. `snap-x check designs/*.mjs` validates the trees (Satori CSS rules + an actual render attempt)
-4. `snap-x render designs/*.mjs --out <dir>` runs Satori → SVG → resvg → PNG
+- **Facts only.** Use numbers, quotes and claims found in the source or given by the user. Never invent stats, customers or testimonials; label anything illustrative as mock.
+- **Self-contained files.** Each design exports `FORMAT`, optionally `FONTS`, and a zero-argument default export (may be async). No config, nothing passed in — hardcode the brand's colors, fonts and copy.
+- **Satori rules.** Every container `display: "flex"`; `children` is an array; no `z-index`, CSS grid, animations or `position: "fixed"`; never an `undefined` style value.
+- **Real logos, never redrawn.** Find the official file (favicon, header logo, brand page), pick the variant for the card's background, save it in `assets/` with `SOURCES.md`. None found → a text wordmark. No third-party customer logos unless asked.
+- **Draw symbols, don't type them.** A glyph the font lacks renders as a blank box and `check` can't see it — emoji, `✔`, and sometimes `→`. Use inline SVG or shapes.
+- **Fit the text.** Headlines `whiteSpace: "nowrap"`, sized to the canvas (≈ 0.5 em per character for bold display type). Wrapped or clipped text means the size is wrong.
+- **Look before you deliver.** `check` passing ≠ looks right. Open every rendered PNG and fix what you see. Banners also get a danger-zone overlay and a mobile-crop render.
+- **Only the formats the project needs.** Common sizes: OG 1200×630 · README card 1280×640 · thumbnail 1280×720 · X/GitHub cover 1500×500 · LinkedIn cover 1584×396 · poster 1080×1920 · portrait post 1080×1350 — or any size.
 
-Design files are plain `.mjs` — version-controllable, editable, re-renderable any time.
+## Output layout
 
----
-
-## Satori rules (must follow when writing trees)
-
-- Every container must have `display: "flex"` — no block, grid, or inline
-- `children` must always be an array
-- `position: "absolute"` works; `position: "fixed"` does not
-- No `z-index`, no CSS Grid, no animations
-- Text is a string in the children array: `children: ["Hello"]`
-
----
-
-## Design file format
-
-Every file exports `FORMAT`, optionally `FONTS`, and a default export that takes **no arguments** — nothing is passed in, so hardcode everything the file needs directly.
-
-### Standard (sync)
-
-```js
-export const FORMAT = { width: 1200, height: 630, name: "og.png" };
-export const FONTS  = [{ family: "Inter", weights: [400, 700, 900] }]; // optional — omit to default to Inter 400/700/900
-
-export default function () {
-  const accent      = "#6366f1"; // whatever brand color you found while inspecting — no config, just hardcode it
-  const accentMuted = "rgba(99,102,241,0.25)";
-  const borderAccent= "rgba(99,102,241,0.35)";
-  const bg          = "#000000";
-  const text        = "rgba(255,255,255,0.95)";
-  const textMuted   = "rgba(255,255,255,0.50)";
-
-  return {
-    type: "div",
-    props: {
-      style: { width: 1200, height: 630, background: bg, display: "flex" },
-      children: [ ... ]
-    }
-  };
-}
+```
+<out>/
+  designs/*.mjs        the design files (helpers start with "_")
+  assets/              logos + SOURCES.md
+  *.png                the images (FORMAT.name)
+  snap-plan.md         Step 2
+  share-copy.txt       Step 4 — where each image goes, what's mock, asset sources
 ```
 
-### With local assets (async)
+Default `<out>` is `snap-output/` (use a timestamped folder if it exists). Real examples: [`examples/`](../../examples) in the repo.
 
-When the project has logos, partner badges, or product images, make the function async — still zero arguments:
+## Agents without this skill (MCP)
 
-```js
-import fs from "fs/promises";
-import { fileURLToPath } from "url";
-
-// Resolve assets relative to THIS file, so it renders correctly from any working directory.
-const asset = async (rel, mime) =>
-  `data:${mime};base64,${(await fs.readFile(fileURLToPath(new URL(rel, import.meta.url)))).toString("base64")}`;
-
-export const FORMAT = { width: 1200, height: 630, name: "og.png" };
-
-export default async function () {
-  const accent = "#6366f1";
-  const logo  = await asset("../assets/logo.png", "image/png");
-  const badge = await asset("../assets/partner-badge.svg", "image/svg+xml");
-
-  return {
-    type: "div",
-    props: {
-      style: { width: 1200, height: 630, background: "#000", display: "flex" },
-      children: [
-        { type: "img", props: { src: logo,  width: 200, height: 60,  style: { display: "flex", objectFit: "contain" } } },
-        { type: "img", props: { src: badge, width: 160, height: 48,  style: { display: "flex", objectFit: "contain" } } },
-      ]
-    }
-  };
-}
-```
-
-Resolve asset paths from the **design file** with `import.meta.url` (e.g. `new URL("../assets/logo.png", import.meta.url)`), not `./relative` paths — those resolve from the directory you run `snap-x` in and break elsewhere. See `references/step-3-design.md` for the ready-made `asset()` helper.
-
-### Static tree (no function needed)
-
-```js
-export const FORMAT = { width: 1200, height: 630, name: "og.png" };
-export default {
-  type: "div",
-  props: { style: { width: 1200, height: 630, background: "#0a0a0a", display: "flex" }, children: [...] }
-};
-```
-
----
-
-## Icons
-
-Design files are plain JavaScript — use any icon source:
-
-**Emoji** (zero deps):
-```js
-{ type: "div", props: { style: { fontSize: 24, display: "flex" }, children: ["⚡"] } }
-{ type: "div", props: { style: { fontSize: 16, display: "flex" }, children: ["📍"] } }
-```
-
-**Inline SVG path** (any icon library — Lucide, Heroicons, Phosphor, etc.):
-```js
-{
-  type: "svg",
-  props: {
-    width: 24, height: 24, viewBox: "0 0 24 24", fill: "none",
-    stroke: accent, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
-    children: [{ type: "path", props: { d: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" } }],
-  },
-}
-```
-
-**Icon pack** (install anything):
-```js
-import { getIcon } from "my-icon-pack"; // your choice
-```
-
----
-
-## Fonts
-
-Declare exactly what each file needs via `FONTS` — any Google Font, any weights:
-
-```js
-export const FONTS = [
-  { family: "Saira", weights: [400, 700, 900] },
-  { family: "JetBrains Mono", weights: [400] }, // a second family, if the design needs one — just another entry
-];
-```
-
-Omit `FONTS` entirely to default to Inter 400/700/900. Each file in a batch declares its own fonts independently — `og.mjs` can use Saira while `poster.mjs` uses Space Grotesk in the same `snap-x render` call. Fonts are fetched and deduped across the batch; an unavailable font falls back to Inter with a warning rather than failing the render.
-
-Use `fontWeight` freely as long as it's one of the weights you declared.
-
-Non-Latin copy (Japanese, Korean, Arabic, Hebrew, Thai, Devanagari, …) needs no extra `FONTS` entry — snap-x adds a matching Noto Sans subset automatically for the glyphs your font can't draw. Emoji aren't supported yet, so avoid them in copy.
-
----
-
-## Colors
-
-There's no theme system, no `themeOverride`, no config to merge. Pick real values while inspecting the project (brand accent from CSS, or a sensible default) and hardcode them directly in each design file — as plain consts, same as the accent/text example above. Each file is independent, so nothing stops one format using different colors than another if that's the right call.
-
----
-
-## Brand assets
-
-Cards look far better with the brand's own logo. Step 1 finds it; Step 3 embeds it.
-
-- **Where to look:** project `public/`/`assets/`/favicons/manifest icons; on a website — `<link rel="icon" | "apple-touch-icon">`, the header `<img>`/inline `<svg>`, JSON-LD `logo`, and `/brand`, `/press`, `/media-kit` pages. Full checklist: `references/step-1-inspect.md`.
-- **Pick the variant for the background** (`Primary-Light`/`white` = for dark cards; `Primary-Dark`/`dark` = for light cards).
-- **Format:** PNG/JPEG/SVG only. Convert AVIF/WebP to PNG; rasterise SVGs that contain text.
-- **Store** in `assets/` beside `designs/`, with `SOURCES.md` (origin URL + trademark note). Reference by `import.meta.url`.
-- **Never** redraw or distort a logo, or add third-party customer logos unprompted. No official file → text wordmark.
-
----
-
-## Customization surface
-
-Everything is customizable, and none of it goes through a shared schema:
-
-| Layer | How |
-|---|---|
-| Layout | Full Satori tree — any composition of flex containers |
-| Colors | Hardcode hex/rgba values per file, based on what you found inspecting the project |
-| Typography | `FONTS` export — any Google Font(s)/weights, per file; `fontWeight`, `fontSize`, `letterSpacing` per element |
-| Icons | Emoji, inline SVG paths, or any icon package |
-| Logos & images | `async` function + `fs.readFile` → base64 `<img>` nodes |
-| Copy | Baked directly into the tree — you already read the real project |
-| Per-format design | Each `.mjs` is independent — poster ≠ OG ≠ cover |
-| Output filename | Set `FORMAT.name` |
-| Canvas size | Set `FORMAT.width` / `FORMAT.height` |
-| Sections / content | Services list, stats bar, location row, CTA — anything baked in |
-
----
-
-## Output directory
-
-Default: `snap-output/`. Use a timestamped directory `snap-output-YYYY-MM-DD-HHmmss/` when one already exists.
-
----
-
-## Step 1 — Inspect the project
-
-**Read:** `references/step-1-inspect.md`
-
-Scan the project (or, for a website, fetch its HTML and CSS) and answer the 9-question rubric. Understand the brand: colors, fonts, product description, audience — **and find its real logo and brand assets** (favicon/icon files, header logo, `/brand` or press-kit pages; pick the variant that suits the card's background; download them into `assets/` with a `SOURCES.md`). Never redraw a logo; if none exists, use a text wordmark.
-
-**Gate:** All 9 questions answered before writing any design, and any logo you plan to use has been downloaded and looked at.
-
----
-
-## Step 2 — Plan the image pack
-
-**Read:** `references/step-2-plan.md`
-
-Write `<out>/snap-plan.md`. Decide layout, copy, icons, assets, colors, and fonts for each format. Commit to the creative direction.
-
-**Gate:** `snap-plan.md` exists with per-format specs.
-
----
-
-## Step 3 — Write the design files
-
-**Read:** `references/step-3-design.md`
-
-Write `designs/*.mjs` — one file per format needed, each self-contained (FORMAT, optional FONTS, zero-argument default export). Format names and dimensions are **not fixed** — choose what fits the project:
-
-- Use the 5 suggested defaults when broad social coverage is needed
-- Add `linkedin-cover.mjs` (1584×396), `app-screenshot.mjs` (1290×2796), or any custom size
-- Skip formats that don't apply — a CLI tool doesn't need a poster
-
-Each file is a valid Satori tree. Follow the Satori rules above. Use async functions when loading local assets.
-
-Run `npx @snap-x/cli check designs/*.mjs` after writing. Fix any errors before proceeding.
-
-**Gate:** `snap-x check` passes with zero errors.
-
----
-
-## Step 4 — Render and deliver
-
-**Read:** `references/step-4-render.md`
-
-Run `npx @snap-x/cli render designs/*.mjs --out <dir>`, verify output images, write `share-copy.txt` with placement instructions.
-
-**Gate:** All PNGs exist. `share-copy.txt` tells the user exactly where each image goes.
-
----
-
-## Agent integration (MCP)
-
-snap-x ships an MCP server at `packages/mcp/`:
-
-```json
-{
-  "mcpServers": {
-    "snap-x": {
-      "command": "npx",
-      "args": ["@snap-x/mcp"]
-    }
-  }
-}
-```
-
-MCP tools: `render_designs`, `check_designs`, `list_formats`. The calling agent writes the `.mjs` files itself (following the same conventions as this skill) and hands their paths to these tools — the MCP server, like the CLI, only renders and validates.
+`@snap-x/mcp` exposes `render_designs`, `check_designs`, `list_formats` (`npx @snap-x/mcp`). The agent still writes the `.mjs` files following the same rules; the server only renders and validates.

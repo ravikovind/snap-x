@@ -12,6 +12,9 @@ Answer these for the full pack:
 4. **Colors** — The brand accent hex (and any other colors) to hardcode directly into each design file.
 5. **Fonts** — Confirmed Google Font family name(s) and weights — this becomes each file's `FONTS` export.
 6. **Brand assets** — Which logo/icon file (and which *variant* for the card's background) goes on which format, at what size, and where (header lockup, watermark, footer). Note the file's origin in `assets/SOURCES.md`. If none was found, say "text wordmark".
+7. **Facts ledger** — every number, quote or claim that will appear, with where it came from. Mark anything illustrative (mock notifications, sample names) as mock.
+8. **Every element has a purpose** — if a viewer would ask "what is that?", cut it. Prefer one strong idea per card over many small decorations.
+9. **Which formats** — only what the project needs. A CLI tool doesn't need a poster; a person needs a profile banner, not an OG card.
 
 ## Per-format specs (fill these in snap-plan.md)
 
@@ -46,6 +49,16 @@ description: [one line, ≤140 chars]
 stack:       [up to 6 pills]
 owner:       [optional — GitHub org or author]
 ```
+
+## Banners and profile covers: plan the safe zones
+
+Platforms overlay UI on banners. Write the danger zones into the plan and keep text out of them.
+
+- **LinkedIn cover 1584×396:** the profile photo covers a circle ≈ Ø230 centred at (160, 396); mobile crops the sides (≈ x<200 and x>1384); keep the top/bottom ≈30 px clear. Safe content area ≈ x 380–1384, y 50–346. Keep decoration (not text) in the avatar zone.
+- **Stories / vertical posters:** leave roughly 250 px clear at the top and bottom for platform UI.
+- Other banners (X header, YouTube channel art): check the platform's current safe area before placing text.
+
+For banners, also plan two QA renders (Step 4): a debug overlay showing the zones and a mobile-crop preview.
 
 ## Gate
 

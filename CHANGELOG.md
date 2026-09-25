@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- **Skill restructured:** `SKILL.md` cut from 282 to 54 lines (a lean workflow with gates and non-negotiables); design detail lives in `references/step-3-design.md`
+- Skill now handles a **repo, a website URL or a written brief**, with a website recipe for copy, colors and fonts, a **facts-only rule**, and **real logo/brand-asset discovery**
+- New guidance from real runs: draw symbols instead of typing glyphs a font lacks, fit headlines (`nowrap`, ≈0.5 em/char), banner safe zones + QA overlay/mobile crop, and **look at every rendered PNG** before delivering
+- `snap-x render`/`check` skip `_`-prefixed helper files when expanding a directory or glob
+- README cut to the essentials (363 → 87 lines)
+
 ## 0.5.0 (core) / 0.1.0 (cli) / 0.2.1 (mcp)
 
 - **New `@snap-x/cli`** owns the `snap-x` command: `npx @snap-x/cli check|render …`, or `npm install -g @snap-x/cli` for the short `snap-x`

@@ -1,68 +1,54 @@
-# Step 4: Render and deliver
+# Step 4: Render, verify, deliver
 
 ## Render
 
 ```bash
-npx @snap-x/cli render designs/*.mjs --out snap-output/
-# or a single file:
-npx @snap-x/cli render designs/og.mjs --out snap-output/
+npx @snap-x/cli render designs/*.mjs --out snap-output/     # or a single file
 ```
 
-Expected output:
+Output names come from each file's `FORMAT.name`. Use `--out` to keep results with the source (e.g. next to `designs/`).
+
+## Verify — look at every PNG
+
+`check` can't see visual problems, so open each rendered image (Read it) and go through this list:
+
+- **Blank boxes** where a symbol/arrow/emoji should be → the font lacks the glyph; draw it as SVG (Step 3)
+- **Wrapped or clipped text** — headlines broken mid-word, text running off an edge, content pushed off the canvas → reduce sizes
+- **Elements clipped by the canvas edge** (an orbit node, an icon half off-screen)
+- **Invisible logo** (dark on dark) or a stretched/blurry one
+- **Contrast** — muted text readable against its background
+- **Copy** matches the source exactly (names, numbers, spelling); nothing invented
+- **Brand** — colors, font and logo look like the brand's own
+
+Fix the design file and re-render until clean. Fix what you see, then look again — don't assume a re-render fixed it.
+
+### Banners / covers: two extra renders
+
+Add `qa-overlay.mjs` (the same composition with the danger zones drawn over it — avatar circle, side crops, top/bottom bands, safe area outlined) and `qa-mobile.mjs` (the centre crop a phone shows). Confirm no text lands in a danger zone and the name/title survive the mobile crop. Measure the text's pixel extent if it's close to a limit.
+
+### `@2x` exports
+
+A second design file that wraps the same tree in a `width×2` / `height×2` root with an inner box `transform: "scale(2)"`, `transformOrigin: "top left"` — vector-sharp, no upscaling.
+
+## share-copy.txt
+
+Write `<out>/share-copy.txt`: where each image goes, plus a note on anything mock or illustrative and where the brand assets came from.
+
 ```
-snap-output/
-  og.png           ← 1200×630
-  thumbnail.png    ← 1280×720
-  cover.png        ← 1500×500
-  poster.png       ← 1080×1920
-  readme-card.png  ← 1280×640
+<Project> — image pack (generated with /snap-x)
+
+og.png (1200×630)         → <meta property="og:image"> / twitter:image; link previews
+readme-card.png (1280×640)→ top of README; GitHub Settings → Social preview
+cover.png (1500×500)      → X / GitHub org banner
+<linkedin-cover>.png      → LinkedIn: Profile → banner (1584×396)
+poster.png (1080×1920)    → Instagram / WhatsApp story
+
+Regenerate: <command>
+Note: <illustrative content, asset sources>
 ```
 
-## Verify
-
-Read each PNG and confirm:
-- Text is readable, not clipped
-- Colors match the project brand
-- No empty/white sections
-- Accent color is correct
-
-If any image has issues, go back to Step 3 and fix the design file, then re-render.
-
-## Write share-copy.txt
-
-Write `<out>/share-copy.txt` with placement instructions:
-
-```
-snap-x output — [Project Name]
-Generated: [date]
-
-og.png (1200×630)
-  → <meta property="og:image" content="https://yourdomain.com/og.png" />
-  → <meta name="twitter:image" content="https://yourdomain.com/og.png" />
-  Use for: all social sharing (Twitter, LinkedIn, Slack unfurl)
-
-thumbnail.png (1280×720)
-  → Blog post featured image, YouTube thumbnail
-  Use for: any 16:9 content slot
-
-cover.png (1500×500)
-  → Twitter/X header: Settings → Profile → Edit → Header
-  → GitHub org banner
-  Use for: profile/org banners
-
-poster.png (1080×1920)
-  → Instagram Stories, WhatsApp Status
-  Use for: vertical social posts
-
-readme-card.png (1280×640)
-  → GitHub repo: Settings → Social preview → Upload image
-  Use for: GitHub social preview card
-  Add to README: ![cover](snap-output/readme-card.png)
-```
+List only the images you actually made.
 
 ## Deliver
 
-Tell the user:
-1. Where images are saved
-2. The share-copy.txt location
-3. One specific action to take first (e.g. "upload readme-card.png to GitHub social preview now")
+Tell the user (short): where the images are, what each is for, anything mock or assumed, and one first action (e.g. "upload readme-card.png as the GitHub social preview").

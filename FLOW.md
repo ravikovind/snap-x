@@ -248,23 +248,15 @@ The `/snap-x` skill is what actually decides content — core never does:
 
 ### Skill workflow
 
+Input can be a repo, a website URL, or a written brief. `SKILL.md` is a lean workflow (54 lines) — each step has a reference file and a gate.
+
 ```
-Step 1 — Inspect project
-  Read package.json, README, globals.css, public/assets
-  Identify: brand colors, fonts, tagline, stack, and the real logo / brand assets (saved to assets/ + SOURCES.md)
-
-Step 2 — Plan the image pack
-  Write snap-output/snap-plan.md
-  Decide copy, layout, icons, assets, and FONTS per format
-
-Step 3 — Write design files
-  Write designs/*.mjs (one per format) — self-contained, FORMAT + optional FONTS + zero-arg default export
-  Run: snap-x check designs/*.mjs  →  fix any Satori errors
-
-Step 4 — Render and deliver
-  Run: snap-x render designs/*.mjs --out snap-output
-  Verify all PNGs exist
-  Write snap-output/share-copy.txt (where to use each image)
+Step 1 — Inspect      copy, colors, fonts (repo files, or curl the site's HTML/CSS), and the real logo/brand assets
+                      → assets/ + SOURCES.md.   Facts rule: nothing invented.
+Step 2 — Plan         snap-plan.md: hook, copy per format, palette, fonts, assets, facts ledger, banner safe zones
+Step 3 — Write        designs/*.mjs — self-contained; draw symbols as SVG; fit text (nowrap, ≈0.5em/char); `check` passes
+Step 4 — Render       render, then LOOK at every PNG (blank boxes, wrapping, clipping, contrast, logo visibility);
+                      banners also get a danger-zone overlay + mobile-crop render; write share-copy.txt
 ```
 
 Skill files: `skills/snap-x/SKILL.md` + `skills/snap-x/references/`
