@@ -1,5 +1,5 @@
 {
-  "name": "snap-x",
+  "name": "snap-x-monorepo",
   "version": "0.1.0",
   "description": "Turn any project into a full image pack — OG cards, thumbnails, covers, posters. One command.",
   "type": "module",
@@ -11,7 +11,13 @@
     "build": "npm run build --workspaces",
     "test": "npm test --workspaces --if-present"
   },
-  "keywords": ["og-images", "social-images", "satori", "claude-skill", "mcp"],
+  "keywords": [
+    "og-images",
+    "social-images",
+    "satori",
+    "claude-skill",
+    "mcp"
+  ],
   "author": "Ravi Kovind",
   "license": "MIT",
   "repository": {

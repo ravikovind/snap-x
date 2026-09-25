@@ -70,7 +70,7 @@ Nothing stops you from writing `.mjs` files by hand instead — the skill just a
 ## Quick start
 
 ```bash
-npm install -g @snap-x/core
+npm install -g snap-x   # or just use `npx snap-x …`
 ```
 
 Write a design file:
@@ -310,7 +310,8 @@ Claude inspects your project, plans the design, writes the `.mjs` design files, 
 
 | Package | Description |
 |---|---|
-| [`@snap-x/core`](packages/core) | Render-only CLI: `check` + `render` for self-contained `.mjs` design files |
+| [`snap-x`](packages/snap-x) | The CLI — `npx snap-x check|render …` (thin entry point over `@snap-x/core`) |
+| [`@snap-x/core`](packages/core) | The engine: `check` + `render`, Satori renderer, font loader, programmatic API |
 | [`@snap-x/mcp`](packages/mcp) | MCP server exposing the same render/check as agent tools |
 
 ---

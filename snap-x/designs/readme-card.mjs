@@ -55,7 +55,7 @@ export default function () {
                     ],
                   },
                 },
-                { type: "div", props: { style: { color: accent, fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", display: "flex" }, children: ["@snap-x/core"] } },
+                { type: "div", props: { style: { color: accent, fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", display: "flex" }, children: ["snap-x"] } },
               ]}},
 
               // headline
@@ -75,7 +75,7 @@ export default function () {
               { type: "div", props: { style: { display: "flex", alignItems: "center", gap: 10, background: surface, border: `1px solid rgba(255,255,255,0.07)`, borderRadius: 8, padding: "10px 16px" }, children: [
                 { type: "div", props: { style: { color: accent, fontSize: 13, fontWeight: 700, display: "flex" }, children: ["$"] } },
                 { type: "div", props: { style: { color: textMuted, fontSize: 13, display: "flex" }, children: ["npm install -g "] } },
-                { type: "div", props: { style: { color: text, fontSize: 13, fontWeight: 700, display: "flex" }, children: ["@snap-x/core"] } },
+                { type: "div", props: { style: { color: text, fontSize: 13, fontWeight: 700, display: "flex" }, children: ["snap-x"] } },
               ]}},
             ],
           },

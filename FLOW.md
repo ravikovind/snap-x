@@ -273,7 +273,8 @@ Skill files: `skills/snap-x/SKILL.md` + `skills/snap-x/references/`
 
 | Package | Description |
 |---------|-------------|
-| `@snap-x/core` | Render-only: `check` + `render` CLI, Satori renderer, Google Font loader |
+| `snap-x` | The CLI entry (`npx snap-x …`) — a thin wrapper that runs `@snap-x/core`'s CLI |
+| `@snap-x/core` | The engine: `check` + `render`, Satori renderer, Google Font loader, programmatic API |
 | `@snap-x/mcp` | MCP server exposing `render_designs` / `check_designs` / `list_formats` as agent tools |
 
 ---
@@ -320,6 +321,7 @@ snap-x/
 │   │   │   └── index.mjs         programmatic API (used by @snap-x/mcp)
 │   │   ├── test/                 node:test suites (resolve, check, fonts, cli) — `npm test`
 │   │   └── test-support/         shared test helpers (not run as tests)
+│   ├── snap-x/                   unscoped CLI entry — bin.mjs imports @snap-x/core/cli
 │   └── mcp/                      MCP server — imports @snap-x/core directly
 ├── snap-x/
 │   └── designs/                  snap-x's own example designs (self-contained, hand-written)
@@ -342,7 +344,7 @@ snap-x/
 ## Quick start
 
 ```bash
-npm install -g @snap-x/core
+npm install -g snap-x
 
 # write designs/og.mjs by hand, or let Claude do it:
 ```

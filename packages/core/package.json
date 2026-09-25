@@ -20,7 +20,8 @@
     ".": "./src/index.mjs",
     "./render": "./src/render.mjs",
     "./check": "./src/check.mjs",
-    "./fonts": "./src/fonts.mjs"
+    "./fonts": "./src/fonts.mjs",
+    "./cli": "./src/cli.mjs"
   },
   "scripts": {
     "start": "node src/cli.mjs",
