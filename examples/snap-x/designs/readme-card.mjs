@@ -12,7 +12,7 @@ export default function () {
   const textDim = "rgba(255,255,255,0.15)";
 
   const steps = [
-    { n: "01", cmd: "Write design.mjs", desc: "Self-contained, any format" },
+    { n: "01", cmd: "Claude writes design.mjs", desc: "/snap-x reads your project" },
     { n: "02", cmd: "snap-x check",     desc: "Validate Satori CSS rules" },
     { n: "03", cmd: "snap-x render",    desc: "Generate PNGs — any format, any size" },
   ];

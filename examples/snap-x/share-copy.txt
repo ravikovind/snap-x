@@ -1,0 +1,14 @@
+snap-x — example image pack (generated with /snap-x)
+
+readme-card.png (1280×640)
+  → top of README.md:  ![snap-x](examples/snap-x/readme-card.png)
+  → GitHub repo → Settings → Social preview → upload this same file
+
+og.png (1200×630)
+  → <meta property="og:image"> / <meta name="twitter:image"> for a project site
+
+thumbnail.png (1280×720)  → blog post / video header
+cover.png (1500×500)      → X / GitHub org banner
+poster.png (1080×1920)    → Instagram / WhatsApp story
+
+Regenerate everything:  npm run examples

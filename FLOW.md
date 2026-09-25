@@ -320,17 +320,15 @@ snap-x/
 │   │   │   ├── fonts.mjs         Google Fonts loader/cache, FONTS-spec resolution
 │   │   │   ├── fallback.mjs      per-design script fallback fonts (CJK, Arabic, …)
 │   │   │   └── index.mjs         programmatic API (used by @snap-x/mcp)
-│   │   ├── test/                 node:test suites (resolve, check, fonts, cli) — `npm test`
-│   │   └── test-support/         shared test helpers (not run as tests)
+│   │   └── test/                 node:test suites (resolve, check, fonts, fallback, load, cli) + helpers.mjs — `npm test`
 │   └── mcp/                      MCP server — imports @snap-x/core directly
-├── snap-x/
-│   └── designs/                  snap-x's own example designs (self-contained, hand-written)
-│       ├── og.mjs
-│       ├── thumbnail.mjs
-│       ├── cover.mjs
-│       ├── poster.mjs
-│       └── readme-card.mjs
-├── examples/                     rendered PNGs (committed)
+├── examples/
+│   └── snap-x/                   dogfood: the /snap-x skill's output for this repo
+│       ├── designs/*.mjs         og · thumbnail · cover · poster · readme-card (self-contained)
+│       ├── *.png                 rendered images (committed; readme-card.png is the README header)
+│       ├── snap-plan.md          the skill's plan (Step 2)
+│       └── share-copy.txt        where each image goes (Step 4)
+│                                 regenerate: `npm run examples`
 ├── skills/
 │   └── snap-x/
 │       ├── SKILL.md              Claude Code skill definition

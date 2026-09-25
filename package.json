@@ -9,7 +9,9 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "test": "npm test --workspaces --if-present"
+    "test": "npm test --workspaces --if-present",
+    "examples": "node packages/core/src/cli.mjs render examples/snap-x/designs --out examples/snap-x",
+    "examples:check": "node packages/core/src/cli.mjs check examples/snap-x/designs"
   },
   "keywords": [
     "og-images",

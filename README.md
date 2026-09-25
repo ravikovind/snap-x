@@ -1,6 +1,6 @@
 # snap-x
 
-![snap-x](.github/og.png)
+![snap-x](examples/snap-x/readme-card.png)
 
 Render-only Satori pipeline: write a self-contained `.mjs` design file, get a PNG. No browser. No config. No auto-detection. Pure Node.js.
 
@@ -15,28 +15,28 @@ That's the whole surface. Everything else — what the image says, what it looks
 
 ## Examples
 
-> All generated with `snap-x render` — snap-x's own images, made by snap-x.
+> snap-x's own images, made by snap-x: Claude Code ran the [`/snap-x` skill](#claude-code-skill) on this repo, wrote the designs in [`examples/snap-x/designs/`](examples/snap-x/designs), and rendered them. The README card above is one of them. Regenerate all five with `npm run examples`.
 
 **OG card** — 1200×630
 
-![og](examples/og.png)
+![og](examples/snap-x/og.png)
 
 **Thumbnail** — 1280×720
 
-![thumbnail](examples/thumbnail.png)
+![thumbnail](examples/snap-x/thumbnail.png)
 
 **Cover banner** — 1500×500
 
-![cover](examples/cover.png)
+![cover](examples/snap-x/cover.png)
 
 **README card** — 1280×640
 
-![readme-card](examples/readme-card.png)
+![readme-card](examples/snap-x/readme-card.png)
 
 <details>
 <summary>Poster — 1080×1920</summary>
 
-![poster](examples/poster.png)
+![poster](examples/snap-x/poster.png)
 
 </details>
 

@@ -11,7 +11,7 @@ export default function () {
   const textDim = "rgba(255,255,255,0.15)";
 
   const steps = [
-    { n: "01", title: "Write .mjs",    desc: "Self-contained, agent or human" },
+    { n: "01", title: "Claude writes .mjs", desc: "/snap-x reads your project" },
     { n: "02", title: "snap-x check",  desc: "Validate" },
     { n: "03", title: "snap-x render", desc: "Generate" },
   ];
