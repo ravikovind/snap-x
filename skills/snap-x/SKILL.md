@@ -47,38 +47,77 @@ snap-x uses a **Satori pipeline** — no browser, pure Node.js:
 
 Design files are plain `.mjs` — version-controllable, editable, re-renderable any time.
 
-### Satori rules (must follow when writing trees)
+---
+
+## Satori rules (must follow when writing trees)
 
 - Every container must have `display: "flex"` — no block, grid, or inline
 - `children` must always be an array
 - `position: "absolute"` works; `position: "fixed"` does not
 - No `z-index`, no CSS Grid, no animations
 - Text is a string in the children array: `children: ["Hello"]`
-- SVG icons: use `lucideIcon()` from `../src/icons.mjs`
-- Themes: import `getTheme` from `../src/themes/index.mjs`
 
-### Design file format
+---
+
+## Design file format
+
+### Standard (sync)
 
 ```js
-// snap-x/designs/og.mjs
 import { getTheme } from "../../../node_modules/@snap-x/core/src/themes/index.mjs";
+import { lucideIcon } from "../../../node_modules/@snap-x/core/src/icons.mjs";
 
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 
 export default function (config) {
-  const t = getTheme(config.theme);
-  const { title, description, domain, tags } = config;
+  const t = { ...getTheme(config.theme), ...(config.themeOverride ?? {}) };
+  const { title, description, domain, tags, stack } = config;
   return {
     type: "div",
     props: {
-      style: { width: 1200, height: 630, background: t.bg, display: "flex", ... },
+      style: { width: 1200, height: 630, background: t.bg, display: "flex" },
       children: [ ... ]
     }
   };
 }
 ```
 
-Or a static tree (no function) when Claude bakes values directly:
+### With local assets (async)
+
+When the project has logos, partner badges, product images, or SVG icon packs, use an async function to load and embed them:
+
+```js
+import fs from "fs/promises";
+import { getTheme } from "../../../node_modules/@snap-x/core/src/themes/index.mjs";
+
+export const FORMAT = { width: 1200, height: 630, name: "og.png" };
+
+async function loadBase64(filePath, mime) {
+  const buf = await fs.readFile(filePath);
+  return `data:${mime};base64,${buf.toString("base64")}`;
+}
+
+export default async function (config) {
+  const t = { ...getTheme(config.theme), ...(config.themeOverride ?? {}) };
+
+  // Load any local PNG, JPG, or SVG from the project
+  const logo = await loadBase64("./public/logo.png", "image/png");
+  const badge = await loadBase64("./public/partner-badge.svg", "image/svg+xml");
+
+  return {
+    type: "div",
+    props: {
+      style: { width: 1200, height: 630, background: t.bg, display: "flex" },
+      children: [
+        { type: "img", props: { src: logo, width: 200, height: 60, style: { display: "flex", objectFit: "contain" } } },
+        { type: "img", props: { src: badge, width: 160, height: 48, style: { display: "flex", objectFit: "contain" } } },
+      ]
+    }
+  };
+}
+```
+
+### Static tree (baked values)
 
 ```js
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
@@ -87,6 +126,79 @@ export default {
   props: { style: { width: 1200, height: 630, background: "#0a0a0a", display: "flex" }, children: [...] }
 };
 ```
+
+---
+
+## Icons
+
+Use the built-in Lucide icon set:
+
+```js
+import { lucideIcon } from "../../../node_modules/@snap-x/core/src/icons.mjs";
+
+lucideIcon("Zap", { size: 24, color: t.accent })
+lucideIcon("Globe", { size: 16, color: t.textMuted })
+lucideIcon("ArrowRight", { size: 20, color: "#ffffff" })
+```
+
+**Available icons:** `ArrowUpRight` · `ArrowRight` · `Check` · `CheckCircle` · `MapPin` · `Mail` · `MessageCircle` · `Rocket` · `Code` · `Zap` · `Star` · `Globe` · `Package` · `Users` · `TrendingUp` · `Shield` · `Terminal` · `Layers`
+
+Default options: `{ size: 24, color: "currentColor", strokeWidth: 2 }`
+
+---
+
+## Fonts
+
+Any Google Font works via `--font` or in `snap-x.config.json`. snap-x downloads and caches all 4 weights automatically (Regular 400, Medium 500, Bold 700, ExtraBold 800).
+
+```bash
+snap-x render --font "Saira"
+snap-x render --font "Space Grotesk"
+snap-x render --font "DM Mono"
+```
+
+Use `fontWeight` freely in your design — all weights are loaded.
+
+---
+
+## Theme tokens
+
+`getTheme(name)` returns these tokens, all overridable via `themeOverride` in config:
+
+| Token | Description |
+|---|---|
+| `t.bg` | Background color |
+| `t.text` | Primary text |
+| `t.textMuted` | Secondary / muted text |
+| `t.accent` | Brand accent color |
+| `t.accentMuted` | Accent with low opacity (for glows, fills) |
+| `t.borderAccent` | Accent border color |
+| `t.fontDisplay` | Font family string |
+
+Apply per-project overrides:
+
+```js
+const t = { ...getTheme(config.theme), ...(config.themeOverride ?? {}) };
+```
+
+---
+
+## Customization surface
+
+Everything is customizable. Here's what Claude controls when writing design files:
+
+| Layer | How |
+|---|---|
+| Layout | Full Satori tree — any composition of flex containers |
+| Colors | `themeOverride` in config or hardcoded in design |
+| Typography | Font via `--font`; `fontWeight`, `fontSize`, `letterSpacing` per element |
+| Icons | `lucideIcon()` — inline SVG nodes, any size/color |
+| Logos & images | `async` function + `fs.readFile` → base64 `<img>` nodes |
+| Copy | All config fields: `title`, `description`, `domain`, `tags`, `stack` |
+| Per-format design | Each `.mjs` is independent — poster ≠ OG ≠ cover |
+| Output filename | Set `FORMAT.name` |
+| Canvas size | Set `FORMAT.width` / `FORMAT.height` |
+| Sections / content | Services list, stats bar, location row, CTA — anything baked in |
 
 ---
 
@@ -100,7 +212,7 @@ Default: `snap-output/`. Use a timestamped directory `snap-output-YYYY-MM-DD-HHm
 
 **Read:** `references/step-1-inspect.md`
 
-Scan the project and answer the 8-question rubric. Understand the brand: colors, fonts, product description, audience.
+Scan the project and answer the 8-question rubric. Understand the brand: colors, fonts, product description, audience. Look for local assets in `public/`, `assets/`, `static/` that could be embedded.
 
 **Gate:** All 8 questions answered before writing any design.
 
@@ -110,7 +222,7 @@ Scan the project and answer the 8-question rubric. Understand the brand: colors,
 
 **Read:** `references/step-2-plan.md`
 
-Write `<out>/snap-plan.md`. Decide layout, copy, and visual choices for each format. Commit to the creative direction.
+Write `<out>/snap-plan.md`. Decide layout, copy, icons, assets, and visual choices for each format. Commit to the creative direction.
 
 **Gate:** `snap-plan.md` exists with per-format specs.
 
@@ -120,7 +232,7 @@ Write `<out>/snap-plan.md`. Decide layout, copy, and visual choices for each for
 
 **Read:** `references/step-3-design.md`
 
-Write `snap-x/designs/*.mjs` — one file per format. Each file is a valid Satori tree. Follow the Satori rules above.
+Write `snap-x/designs/*.mjs` — one file per format. Each file is a valid Satori tree. Follow the Satori rules above. Use async functions when loading local assets.
 
 Run `npx snap-x check` after writing. Fix any errors before proceeding.
 

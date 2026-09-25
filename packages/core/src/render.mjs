@@ -19,8 +19,8 @@ export async function renderDesign(designPath, outDir, config, fonts) {
   const { width, height, name } = mod.FORMAT;
   const outName = name ?? path.basename(designPath, ".mjs") + ".png";
 
-  // Static tree or factory function
-  const tree = typeof mod.default === "function" ? mod.default(config) : mod.default;
+  // Static tree or factory function (supports async)
+  const tree = typeof mod.default === "function" ? await mod.default(config) : mod.default;
 
   const satori = (await import("satori")).default;
   const { Resvg } = await import("@resvg/resvg-js");

@@ -129,7 +129,12 @@ snap-x render [--format <id>] [--theme dark|light] [--out <dir>]
   "stack": ["Node.js", "TypeScript"],
   "theme": "dark",
   "font": "Inter",
-  "outDir": "./snap-output"
+  "outDir": "./snap-output",
+  "themeOverride": {
+    "accent": "#6366f1",
+    "accentMuted": "rgba(99,102,241,0.25)",
+    "borderAccent": "rgba(99,102,241,0.35)"
+  }
 }
 ```
 
@@ -144,11 +149,13 @@ After `snap-x init`, designs live in `./snap-x/designs/`. Each is a Satori tree:
 ```js
 // snap-x/designs/og.mjs
 import { getTheme } from "@snap-x/core/src/themes/index.mjs";
+import { lucideIcon } from "@snap-x/core/src/icons.mjs";
+import fs from "fs/promises";
 
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 
-export default function (config) {
-  const t = getTheme(config.theme);
+export default async function (config) {
+  const t = { ...getTheme(config.theme), ...(config.themeOverride ?? {}) };
   const { title, description, domain, tags } = config;
 
   return {
@@ -166,9 +173,108 @@ export default function (config) {
 **Satori rules** (the only constraints):
 - Every container needs `display: "flex"` — no block, grid, or inline
 - `children` must be an array
-- No `z-index`, no `position: "fixed"`, no CSS animations
+- `position: "absolute"` works; `position: "fixed"` does not
+- No `z-index`, no CSS Grid, no CSS animations
+- Text goes directly in `children`: `children: ["Hello"]`
 
 Run `snap-x check` to catch any violations before rendering.
+
+---
+
+## Customization
+
+Design files are just JavaScript — anything you can compute, you can render.
+
+### Fonts
+
+Pass any [Google Font](https://fonts.google.com) name via `--font` or in config:
+
+```bash
+snap-x render --font "Saira"
+snap-x render --font "Space Grotesk"
+snap-x render --font "DM Sans"
+```
+
+snap-x downloads and caches the font automatically. All 4 weights (Regular, Medium, Bold, ExtraBold) are loaded so you can use `fontWeight: 400–800` freely in your designs.
+
+### Icons
+
+snap-x ships a built-in Lucide icon set, ready for Satori:
+
+```js
+import { lucideIcon } from "@snap-x/core/src/icons.mjs";
+
+lucideIcon("Zap", { size: 24, color: "#eb1d25" })
+lucideIcon("Globe", { size: 16, color: t.textMuted })
+lucideIcon("ArrowRight", { size: 20, color: t.accent })
+```
+
+Available icons: `ArrowUpRight` · `ArrowRight` · `Check` · `CheckCircle` · `MapPin` · `Mail` · `MessageCircle` · `Rocket` · `Code` · `Zap` · `Star` · `Globe` · `Package` · `Users` · `TrendingUp` · `Shield` · `Terminal` · `Layers`
+
+### Local images & assets
+
+Design functions can be `async` — load any local PNG, JPG, or SVG from your project and embed it as base64:
+
+```js
+import fs from "fs/promises";
+
+export default async function (config) {
+  const logo = await fs.readFile("./public/logo.png");
+  const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
+
+  const icon = await fs.readFile("./public/icon.svg");
+  const iconSrc = `data:image/svg+xml;base64,${icon.toString("base64")}`;
+
+  return {
+    type: "div",
+    props: {
+      style: { display: "flex" },
+      children: [
+        { type: "img", props: { src: logoSrc, width: 200, height: 60, style: { display: "flex" } } },
+        { type: "img", props: { src: iconSrc, width: 48, height: 48, style: { display: "flex" } } },
+      ],
+    },
+  };
+}
+```
+
+Both PNG and SVG are confirmed working. Any file accessible on disk can be embedded.
+
+### Theme overrides
+
+Override any theme token per-project in `snap-x.config.json`:
+
+```json
+{
+  "themeOverride": {
+    "accent": "#eb1d25",
+    "accentMuted": "rgba(235,29,37,0.25)",
+    "borderAccent": "rgba(235,29,37,0.35)",
+    "bg": "#050505",
+    "text": "#ffffff",
+    "textMuted": "#888888"
+  }
+}
+```
+
+Or apply overrides inside the design file itself for per-format control.
+
+### What you can fully customize
+
+| Layer | How |
+|---|---|
+| Layout & composition | Rewrite the `.mjs` tree entirely — it's just JavaScript |
+| Brand colors | `themeOverride` in config or hardcoded in the design |
+| Typography | `--font` flag for any Google Font; per-element `fontWeight`, `fontSize`, `letterSpacing` |
+| Icons | `lucideIcon()` — 18 built-in, add your own to `icons.mjs` |
+| Logos & images | `async` design + `fs.readFile` → base64 `<img>` |
+| Copy & content | All fields driven by `config` (title, description, tags, domain, stack) |
+| Per-format design | Each `.mjs` is independent — poster can look completely different from OG |
+| Output name | `FORMAT.name` controls the output filename |
+| Dimensions | `FORMAT.width` / `FORMAT.height` — any size Satori supports |
+| Static vs dynamic | Export a plain object (static) or a function (dynamic/async) |
+
+The design files are yours. snap-x is just the renderer.
 
 ---
 
