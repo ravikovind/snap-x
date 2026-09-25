@@ -40,7 +40,7 @@ snap-x render <paths...> [--out <dir>]
         fs.writeFile(outDir/name)   write PNG
 ```
 
-`snap-x check <paths...>` follows the same resolve → collect fonts → resolve fonts path, then for each file: validates structural Satori rules (display:flex only, no z-index/position:fixed/grid) and, if fonts loaded successfully, actually runs the tree through `satori()` to catch runtime-only errors (bad image data URIs, invalid font weights, malformed SVG paths) before you spend time on a full render.
+`snap-x check <paths...>` also **warns** when the design's text contains characters none of the loaded fonts can draw (`glyphs.mjs`, via the parser Satori bundles) — they would render as blank boxes. It follows the same resolve → collect fonts → resolve fonts path, then for each file: validates structural Satori rules (display:flex only, no z-index/position:fixed/grid) and, if fonts loaded successfully, actually runs the tree through `satori()` to catch runtime-only errors (bad image data URIs, invalid font weights, malformed SVG paths) before you spend time on a full render.
 
 ---
 
@@ -313,9 +313,10 @@ snap-x/
 │   │   │   ├── load.mjs          imports a design once per file version (mtime-keyed)
 │   │   │   ├── fonts.mjs         Google Fonts loader/cache, FONTS-spec resolution
 │   │   │   ├── fallback.mjs      per-design script fallback fonts (CJK, Arabic, …)
+│   │   │   ├── glyphs.mjs        which characters no loaded font can draw (used by check)
 │   │   │   └── index.mjs         programmatic API (used by @snap-x/mcp)
 │   │   └── test/                 node:test suites (resolve, check, fonts, fallback, load, cli) + helpers.mjs — `npm test`
-│   └── mcp/                      MCP server — imports @snap-x/core directly
+│   └── mcp/                      MCP server — imports @snap-x/core directly; tools + `snap-x://design-guide` resource + `design_cards` prompt; test/ (node:test over stdio)
 ├── examples/
 │   └── snap-x/                   dogfood: the /snap-x skill's output for this repo
 │       ├── designs/*.mjs         og · thumbnail · cover · poster · readme-card (self-contained)
@@ -328,7 +329,9 @@ snap-x/
 │   └── ravikovind/               personal LinkedIn cover from a written spec (plan.md): 1x, @2x, QA overlay, mobile crop; shared `_cover.mjs` builder
 │                                 each folder: designs/*.mjs · *.png · snap-plan.md · share-copy.txt
 ├── scripts/
-│   └── examples.mjs              `npm run examples` — renders/checks every examples/*/designs
+│   ├── examples.mjs              `npm run examples` — renders/checks every examples/*/designs
+│   └── check-packages.mjs        publish dry-run guard: fails on npm manifest warnings / bad bin paths
+├── .github/workflows/ci.yml      tests (Node 20/22/24) + example check + package guard
 ├── skills/
 │   └── snap-x/
 │       ├── SKILL.md              Claude Code skill definition

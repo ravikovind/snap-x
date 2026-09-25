@@ -27,16 +27,31 @@ export default function () {                    // zero arguments; may be async
 }
 ```
 
-A static tree (`export default { type: "div", … }`) also works. To share one composition across several outputs (1×, @2×, QA views), put it in a helper named `_something.mjs` — files starting with `_` are skipped by `snap-x render`/`check` but other designs can import them (each entry file still exports its own `FORMAT` and `FONTS`).
+A static tree (`export default { type: "div", … }`) also works.
+
+**Shared code → a `_helper.mjs`.** Files starting with `_` are never rendered (skipped even when the shell expands `designs/*.mjs`), but designs can import them. Use one for a shared theme, an icon set, or a composition rendered several ways (1×, @2×, QA). Each entry file still exports its own `FORMAT` and `FONTS`:
+
+```js
+// designs/_theme.mjs — helper, not rendered
+export const FONTS = [{ family: "Inter", weights: [400, 700] }, { family: "JetBrains Mono", weights: [400] }];
+export const COLORS = { bg: "#18181b", accent: "#f56565", text: "#f5f5f4" };
+
+// designs/og.mjs — entry
+import { FONTS as F, COLORS } from "./_theme.mjs";
+export const FORMAT = { width: 1200, height: 630, name: "og.png" };
+export const FONTS = F;
+export default () => ({ /* uses COLORS */ });
+```
 
 ## Fonts
 
 - `FONTS` per file: any Google Font and weights. `fontWeight` must be one you declared. A font that can't be fetched falls back to Inter with a warning — check the render if you see it.
 - Non-Latin copy (Japanese, Korean, Arabic, Hebrew, Thai, Devanagari, Bengali, …) gets a Noto fallback automatically; no extra entry needed.
+- **Code-like copy** (`LucideIcons.heart`, commands, file names) needs a monospace font in `FONTS` (e.g. JetBrains Mono): sans fonts confuse `I` / `l` / `1`, so "LucideIcons" can read as "Lucidelcons".
 
 ## Glyphs: draw, don't type, anything the font might lack
 
-A character the loaded fonts don't contain renders as a **blank box**, and `snap-x check` can't see it. Emoji always fail; `✔ ✉ ◷ ★ ●` and even `→` / `↓` fail in some fonts (e.g. Poppins has none of those). Use instead:
+A character the loaded fonts don't contain renders as a **blank box** — `snap-x check` *warns* about these (`no loaded font has: "✔" …`); don't ignore the warning. Emoji always fail; `✔ ✉ ◷ ★ ●` and even `→` / `↓` fail in some fonts (e.g. Poppins has none of those). Use instead:
 - an inline SVG for arrows, stars, chevrons, icons; a CSS circle for bullets; numerals or letters in icon squares
 - only glyphs you have seen render — then verify in Step 4
 
@@ -44,6 +59,8 @@ A character the loaded fonts don't contain renders as a **blank box**, and `snap
 { type: "svg", props: { width: 24, height: 24, viewBox: "0 0 24 24", fill: "none", stroke: accent, strokeWidth: 2,
   strokeLinecap: "round", strokeLinejoin: "round", children: [{ type: "path", props: { d: "M6 9l6 6 6-6" } }] } }
 ```
+
+**A real icon set (Lucide, Heroicons, …):** don't hand-convert SVG markup into nodes. Download the `.svg` files and embed each as an `<img>` data URI (`asset("../assets/heart.svg", "image/svg+xml")`, see below). SVGs using `stroke="currentColor"` render black inside an `<img>` — replace `currentColor` with your hex in the file text first (`svgText.replaceAll("currentColor", "#f5f5f4")`) and embed the result as `data:image/svg+xml;base64,…`. Icon SVGs with no `<text>` work fine this way.
 
 ## Fit the text
 
@@ -79,7 +96,7 @@ Hardcode the brand's palette. Body text needs ≥ 4.5:1 against its background (
 
 ## Check, then fix
 
-Run `npx @snap-x/cli check designs/*.mjs`. Common failures:
+Run `npx -y @snap-x/cli check designs/*.mjs`. Common failures:
 - `display:"block"|"grid"` → `"flex"`; `position:"fixed"` → `"absolute"`
 - "Satori render failed" → a `fontWeight` not in `FONTS`, an `undefined` style value, or a bad image data URI
 - `check` passing does **not** mean it looks right — that's Step 4

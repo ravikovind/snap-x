@@ -3,7 +3,7 @@
 ## Render
 
 ```bash
-npx @snap-x/cli render designs/*.mjs --out snap-output/     # or a single file
+npx -y @snap-x/cli render designs/*.mjs --out snap-output/     # or a single file
 ```
 
 Output names come from each file's `FORMAT.name`. Use `--out` to keep results with the source (e.g. next to `designs/`).
@@ -12,7 +12,7 @@ Output names come from each file's `FORMAT.name`. Use `--out` to keep results wi
 
 `check` can't see visual problems, so open each rendered image (Read it) and go through this list:
 
-- **Blank boxes** where a symbol/arrow/emoji should be → the font lacks the glyph; draw it as SVG (Step 3)
+- **Blank boxes** where a symbol/arrow/emoji should be → the font lacks the glyph (`check` warns about most); draw it as SVG (Step 3)
 - **Wrapped or clipped text** — headlines broken mid-word, text running off an edge, content pushed off the canvas → reduce sizes
 - **Elements clipped by the canvas edge** (an orbit node, an icon half off-screen)
 - **Invisible logo** (dark on dark) or a stretched/blurry one
@@ -43,7 +43,7 @@ cover.png (1500×500)      → X / GitHub org banner
 <linkedin-cover>.png      → LinkedIn: Profile → banner (1584×396)
 poster.png (1080×1920)    → Instagram / WhatsApp story
 
-Regenerate: <command>
+Regenerate: npx -y @snap-x/cli render designs/*.mjs --out <dir>
 Note: <illustrative content, asset sources>
 ```
 

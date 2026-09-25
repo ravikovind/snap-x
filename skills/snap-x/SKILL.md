@@ -10,8 +10,8 @@ Write self-contained Satori `.mjs` design files, render them with `snap-x`, and 
 **Input:** a repo, a website URL, or a written brief. **Output:** PNGs (any size, any names) plus a plan and share notes.
 
 ```bash
-npx @snap-x/cli check  designs/*.mjs
-npx @snap-x/cli render designs/*.mjs --out <dir>
+npx -y @snap-x/cli check  designs/*.mjs
+npx -y @snap-x/cli render designs/*.mjs --out <dir>
 ```
 
 `/snap-x --font "Saira"` suggests a default font; every other choice (formats, colors, copy) is yours.
@@ -31,7 +31,8 @@ npx @snap-x/cli render designs/*.mjs --out <dir>
 - **Self-contained files.** Each design exports `FORMAT`, optionally `FONTS`, and a zero-argument default export (may be async). No config, nothing passed in — hardcode the brand's colors, fonts and copy.
 - **Satori rules.** Every container `display: "flex"`; `children` is an array; no `z-index`, CSS grid, animations or `position: "fixed"`; never an `undefined` style value.
 - **Real logos, never redrawn.** Find the official file (favicon, header logo, brand page), pick the variant for the card's background, save it in `assets/` with `SOURCES.md`. None found → a text wordmark. No third-party customer logos unless asked.
-- **Draw symbols, don't type them.** A glyph the font lacks renders as a blank box and `check` can't see it — emoji, `✔`, and sometimes `→`. Use inline SVG or shapes.
+- **Draw symbols, don't type them.** A glyph the font lacks renders as a blank box — emoji, `✔`, and sometimes `→`. `check` warns about these; use inline SVG or shapes instead.
+- **Sources disagree?** Prefer the README/manifest over API blurbs and say which you chose in the plan.
 - **Fit the text.** Headlines `whiteSpace: "nowrap"`, sized to the canvas (≈ 0.5 em per character for bold display type). Wrapped or clipped text means the size is wrong.
 - **Look before you deliver.** `check` passing ≠ looks right. Open every rendered PNG and fix what you see. Banners also get a danger-zone overlay and a mobile-crop render.
 - **Only the formats the project needs.** Common sizes: OG 1200×630 · README card 1280×640 · thumbnail 1280×720 · X/GitHub cover 1500×500 · LinkedIn cover 1584×396 · poster 1080×1920 · portrait post 1080×1350 — or any size.

@@ -2,7 +2,7 @@
 
 The source is a **repo**, a **website URL**, or a **written brief**. Answer all 9 questions before writing anything.
 
-**Facts rule:** only use facts you actually found — a real number, quote, customer or claim from the source, or from the user's brief. Never invent stats or testimonials. Anything illustrative (a sample notification, a mock inbox) is allowed only if it's obviously generic and you say so in `share-copy.txt`.
+**Facts rule:** only use facts you actually found — a real number, quote, customer or claim from the source, or from the user's brief. Never invent stats or testimonials. Anything illustrative (a sample notification, a mock inbox) is allowed only if it's obviously generic and you say so in `share-copy.txt`. **When sources disagree** (README says 1,854 icons, the API description says 1,776), prefer the primary source — the README or package manifest — and note the choice in the plan.
 
 ## Rubric
 
@@ -18,7 +18,9 @@ The source is a **repo**, a **website URL**, or a **written brief**. Answer all 
 
 ## Where to read
 
-**Repo:** `package.json`, `README.md` (h1 + first paragraph), `app/globals.css` / `styles/globals.css`, `next.config.*`.
+**Repo** (any ecosystem): the manifest — `package.json`, `pubspec.yaml` (Flutter/Dart), `Cargo.toml`, `pyproject.toml`, `go.mod`, `composer.json`, … — for name and description; `README.md` (h1 + first paragraph) for the pitch; and for web projects `app/globals.css` / `styles/globals.css` / `next.config.*` for fonts and colors.
+
+**A library with no brand of its own** (most packages): use the brand of its homepage/docs site or of the thing it wraps (e.g. a Flutter port of Lucide → Lucide's coral accent and logo), and say so in the plan. Otherwise pick a restrained neutral palette.
 
 **Website** — fetch the HTML and its stylesheet:
 
@@ -64,7 +66,7 @@ Real logos make a card look like the brand's own. Look in this order and stop wh
 **Save and record**
 - Download into `<examples-or-out>/assets/` next to the designs, e.g. `curl -sL -o assets/logo.png "<url>"`
 - Add `assets/SOURCES.md`: file → origin URL, plus "Logos and brand marks belong to their owners; used to demonstrate snap-x"
-- Look at the file (Read it) before using it — check it isn't a tiny 16px favicon or an all-black mark on a black card
+- Look at the file (Read it) before using it — check it isn't a tiny 16px favicon or an all-black mark on a black card. **Too small?** Look for a vector or larger version on the project's homepage/docs site: `/logo.svg`, `/logo.dark.svg`, `/favicon.svg`, `/apple-touch-icon.png`, or the header `<img>`; if none, use a text wordmark
 
 **Format rules** (Satori `<img>`): PNG / JPEG / SVG work. **AVIF and WebP do not** — convert to PNG first (e.g. `sharp`, ImageMagick `magick in.avif out.png`). An **SVG that contains `<text>`** can't load webfonts when embedded — rasterise it once (`@resvg/resvg-js` with `font.fontFiles`) and save the PNG. Prefer ≥2× the display size.
 

@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+## Unreleased — core 0.5.1 · cli 0.1.1 · mcp 0.3.0
+
+- **`snap-x check` now warns about characters no loaded font can draw** (they render as blank boxes: emoji, `✔`, `→` in some fonts). Chars covered by the automatic script fallback are not flagged
+- **Fix: `_`-prefixed helper files are always skipped**, including when a shell expands `designs/*.mjs` into explicit paths (0.5.0 did not skip them at all)
+- **MCP:** new `snap-x://design-guide` resource and `design_cards` prompt so agents without the skill get the design rules; `check_designs` surfaces the glyph warnings
+- Skill: fixes from a cold test (repo types beyond Node, brand-less libraries, conflicting facts, undersized logos, real icon sets, monospace for code copy, a `_helper.mjs` example) and `npx -y` so agents never stall on the install prompt
+- CI (GitHub Actions: tests on Node 20/22/24, example designs, and a publish dry-run guard against manifest warnings); MCP server tests
 
 - **Skill restructured:** `SKILL.md` cut from 282 to 54 lines (a lean workflow with gates and non-negotiables); design detail lives in `references/step-3-design.md`
 - Skill now handles a **repo, a website URL or a written brief**, with a website recipe for copy, colors and fonts, a **facts-only rule**, and **real logo/brand-asset discovery**
@@ -10,10 +16,10 @@
 
 ## 0.5.0 (core) / 0.1.0 (cli) / 0.2.1 (mcp)
 
-- **New `@snap-x/cli`** owns the `snap-x` command: `npx @snap-x/cli check|render …`, or `npm install -g @snap-x/cli` for the short `snap-x`
+- **New `@snap-x/cli`** owns the `snap-x` command: `npx -y @snap-x/cli check|render …`, or `npm install -g @snap-x/cli` for the short `snap-x`
 - `@snap-x/core` is now library-only (its `bin` moved to `@snap-x/cli`); the CLI implementation is still exported as `@snap-x/core/cli`
 - `@snap-x/mcp` updated to depend on `@snap-x/core ^0.5.0`
-- Migration: `npx @snap-x/core …` → `npx @snap-x/cli …`
+- Migration: `npx @snap-x/core …` → `npx -y @snap-x/cli …`
 
 ## 0.4.0 — first public release
 

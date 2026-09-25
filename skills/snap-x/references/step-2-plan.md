@@ -23,7 +23,7 @@ Answer these for the full pack:
 label:       [domain or short name]
 title:       [main headline — keep under 60 chars]
 description: [one line — keep under 100 chars]
-tags:        [2–3 pills]
+tags:        [2–3 pills, only real ones]
 domain:      [bottom-right brand]
 
 ### Thumbnail (1280×720)
@@ -46,7 +46,7 @@ footer:   [domain]
 ### README card (1280×640)
 name:        [project name]
 description: [one line, ≤140 chars]
-stack:       [up to 6 pills]
+stack:       [2–4 real pills — tech, platform, license; skip pills if there's nothing true to say]
 owner:       [optional — GitHub org or author]
 ```
 
@@ -62,4 +62,4 @@ For banners, also plan two QA renders (Step 4): a debug overlay showing the zone
 
 ## Gate
 
-`snap-plan.md` must exist with copy decided for every format before Step 3.
+`snap-plan.md` must exist with copy decided for every format before Step 3. Include the exact **regenerate command** (`npx -y @snap-x/cli render designs/*.mjs --out <dir>`) so anyone can rebuild the images.
