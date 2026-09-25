@@ -1,114 +1,48 @@
 export const FORMAT = { width: 1280, height: 720, name: "thumbnail.png" };
-export const FONTS  = [{ family: "Saira", weights: [400, 700, 900] }];
+export const FONTS = [
+  { family: "Saira", weights: [400, 700, 900] },
+  { family: "JetBrains Mono", weights: [400, 700] },
+];
+
+const RED = "#eb1d25";
+const INK = "#f5f5f5";
+const MUTED = "rgba(255,255,255,0.52)";
+const LINE = "rgba(255,255,255,0.14)";
+
+const box = (style, children = []) => ({ type: "div", props: { style: { display: "flex", ...style }, children } });
+const txt = (text, style) => box(style, [text]);
+const H = (size) => ({ fontSize: size, fontWeight: 900, lineHeight: 0.96, letterSpacing: "-0.045em", whiteSpace: "nowrap" });
+
+const chip = (label, filled, big) =>
+  box({
+    padding: big ? "10px 24px" : "7px 16px", borderRadius: 999, fontFamily: "JetBrains Mono", fontSize: big ? 20 : 14, fontWeight: 700,
+    color: filled ? "#fff" : INK, background: filled ? RED : "transparent", border: `1px solid ${filled ? RED : LINE}`,
+  }, [label]);
+const arrow = (size = 16, m = 10) => txt("→", { color: MUTED, fontSize: size, margin: `0 ${m}px` });
+const brand = (size = 17) => box({ alignItems: "center", gap: 12 }, [
+  box({ width: size * 0.8, height: size * 0.8, background: RED }),
+  txt("SNAP-X", { fontSize: size, fontWeight: 700, letterSpacing: "0.24em", color: INK }),
+]);
+const glow = (extra) => box({ position: "absolute", width: 760, height: 760, background: "radial-gradient(circle, rgba(235,29,37,0.30) 0%, rgba(235,29,37,0) 62%)", ...extra });
+const command = (size = 14) => box({ fontFamily: "JetBrains Mono", fontSize: size, color: MUTED, gap: 10 }, [
+  txt("$", { color: RED, fontWeight: 700 }), txt("npx @snap-x/cli render designs/*.mjs", { color: INK }),
+]);
+const root = (w, h, style, children) => box({ width: w, height: h, background: "#070707", fontFamily: "Saira", position: "relative", overflow: "hidden", ...style }, children);
 
 export default function () {
-  const accent = "#eb1d25";
-  const accentMuted = "rgba(235,29,37,0.25)";
-  const borderAccent = "rgba(235,29,37,0.30)";
-  const bg = "#080808";
-  const text = "rgba(255,255,255,0.95)";
-  const textMuted = "rgba(255,255,255,0.45)";
-
-  const formats = [
-    { name: "og",           size: "1200×630",  tag: "Open Graph" },
-    { name: "thumbnail",    size: "1280×720",  tag: "YouTube" },
-    { name: "cover",        size: "1500×500",  tag: "GitHub Banner" },
-    { name: "poster",       size: "1080×1920", tag: "Instagram" },
-    { name: "linkedin-cover", size: "1584×396", tag: "LinkedIn" },
-    { name: "custom",       size: "any size",  tag: "Your format" },
-  ];
-
-  return {
-    type: "div",
-    props: {
-      style: { width: 1280, height: 720, background: bg, display: "flex", flexDirection: "column", fontFamily: "Saira", position: "relative", overflow: "hidden" },
-      children: [
-        // top glow
-        { type: "div", props: { style: { position: "absolute", top: -100, right: -60, width: 560, height: 560, background: `radial-gradient(circle, ${accentMuted} 0%, transparent 60%)`, display: "flex" }, children: [] } },
-        // top accent bar
-        { type: "div", props: { style: { position: "absolute", top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(to right, ${accent}, ${accentMuted}, transparent)`, display: "flex" }, children: [] } },
-
-        // HEADER
-        {
-          type: "div",
-          props: {
-            style: { height: 80, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 68px", flexShrink: 0 },
-            children: [
-              { type: "div", props: { style: { display: "flex", alignItems: "baseline", gap: 2, display: "flex" }, children: [
-                { type: "div", props: { style: { color: text, fontSize: 22, fontWeight: 900, letterSpacing: "-0.03em", display: "flex" }, children: ["snap"] } },
-                { type: "div", props: { style: { color: accent, fontSize: 22, fontWeight: 900, letterSpacing: "-0.03em", display: "flex" }, children: ["-x"] } },
-              ]}},
-              { type: "div", props: { style: { color: accent, fontSize: 12, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", display: "flex" }, children: ["Any format · Any size"] } },
-            ],
-          },
-        },
-
-        // BODY
-        {
-          type: "div",
-          props: {
-            style: { flex: 1, display: "flex", flexDirection: "row", padding: "0 68px 0 68px", gap: 52, alignItems: "center" },
-            children: [
-              // Left — headline
-              {
-                type: "div",
-                props: {
-                  style: { display: "flex", flexDirection: "column", gap: 20, width: 500, flexShrink: 0 },
-                  children: [
-                    { type: "div", props: { style: { display: "flex", flexDirection: "column", gap: 0 }, children: [
-                      { type: "div", props: { style: { color: text, fontSize: 76, fontWeight: 900, lineHeight: 0.95, letterSpacing: "-0.04em", display: "flex" }, children: ["Social"] } },
-                      { type: "div", props: { style: { color: text, fontSize: 76, fontWeight: 900, lineHeight: 0.95, letterSpacing: "-0.04em", display: "flex" }, children: ["images,"] } },
-                      { type: "div", props: { style: { color: accent, fontSize: 76, fontWeight: 900, lineHeight: 0.95, letterSpacing: "-0.04em", display: "flex" }, children: ["automated."] } },
-                    ]}},
-                    { type: "div", props: { style: { color: textMuted, fontSize: 17, lineHeight: 1.55, display: "flex", flexWrap: "wrap" }, children: ["One command. No browser. Pure Node.js.\nAdd a .mjs file — get a PNG."] } },
-                    { type: "div", props: { style: { display: "flex", gap: 8 }, children: ["check", "render"].map(cmd => ({
-                      type: "div", props: { style: { background: "rgba(255,255,255,0.06)", border: `1px solid ${borderAccent}`, borderRadius: 6, padding: "5px 14px", display: "flex" }, children: [
-                        { type: "div", props: { style: { color: accent, fontSize: 12, fontWeight: 700, display: "flex" }, children: ["> "] } },
-                        { type: "div", props: { style: { color: text, fontSize: 12, fontWeight: 600, display: "flex" }, children: [`snap-x ${cmd}`] } },
-                      ]},
-                    }))}},
-                  ],
-                },
-              },
-
-              // divider
-              { type: "div", props: { style: { width: 1, alignSelf: "stretch", marginTop: 40, marginBottom: 40, background: `linear-gradient(to bottom, transparent, ${borderAccent}, transparent)`, display: "flex", flexShrink: 0 }, children: [] } },
-
-              // Right — format grid
-              {
-                type: "div",
-                props: {
-                  style: { flex: 1, display: "flex", flexDirection: "column", gap: 8 },
-                  children: formats.map((f, i) => ({
-                    type: "div",
-                    props: {
-                      style: {
-                        display: "flex", alignItems: "center", justifyContent: "space-between",
-                        padding: "11px 16px",
-                        background: i === formats.length - 1 ? `rgba(235,29,37,0.08)` : "rgba(255,255,255,0.04)",
-                        border: `1px solid ${i === formats.length - 1 ? borderAccent : "rgba(255,255,255,0.06)"}`,
-                        borderRadius: 8,
-                      },
-                      children: [
-                        { type: "div", props: { style: { display: "flex", flexDirection: "column", gap: 1 }, children: [
-                          { type: "div", props: { style: { color: i === formats.length - 1 ? accent : text, fontSize: 13, fontWeight: 700, display: "flex" }, children: [f.name + ".mjs"] } },
-                          { type: "div", props: { style: { color: textMuted, fontSize: 11, display: "flex" }, children: [f.tag] } },
-                        ]}},
-                        { type: "div", props: { style: { color: i === formats.length - 1 ? accent : textMuted, fontSize: 12, fontWeight: 600, display: "flex" }, children: [f.size] } },
-                      ],
-                    },
-                  })),
-                },
-              },
-            ],
-          },
-        },
-
-        // FOOTER
-        { type: "div", props: { style: { height: 52, display: "flex", alignItems: "center", justifyContent: "center", borderTop: `1px solid rgba(255,255,255,0.05)`, flexShrink: 0 }, children: [
-          { type: "div", props: { style: { color: textMuted, fontSize: 12, letterSpacing: "0.08em", display: "flex" }, children: ["npm install -g @snap-x/cli"] } },
-        ]}},
-      ],
-    },
-  };
+  return root(1280, 720, { flexDirection: "column", justifyContent: "space-between", padding: "60px 80px 60px" }, [
+    glow({ top: -240, right: -180, width: 900, height: 900 }),
+    box({ alignItems: "center", justifyContent: "space-between" }, [
+      brand(20),
+      txt("/snap-x · Claude Code skill", { fontSize: 16, fontWeight: 700, letterSpacing: "0.12em", color: MUTED }),
+    ]),
+    box({ flexDirection: "column" }, [
+      txt("Claude writes it.", { ...H(122), color: INK }),
+      box({ alignItems: "baseline", gap: 28 }, [
+        txt("snap-x", { ...H(122), color: RED }),
+        txt("renders it.", { ...H(122), color: INK }),
+      ]),
+    ]),
+    box({ alignItems: "center" }, [chip("your project", false, true), arrow(22, 14), chip("Claude Code", false, true), arrow(22, 14), chip("design.mjs", false, true), arrow(22, 14), chip("PNG", true, true)]),
+  ]);
 }
