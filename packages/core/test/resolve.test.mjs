@@ -67,3 +67,16 @@ test("regex metacharacters in a glob are treated literally", async () => {
   const out = await resolveDesignFiles([path.join(dir, "a.b*")]);
   assert.deepEqual(base(out), ["a.b.mjs"]);
 });
+
+test("underscore-prefixed helper files are skipped in directories and globs", async () => {
+  await writeFiles(dir, { "_shared.mjs": "", "sub/_helper.mjs": "", "sub/real.mjs": "" });
+  assert.ok(!base(await resolveDesignFiles([dir])).includes("_shared.mjs"));
+  assert.ok(!base(await resolveDesignFiles([path.join(dir, "*.mjs")])).includes("_shared.mjs"));
+  assert.ok(!base(await resolveDesignFiles([path.join(dir, "*")])).includes("_shared.mjs"));
+  const sub = base(await resolveDesignFiles([path.join(dir, "sub")]));
+  assert.ok(sub.includes("real.mjs") && !sub.includes("_helper.mjs"));
+});
+
+test("an underscore file passed explicitly is still resolved", async () => {
+  assert.deepEqual(base(await resolveDesignFiles([path.join(dir, "_shared.mjs")])), ["_shared.mjs"]);
+});

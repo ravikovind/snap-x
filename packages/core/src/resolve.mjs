@@ -2,7 +2,11 @@ import path from "path";
 import fs from "fs/promises";
 import { existsSync, statSync } from "fs";
 
-/** Expands literal files, directories, and single-`*`-wildcard globs into a flat, deduped list of absolute .mjs paths. */
+/**
+ * Expands literal files, directories, and single-`*`-wildcard globs into a flat, deduped list of absolute .mjs paths.
+ * Files whose name starts with `_` are helpers (shared builders etc.): skipped when a directory or glob is expanded,
+ * but still honoured when passed explicitly.
+ */
 export async function resolveDesignFiles(patterns) {
   const out = [];
   for (const p of patterns) {
@@ -14,7 +18,7 @@ export async function resolveDesignFiles(patterns) {
       const re = new RegExp("^" + filePattern.split("*").map(escapeRegExp).join(".*") + "$");
       const entries = existsSync(dir) ? await fs.readdir(dir) : [];
       for (const entry of entries.sort()) {
-        if (entry.endsWith(".mjs") && re.test(entry)) out.push(path.join(dir, entry));
+        if (isDesign(entry) && re.test(entry)) out.push(path.join(dir, entry));
       }
       continue;
     }
@@ -24,7 +28,7 @@ export async function resolveDesignFiles(patterns) {
     if (statSync(abs).isDirectory()) {
       const entries = await fs.readdir(abs);
       for (const entry of entries.sort()) {
-        if (entry.endsWith(".mjs")) out.push(path.join(abs, entry));
+        if (isDesign(entry)) out.push(path.join(abs, entry));
       }
       continue;
     }
@@ -33,6 +37,8 @@ export async function resolveDesignFiles(patterns) {
   }
   return [...new Set(out)];
 }
+
+const isDesign = (name) => name.endsWith(".mjs") && !name.startsWith("_");
 
 function escapeRegExp(s) {
   return s.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
