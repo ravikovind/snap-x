@@ -40,6 +40,18 @@ That's the whole surface. Everything else — what the image says, what it looks
 
 </details>
 
+### Another project: Open Notifier
+
+snap-x doesn't need a repo, just facts about a project. For [open-notifier.io](https://open-notifier.io) the skill read the live site's meta tags and stylesheet (brand green `#0b9444`, Saira, real copy) and produced two cards, in [`examples/open-notifier/`](examples/open-notifier):
+
+**OG card** — 1200×630
+
+![open-notifier og](examples/open-notifier/og.png)
+
+**Notifications card** — 1080×1350
+
+![open-notifier notifications](examples/open-notifier/notifications.png)
+
 ---
 
 ## How it works

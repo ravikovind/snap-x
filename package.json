@@ -10,8 +10,8 @@
   "scripts": {
     "build": "npm run build --workspaces",
     "test": "npm test --workspaces --if-present",
-    "examples": "node packages/core/src/cli.mjs render examples/snap-x/designs --out examples/snap-x",
-    "examples:check": "node packages/core/src/cli.mjs check examples/snap-x/designs"
+    "examples": "node packages/core/src/cli.mjs render examples/snap-x/designs --out examples/snap-x && node packages/core/src/cli.mjs render examples/open-notifier/designs --out examples/open-notifier",
+    "examples:check": "node packages/core/src/cli.mjs check examples/snap-x/designs && node packages/core/src/cli.mjs check examples/open-notifier/designs"
   },
   "keywords": [
     "og-images",

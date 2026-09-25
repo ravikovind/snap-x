@@ -329,6 +329,8 @@ snap-x/
 │       ├── snap-plan.md          the skill's plan (Step 2)
 │       └── share-copy.txt        where each image goes (Step 4)
 │                                 regenerate: `npm run examples`
+│   └── open-notifier/            second dogfood, built from a website (no repo): og + notifications
+│       └── designs/*.mjs · *.png · snap-plan.md · share-copy.txt
 ├── skills/
 │   └── snap-x/
 │       ├── SKILL.md              Claude Code skill definition
