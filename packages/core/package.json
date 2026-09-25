@@ -9,7 +9,7 @@
   "type": "module",
   "main": "src/index.mjs",
   "bin": {
-    "snap-x": "./src/cli.mjs"
+    "snap-x": "src/cli.mjs"
   },
   "files": [
     "src/",

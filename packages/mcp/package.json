@@ -9,7 +9,7 @@
   "type": "module",
   "main": "src/index.mjs",
   "bin": {
-    "snap-x-mcp": "./src/index.mjs"
+    "snap-x-mcp": "src/index.mjs"
   },
   "scripts": {
     "start": "node src/index.mjs"
