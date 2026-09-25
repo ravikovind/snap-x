@@ -111,6 +111,8 @@ export default async function () {
 }
 ```
 
+Relative paths in `fs.readFile` resolve from the directory you **run `snap-x` in**, not from the design file — so run it from the project root (where `./public/logo.png` lives), or use absolute paths.
+
 ### Static tree (no function needed)
 
 ```js

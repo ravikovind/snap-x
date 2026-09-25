@@ -64,6 +64,10 @@ export default function () {
 }
 ```
 
+## Local assets
+
+Async designs may `fs.readFile("./public/logo.png")` and embed it as a base64 `<img>` (see SKILL.md). Paths resolve from the directory you run `snap-x` in, so run it from the project root.
+
 ## After writing all files
 
 Run `npx snap-x check designs/*.mjs` and fix every error before proceeding to Step 4.
