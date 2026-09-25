@@ -3,7 +3,7 @@
 Render-only Satori pipeline: a self-contained `.mjs` design file in, a PNG out. No browser, no config.
 
 ```bash
-npm install -g @snap-x/core   # or use the `snap-x` package: npx snap-x …
+npm install -g @snap-x/core   # provides the `snap-x` command; or run `npx @snap-x/core …`
 
 snap-x check  designs/*.mjs
 snap-x render designs/*.mjs --out snap-output

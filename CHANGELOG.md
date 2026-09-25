@@ -5,8 +5,9 @@
 snap-x is now a **render-only** pipeline: a self-contained `.mjs` design file in, a PNG out. No browser, no config, no auto-detection.
 
 ### Packages
-- `snap-x` — the CLI (`npx snap-x check|render …`), a thin entry over `@snap-x/core`
-- `@snap-x/core` — the engine: check + render, Satori renderer, font loader, programmatic API
+(The unscoped `snap-x` name is unavailable on npm — too similar to the existing `snapx` — so the CLI ships inside `@snap-x/core`.)
+
+- `@snap-x/core` — the CLI (`npx @snap-x/core check|render …`, or `snap-x` after a global install) and the engine: Satori renderer, font loader, programmatic API
 - `@snap-x/mcp` 0.2.0 — MCP server: `render_designs`, `check_designs`, `list_formats`
 
 ### Breaking changes (from the pre-release tooling)

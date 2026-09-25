@@ -106,7 +106,7 @@ export default function () {
 
         // FOOTER
         { type: "div", props: { style: { height: 52, display: "flex", alignItems: "center", justifyContent: "center", borderTop: `1px solid rgba(255,255,255,0.05)`, flexShrink: 0 }, children: [
-          { type: "div", props: { style: { color: textMuted, fontSize: 12, letterSpacing: "0.08em", display: "flex" }, children: ["npm install -g snap-x"] } },
+          { type: "div", props: { style: { color: textMuted, fontSize: 12, letterSpacing: "0.08em", display: "flex" }, children: ["npm install -g @snap-x/core"] } },
         ]}},
       ],
     },

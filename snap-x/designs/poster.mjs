@@ -99,8 +99,8 @@ export default function () {
 
         // FOOTER (140px)
         { type: "div", props: { style: { height: 140, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, borderTop: `1px solid ${borderAccent}`, flexShrink: 0 }, children: [
-          { type: "div", props: { style: { color: textMuted, fontSize: 13, letterSpacing: "0.06em", display: "flex" }, children: ["npm install -g snap-x"] } },
-          { type: "div", props: { style: { color: accent, fontSize: 13, fontWeight: 700, letterSpacing: "0.10em", display: "flex" }, children: ["snap-x"] } },
+          { type: "div", props: { style: { color: textMuted, fontSize: 13, letterSpacing: "0.06em", display: "flex" }, children: ["npm install -g @snap-x/core"] } },
+          { type: "div", props: { style: { color: accent, fontSize: 13, fontWeight: 700, letterSpacing: "0.10em", display: "flex" }, children: ["@snap-x/core"] } },
         ]}},
       ],
     },

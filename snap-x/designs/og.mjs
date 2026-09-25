@@ -12,7 +12,7 @@ export default function () {
   const textDim = "rgba(255,255,255,0.20)";
 
   const lines = [
-    { prompt: "$", cmd: "npx snap-x render designs/*.mjs", out: null },
+    { prompt: "$", cmd: "npx @snap-x/core render designs/*.mjs", out: null },
     { prompt: " ", cmd: null, out: "→  og.png        (67 KB)" },
     { prompt: " ", cmd: null, out: "→  cover.png     (66 KB)" },
     { prompt: " ", cmd: null, out: "→  poster.png   (124 KB)" },
