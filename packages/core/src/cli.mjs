@@ -177,18 +177,14 @@ function resolveDesignDir(projectDir) {
 }
 
 async function getDesignFiles(designDir, formatFilter) {
-  const NAME_MAP = {
-    "og.mjs": "og",
-    "cover.mjs": "cover",
-    "thumbnail.mjs": "thumbnail",
-    "poster.mjs": "poster",
-    "readme-card.mjs": "readme",
-    "readme.mjs": "readme",
-  };
   const all = await fs.readdir(designDir);
   return all
     .filter((f) => f.endsWith(".mjs"))
-    .filter((f) => !formatFilter || NAME_MAP[f] === formatFilter || f === `${formatFilter}.mjs`)
+    .filter((f) => {
+      if (!formatFilter) return true;
+      const stem = f.replace(/\.mjs$/, "");
+      return stem === formatFilter || f === `${formatFilter}.mjs`;
+    })
     .map((f) => ({ name: f, path: path.join(designDir, f) }));
 }
 

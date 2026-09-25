@@ -4,7 +4,7 @@
 
 Turn any project into a full social image pack — one command. No browser. Pure Node.js.
 
-OG card · Thumbnail · Cover banner · Poster · README card
+Any size. Any format. Add a `.mjs` file, get a PNG.
 
 ```bash
 npx snap-x init    # scaffold config + design files
@@ -37,6 +37,10 @@ npx snap-x render  # Satori → PNG
 
 ## What it generates
 
+Any format you define. Add a `.mjs` file → get a PNG.
+
+**Default designs (scaffolded by `snap-x init`):**
+
 | Format | Size | Use case |
 |---|---|---|
 | `og.png` | 1200×630 | Open Graph / Twitter card |
@@ -44,6 +48,18 @@ npx snap-x render  # Satori → PNG
 | `cover.png` | 1500×500 | GitHub / Twitter/X banner |
 | `poster.png` | 1080×1920 | Instagram story / vertical |
 | `readme-card.png` | 1280×640 | GitHub README social preview |
+
+**Add your own — any size, any name:**
+
+```js
+// snap-x/designs/linkedin-cover.mjs
+export const FORMAT = { width: 1584, height: 396, name: "linkedin-cover.png" };
+export default function (config) { ... }
+```
+
+```bash
+snap-x render --format linkedin-cover
+```
 
 ---
 

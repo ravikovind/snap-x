@@ -9,7 +9,11 @@ You built it. Now frame it.
 
 `/snap-x` generates a complete branded image pack by writing Satori design trees and rendering them — no browser, pure Node.js.
 
-**Formats:** OG (1200×630) · Thumbnail (1280×720) · Cover (1500×500) · Poster (1080×1920) · README card (1280×640)
+**Formats:** Any size, any name — add a `.mjs` file, get a PNG.
+
+Default designs (from `snap-x init`): OG (1200×630) · Thumbnail (1280×720) · Cover (1500×500) · Poster (1080×1920) · README card (1280×640)
+
+Custom examples: LinkedIn cover (1584×396) · App Store screenshot (1290×2796) · Twitter header (1500×500) · Discord banner (960×540) — or any dimension you need.
 
 ---
 
@@ -25,7 +29,7 @@ You built it. Now frame it.
 
 | Option | Values | Default |
 |---|---|---|
-| `--format` | `og`, `thumbnail`, `cover`, `poster`, `readme` | all |
+| `--format` | any design filename stem (e.g. `og`, `linkedin-cover`, `app-screenshot`) | all |
 | `--theme` | `dark`, `light` | `dark` |
 | `--title` | string | inferred from project |
 | `--desc` | string | inferred from project |
@@ -252,7 +256,15 @@ Write `<out>/snap-plan.md`. Decide layout, copy, icons, assets, and visual choic
 
 **Read:** `references/step-3-design.md`
 
-Write `snap-x/designs/*.mjs` — one file per format. Each file is a valid Satori tree. Follow the Satori rules above. Use async functions when loading local assets.
+Write `snap-x/designs/*.mjs` — one file per format needed. Format names and dimensions are **not fixed** — choose what fits the project:
+
+- Use the 5 defaults when broad social coverage is needed
+- Add `linkedin-cover.mjs` (1584×396), `app-screenshot.mjs` (1290×2796), or any custom size
+- Skip formats that don't apply — a CLI tool doesn't need a poster
+
+`--format` matches by filename stem: `--format linkedin-cover` renders `linkedin-cover.mjs`.
+
+Each file is a valid Satori tree. Follow the Satori rules above. Use async functions when loading local assets.
 
 Run `npx snap-x check` after writing. Fix any errors before proceeding.
 

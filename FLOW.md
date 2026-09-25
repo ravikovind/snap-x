@@ -6,9 +6,11 @@
 
 ## What it is
 
-snap-x turns any project into a full branded image pack — no browser, pure Node.js.
+snap-x turns any project into a branded image pack — no browser, pure Node.js.
 
-**5 formats generated in one command:**
+**Any format. Any size. Add a `.mjs` file → get a PNG.**
+
+Default designs (scaffolded by `snap-x init`):
 
 | Format            | Size       | Use case                          |
 |-------------------|------------|-----------------------------------|
@@ -17,6 +19,16 @@ snap-x turns any project into a full branded image pack — no browser, pure Nod
 | `cover.png`       | 1500×500   | GitHub / Twitter/X banner         |
 | `poster.png`      | 1080×1920  | Instagram story / vertical        |
 | `readme-card.png` | 1280×640   | GitHub README social preview      |
+
+Custom — add any file with any dimensions:
+
+| Example                  | Size        |
+|--------------------------|-------------|
+| `linkedin-cover.mjs`     | 1584×396    |
+| `app-screenshot.mjs`     | 1290×2796   |
+| `twitter-header.mjs`     | 1500×500    |
+| `discord-banner.mjs`     | 960×540     |
+| `product-hunt-banner.mjs`| 1270×760    |
 
 ---
 
@@ -58,7 +70,7 @@ snap-x render [--project <dir>] [--format <id>] [--font <name>]
 | Flag        | Default         | Description                                           |
 |-------------|-----------------|-------------------------------------------------------|
 | `--project` | `cwd`           | Path to project directory                             |
-| `--format`  | all             | One format: `og` `cover` `thumbnail` `poster` `readme` |
+| `--format`  | all             | Any design filename stem: `og`, `linkedin-cover`, `app-screenshot`, … |
 | `--font`    | `Inter`         | Any Google Font family name                           |
 | `--theme`   | `dark`          | Visual theme hint (passed to config)                  |
 | `--out`     | `./snap-output` | Output directory                                      |
