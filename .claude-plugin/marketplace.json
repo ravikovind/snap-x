@@ -1,0 +1,13 @@
+{
+  "owner": {
+    "name": "VoltVave Innovations",
+    "url": "https://voltvave.com"
+  },
+  "plugins": [
+    {
+      "name": "snap-x",
+      "source": "./",
+      "description": "Turn any project into a full image pack — OG cards, thumbnails, covers, posters. One command, pure Node.js, no headless browser."
+    }
+  ]
+}

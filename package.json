@@ -1,0 +1,21 @@
+{
+  "name": "snap-x",
+  "version": "0.1.0",
+  "description": "Turn any project into a full image pack — OG cards, thumbnails, covers, posters. One command.",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm test --workspaces --if-present"
+  },
+  "keywords": ["og-images", "social-images", "satori", "claude-skill"],
+  "author": "VoltVave Innovations",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/voltvave/snap-x.git"
+  }
+}

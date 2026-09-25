@@ -1,0 +1,29 @@
+{
+  "name": "@snap-x/core",
+  "version": "0.1.0",
+  "description": "Core image generation engine for snap-x — Satori + Resvg, zero headless browser.",
+  "type": "module",
+  "main": "src/index.mjs",
+  "bin": {
+    "snap-x": "./src/cli.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./render": "./src/render.mjs",
+    "./templates/*": "./src/templates/*.mjs",
+    "./themes/*": "./src/themes/*.mjs"
+  },
+  "scripts": {
+    "start": "node src/cli.mjs"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "gray-matter": "^4.0.3",
+    "satori": "^0.11.4"
+  },
+  "keywords": ["og-images", "satori", "resvg", "social-cards", "snap-x"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
