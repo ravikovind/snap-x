@@ -38,9 +38,22 @@ export default function (config) {
           props: {
             style: { width: 700, height: 640, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "52px 48px 52px 60px" },
             children: [
-              // eyebrow
-              { type: "div", props: { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
-                { type: "div", props: { style: { width: 6, height: 6, borderRadius: 99, background: accent, display: "flex" }, children: [] } },
+              // eyebrow — image-plus lucide icon + label
+              { type: "div", props: { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+                {
+                  type: "svg",
+                  props: {
+                    width: 22, height: 22, viewBox: "0 0 24 24", fill: "none",
+                    stroke: accent, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
+                    children: [
+                      { type: "path",   props: { d: "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7" } },
+                      { type: "line",   props: { x1: "16", x2: "22", y1: "5", y2: "5" } },
+                      { type: "line",   props: { x1: "19", x2: "19", y1: "2", y2: "8" } },
+                      { type: "circle", props: { cx: "9", cy: "9", r: "2" } },
+                      { type: "path",   props: { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" } },
+                    ],
+                  },
+                },
                 { type: "div", props: { style: { color: accent, fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", display: "flex" }, children: ["@snap-x/core"] } },
               ]}},
 
