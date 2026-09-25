@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — core 0.6.0 · cli 0.2.0 · mcp 0.4.0
+## 0.6.0 — core 0.6.0 · cli 0.2.0 · mcp 0.4.0
 
 - **Emoji support:** emoji (incl. flags and ZWJ sequences) are drawn as Twemoji images, fetched once and cached on disk (works offline afterwards). `check` no longer flags them
 - **Platform formats:** `snap-x formats` lists 19 formats — link previews, YouTube thumbnails / Shorts / channel art, X, LinkedIn, Instagram, Google Play, App Store — with sizes, notes, no-alpha rules and placement zones; 11 are checked against official documentation (source URLs shown), the rest are marked unverified
