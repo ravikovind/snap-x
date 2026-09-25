@@ -13,7 +13,7 @@
 
 import path from "path";
 import fs from "fs/promises";
-import { existsSync, statSync } from "fs";
+import { resolveDesignFiles } from "./resolve.mjs";
 
 const rawArgs = process.argv.slice(2);
 const SUBCMDS = ["render", "check"];
@@ -94,42 +94,4 @@ async function runCheck(files) {
 
   console.log(allOk ? "\n  All designs valid.\n" : "\n  Fix errors above before rendering.\n");
   if (!allOk) process.exit(1);
-}
-
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
-/** Expands literal files, directories, and single-`*`-wildcard globs into a flat list of .mjs paths. */
-async function resolveDesignFiles(patterns) {
-  const out = [];
-  for (const p of patterns) {
-    const abs = path.resolve(p);
-
-    if (p.includes("*")) {
-      const dir = path.dirname(abs);
-      const filePattern = path.basename(abs);
-      const re = new RegExp("^" + filePattern.split("*").map(escapeRegExp).join(".*") + "$");
-      const entries = existsSync(dir) ? await fs.readdir(dir) : [];
-      for (const entry of entries) {
-        if (entry.endsWith(".mjs") && re.test(entry)) out.push(path.join(dir, entry));
-      }
-      continue;
-    }
-
-    if (!existsSync(abs)) continue;
-
-    if (statSync(abs).isDirectory()) {
-      const entries = await fs.readdir(abs);
-      for (const entry of entries) {
-        if (entry.endsWith(".mjs")) out.push(path.join(abs, entry));
-      }
-      continue;
-    }
-
-    out.push(abs);
-  }
-  return [...new Set(out)];
-}
-
-function escapeRegExp(s) {
-  return s.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
 }

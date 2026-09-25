@@ -34,6 +34,7 @@ snap-x render <paths...> [--out <dir>]
   └── for each design file:
         import(designPath)          dynamic ESM import
         await mod.default()         call design function — no arguments
+        loadFallbackFonts(tree)     Noto subsets for any non-Latin scripts in the text
         satori(tree, {w,h,fonts})   tree → SVG string
         Resvg(svg).render()         SVG → PNG buffer
         fs.writeFile(outDir/name)   write PNG
@@ -161,6 +162,10 @@ export const FONTS = [
 ```
 
 Omitted → defaults to `[{ family: "Inter", weights: [400, 700, 900] }]`.
+
+### Script fallback (automatic)
+
+Satori falls back per glyph across *every* loaded font, whatever `fontFamily` a node names. `renderDesign` uses that: after building a design's tree it collects the text (`fallback.mjs › collectText`), and for each script the text contains that isn't Latin/Latin-1 (CJK → Noto Sans JP, Hangul → KR, Arabic, Hebrew, Thai, Devanagari, Bengali, plus Cyrillic/Greek/Latin-ext → Noto Sans) it fetches a **subset containing only those characters** via Google's `text=` parameter (a few KB), at the same weights as the primary fonts, and appends it *after* the primary fonts so they always win. A fallback that can't be fetched warns and is skipped. Emoji are not covered.
 
 `resolveFonts()` (in `fonts.mjs`) merges every file's `FONTS` in a batch, dedupes by family+weight, and fetches each exactly once regardless of how many files reference it. `loadGoogleFont()` falls back to Inter with a console warning if a requested family/weight can't be fetched, instead of aborting the whole render.
 
@@ -300,12 +305,16 @@ Lets Cursor, Windsurf, Claude Desktop, and other agents render/check design file
 snap-x/
 ├── packages/
 │   ├── core/
-│   │   └── src/
-│   │       ├── cli.mjs           entry — check / render, path & glob resolution
-│   │       ├── render.mjs        Satori → resvg → PNG
-│   │       ├── check.mjs         structural validation + real Satori render check
-│   │       ├── fonts.mjs         Google Fonts loader/cache, FONTS-spec resolution
-│   │       └── index.mjs         programmatic API (used by @snap-x/mcp)
+│   │   ├── src/
+│   │   │   ├── cli.mjs           entry — check / render
+│   │   │   ├── resolve.mjs       files / directories / `*` globs → .mjs paths
+│   │   │   ├── render.mjs        Satori → resvg → PNG
+│   │   │   ├── check.mjs         structural validation + real Satori render check
+│   │   │   ├── fonts.mjs         Google Fonts loader/cache, FONTS-spec resolution
+│   │   │   ├── fallback.mjs      per-design script fallback fonts (CJK, Arabic, …)
+│   │   │   └── index.mjs         programmatic API (used by @snap-x/mcp)
+│   │   ├── test/                 node:test suites (resolve, check, fonts, cli) — `npm test`
+│   │   └── test-support/         shared test helpers (not run as tests)
 │   └── mcp/                      MCP server — imports @snap-x/core directly
 ├── snap-x/
 │   └── designs/                  snap-x's own example designs (self-contained, hand-written)

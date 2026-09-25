@@ -167,6 +167,8 @@ Omit `FONTS` entirely to default to Inter 400/700/900. Each file in a batch decl
 
 Use `fontWeight` freely as long as it's one of the weights you declared.
 
+Non-Latin copy (Japanese, Korean, Arabic, Hebrew, Thai, Devanagari, …) needs no extra `FONTS` entry — snap-x adds a matching Noto Sans subset automatically for the glyphs your font can't draw. Emoji aren't supported yet, so avoid them in copy.
+
 ---
 
 ## Colors

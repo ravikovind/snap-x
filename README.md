@@ -207,6 +207,8 @@ export const FONTS = [
 
 Omit `FONTS` entirely and it defaults to Inter 400/700/900. Each file in a batch declares its own fonts independently — `og.mjs` and `poster.mjs` in the same `snap-x render` call can use completely different families. Fonts are fetched from Google Fonts and deduped across the batch; an unavailable font falls back to Inter with a warning instead of failing the render.
 
+**Non-Latin text works without any setup.** If a design's text contains CJK, Korean, Arabic, Hebrew, Thai, Devanagari or Bengali (or Cyrillic/Greek/Latin-extended that your font lacks), snap-x downloads a small Noto Sans subset covering just those characters and uses it for the glyphs your font can't draw. Your `FONTS` always win where they have the glyph. Emoji are not supported yet.
+
 ---
 
 ## Icons

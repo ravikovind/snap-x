@@ -24,8 +24,22 @@ export async function loadGoogleFont(family, weight) {
   }
 }
 
-async function fetchGoogleFont(family, weight) {
-  const url = `https://fonts.googleapis.com/css2?family=${family.replace(/ /g, "+")}:wght@${weight}&display=swap`;
+/**
+ * Fetches a glyph subset of a family (only `text`'s characters — a few KB even for CJK).
+ * Used for script fallbacks; unlike loadGoogleFont it never substitutes Inter, since
+ * Inter can't cover the scripts this exists for — callers decide how to handle failure.
+ */
+export async function loadGoogleFontSubset(family, weight, text) {
+  const key = `${family}:${weight}:subset:${text}`;
+  if (cache.has(key)) return cache.get(key);
+  const buf = await fetchGoogleFont(family, weight, text);
+  cache.set(key, buf);
+  return buf;
+}
+
+async function fetchGoogleFont(family, weight, text) {
+  const textParam = text ? `&text=${encodeURIComponent(text)}` : "";
+  const url = `https://fonts.googleapis.com/css2?family=${family.replace(/ /g, "+")}:wght@${weight}${textParam}&display=swap`;
   const res = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)" },
   });

@@ -25,8 +25,12 @@ export async function renderDesign(designPath, outDir, fonts) {
 
   const satori = (await import("satori")).default;
   const { Resvg } = await import("@resvg/resvg-js");
+  const { loadFallbackFonts } = await import("./fallback.mjs");
 
-  const svg = await satori(tree, { width, height, fonts, embedFont: true });
+  // Primary fonts first so they win; fallbacks only fill glyphs they can't draw.
+  const allFonts = [...fonts, ...(await loadFallbackFonts(tree, fonts))];
+
+  const svg = await satori(tree, { width, height, fonts: allFonts, embedFont: true });
   const png = new Resvg(svg, { fitTo: { mode: "width", value: width } }).render().asPng();
 
   const outPath = path.join(outDir, outName);
