@@ -3,16 +3,19 @@ import assert from "node:assert/strict";
 import fs from "fs/promises";
 import path from "path";
 import { resolveFonts, loadGoogleFont, resetFontCache, collectFontsSpec } from "../src/fonts.mjs";
-import { makeTmpDir, writeFiles, validDesign } from "./helpers.mjs";
+import { makeTmpDir, writeFiles, validDesign, isolateCache } from "./helpers.mjs";
 
 const realFetch = globalThis.fetch;
 let fontFileRequests;
 let unavailable;
+let fontFileStatus;
+let cacheCtx;
 
 // Fake Google Fonts: CSS endpoint returns a font URL; font URL returns bytes naming family+weight.
 function installFetchMock() {
   fontFileRequests = [];
   unavailable = new Set();
+  fontFileStatus = 200;
   globalThis.fetch = async (url) => {
     const u = new URL(url);
     if (u.hostname === "fonts.googleapis.com") {
@@ -21,13 +24,15 @@ function installFetchMock() {
       return new Response(`src: url(https://fonts.test/${encodeURIComponent(family)}/${weight}.woff2) format('woff2');`);
     }
     fontFileRequests.push(u.pathname);
+    if (fontFileStatus !== 200) return new Response("gone", { status: fontFileStatus });
     return new Response(Buffer.from(`font:${decodeURIComponent(u.pathname.slice(1))}`));
   };
 }
 
 const bytes = (entry) => Buffer.from(entry.data).toString();
 
-beforeEach(() => {
+beforeEach(async () => {
+  cacheCtx = await isolateCache();
   resetFontCache();
   installFetchMock();
   // Silence only resolveFonts' progress line; the test reporter also writes to stdout.
@@ -38,9 +43,10 @@ beforeEach(() => {
   mock.method(console, "warn", () => {});
 });
 
-afterEach(() => {
+afterEach(async () => {
   globalThis.fetch = realFetch;
   mock.restoreAll();
+  await cacheCtx.cleanup();
 });
 
 test("defaults to Inter 400/700/900 when no spec is given", async () => {
@@ -83,11 +89,79 @@ test("caches across calls within a run", async () => {
   assert.equal(fontFileRequests.length, 1);
 });
 
-test("resetFontCache forces a re-download", async () => {
+test("resetFontCache clears memory only — the disk cache still prevents a re-download", async () => {
   await resolveFonts([{ family: "Saira", weights: [400] }]);
   resetFontCache();
+  const again = await resolveFonts([{ family: "Saira", weights: [400] }]);
+  assert.equal(fontFileRequests.length, 1);
+  assert.equal(bytes(again[0]), "font:Saira/400.woff2", "served from disk, byte-identical");
+});
+
+test("a font downloaded once is served from disk with no network at all", async () => {
   await resolveFonts([{ family: "Saira", weights: [400] }]);
+  resetFontCache();
+  globalThis.fetch = async () => { throw new Error("offline"); };
+  const fonts = await resolveFonts([{ family: "Saira", weights: [400] }]);
+  assert.equal(bytes(fonts[0]), "font:Saira/400.woff2");
+});
+
+test("cache is keyed by family and weight", async () => {
+  await resolveFonts([{ family: "Saira", weights: [400, 700] }, { family: "Lora", weights: [400] }]);
+  assert.equal((await fs.readdir(cacheCtx.dir)).length, 3);
+});
+
+test("subsets are cached separately per character set and never collide with the full font", async () => {
+  const { loadGoogleFontSubset } = await import("../src/fonts.mjs");
+  await loadGoogleFont("Noto Sans JP", 400);
+  await loadGoogleFontSubset("Noto Sans JP", 400, "你好");
+  await loadGoogleFontSubset("Noto Sans JP", 400, "世界");
+  assert.equal((await fs.readdir(cacheCtx.dir)).length, 3);
+});
+
+test("an empty (corrupt) cache file is ignored and re-downloaded", async () => {
+  await resolveFonts([{ family: "Saira", weights: [400] }]);
+  for (const f of await fs.readdir(cacheCtx.dir)) await fs.writeFile(path.join(cacheCtx.dir, f), "");
+  resetFontCache();
+  const fonts = await resolveFonts([{ family: "Saira", weights: [400] }]);
+  assert.equal(bytes(fonts[0]), "font:Saira/400.woff2");
   assert.equal(fontFileRequests.length, 2);
+});
+
+test("failed downloads are never written to the cache", async () => {
+  fontFileStatus = 404;
+  await assert.rejects(loadGoogleFont("Inter", 400), /font file returned HTTP 404/);
+  assert.deepEqual(await fs.readdir(cacheCtx.dir), []);
+});
+
+test("a substituted Inter fallback is cached as Inter, not under the missing family", async () => {
+  unavailable.add("Ghost Font");
+  await resolveFonts([{ family: "Ghost Font", weights: [400] }]);
+  assert.equal((await fs.readdir(cacheCtx.dir)).length, 1);
+  resetFontCache();
+  const inter = await resolveFonts([{ family: "Inter", weights: [400] }]);
+  assert.equal(bytes(inter[0]), "font:Inter/400.woff2");
+});
+
+test("an unusable cache directory never breaks font loading", async () => {
+  const blocker = path.join(cacheCtx.dir, "blocker");
+  await fs.writeFile(blocker, "i am a file");
+  process.env.SNAP_X_CACHE_DIR = path.join(blocker, "nested"); // mkdir under a file → fails
+  const fonts = await resolveFonts([{ family: "Saira", weights: [400] }]);
+  assert.equal(bytes(fonts[0]), "font:Saira/400.woff2");
+});
+
+test("falls back to XDG_CACHE_HOME when SNAP_X_CACHE_DIR is unset", async () => {
+  delete process.env.SNAP_X_CACHE_DIR;
+  const xdg = await makeTmpDir();
+  const prev = process.env.XDG_CACHE_HOME;
+  process.env.XDG_CACHE_HOME = xdg;
+  try {
+    await resolveFonts([{ family: "Saira", weights: [400] }]);
+    assert.equal((await fs.readdir(path.join(xdg, "snap-x", "fonts"))).length, 1);
+  } finally {
+    prev === undefined ? delete process.env.XDG_CACHE_HOME : (process.env.XDG_CACHE_HOME = prev);
+    await fs.rm(xdg, { recursive: true, force: true });
+  }
 });
 
 test("an unavailable family falls back to Inter data under the requested name", async () => {

@@ -26,3 +26,18 @@ export default function () {
 }
 `;
 }
+
+/** Points the font disk cache at a fresh temp dir; returns { dir, cleanup }. */
+export async function isolateCache() {
+  const dir = await makeTmpDir();
+  const prev = process.env.SNAP_X_CACHE_DIR;
+  process.env.SNAP_X_CACHE_DIR = dir;
+  return {
+    dir,
+    cleanup: async () => {
+      if (prev === undefined) delete process.env.SNAP_X_CACHE_DIR;
+      else process.env.SNAP_X_CACHE_DIR = prev;
+      await fs.rm(dir, { recursive: true, force: true });
+    },
+  };
+}

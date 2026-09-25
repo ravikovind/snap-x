@@ -4,18 +4,25 @@ import { spawnSync } from "child_process";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-import { makeTmpDir, writeFiles, validDesign } from "./helpers.mjs";
+import { makeTmpDir, writeFiles, validDesign, isolateCache } from "./helpers.mjs";
 
 const CLI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../src/cli.mjs");
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 let dir;
+let cacheCtx;
 let fontsReachable = false;
 
 const run = (...args) =>
-  spawnSync(process.execPath, [CLI, ...args], { cwd: dir, encoding: "utf-8", timeout: 60_000 });
+  spawnSync(process.execPath, [CLI, ...args], {
+    cwd: dir,
+    encoding: "utf-8",
+    timeout: 60_000,
+    env: { ...process.env, SNAP_X_CACHE_DIR: cacheCtx.dir },
+  });
 
 before(async () => {
+  cacheCtx = await isolateCache(); // spawned CLIs share one throwaway cache, never the user's
   dir = await makeTmpDir();
   await writeFiles(dir, {
     "designs/og.mjs": validDesign({ name: "og.png", width: 300, height: 150 }),
@@ -29,7 +36,10 @@ export default { type: "div", props: { style: { display: "grid" }, children: [] 
   } catch {}
 });
 
-after(() => fs.rm(dir, { recursive: true, force: true }));
+after(async () => {
+  await fs.rm(dir, { recursive: true, force: true });
+  await cacheCtx.cleanup();
+});
 
 // Real renders need Google Fonts; skip (not fail) when the network is unavailable.
 const needsFonts = (name, fn) =>

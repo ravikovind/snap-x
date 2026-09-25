@@ -1,16 +1,66 @@
 /**
- * Google Fonts loader — fetches woff2 and returns ArrayBuffer for Satori.
- * Results are cached in memory per process run.
+ * Google Fonts loader — returns font data for Satori.
+ *
+ * Two cache layers: an in-memory map (per process) and a persistent disk cache
+ * so repeat runs — and offline runs — never touch the network for fonts already
+ * fetched. Disk location: $SNAP_X_CACHE_DIR, else $XDG_CACHE_HOME/snap-x/fonts,
+ * else ~/.cache/snap-x/fonts. Delete that directory to clear it. Disk caching is
+ * strictly best-effort: any read/write problem silently falls back to the network.
  */
 
+import fs from "fs/promises";
+import os from "os";
+import path from "path";
+import { createHash } from "crypto";
+
 const cache = new Map();
+
+function cacheDir() {
+  return (
+    process.env.SNAP_X_CACHE_DIR ??
+    path.join(process.env.XDG_CACHE_HOME ?? path.join(os.homedir(), ".cache"), "snap-x", "fonts")
+  );
+}
+
+function diskPath(family, weight, text) {
+  const hash = createHash("sha256").update(`${family}\0${weight}\0${text ?? ""}`).digest("hex");
+  return path.join(cacheDir(), `${hash}.ttf`);
+}
+
+async function readDisk(file) {
+  try {
+    const b = await fs.readFile(file);
+    if (b.length === 0) return null;
+    return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
+  } catch {
+    return null;
+  }
+}
+
+async function writeDisk(file, arrayBuffer) {
+  try {
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    const tmp = `${file}.${process.pid}.tmp`; // write-then-rename so concurrent runs never see a partial file
+    await fs.writeFile(tmp, Buffer.from(arrayBuffer));
+    await fs.rename(tmp, file);
+  } catch {}
+}
+
+async function fetchCached(family, weight, text) {
+  const file = diskPath(family, weight, text);
+  const hit = await readDisk(file);
+  if (hit) return hit;
+  const buf = await fetchGoogleFont(family, weight, text);
+  await writeDisk(file, buf);
+  return buf;
+}
 
 export async function loadGoogleFont(family, weight) {
   const key = `${family}:${weight}`;
   if (cache.has(key)) return cache.get(key);
 
   try {
-    const buf = await fetchGoogleFont(family, weight);
+    const buf = await fetchCached(family, weight);
     cache.set(key, buf);
     return buf;
   } catch (err) {
@@ -32,7 +82,7 @@ export async function loadGoogleFont(family, weight) {
 export async function loadGoogleFontSubset(family, weight, text) {
   const key = `${family}:${weight}:subset:${text}`;
   if (cache.has(key)) return cache.get(key);
-  const buf = await fetchGoogleFont(family, weight, text);
+  const buf = await fetchCached(family, weight, text);
   cache.set(key, buf);
   return buf;
 }
@@ -51,7 +101,9 @@ async function fetchGoogleFont(family, weight, text) {
   );
   if (!match) throw new Error(`font URL not found for ${family} ${weight}`);
 
-  return fetch(match[1]).then((r) => r.arrayBuffer());
+  const fontRes = await fetch(match[1]);
+  if (!fontRes.ok) throw new Error(`font file returned HTTP ${fontRes.status}`);
+  return fontRes.arrayBuffer();
 }
 
 const DEFAULT_FONTS = [{ family: "Inter", weights: [400, 700, 900] }];
@@ -59,7 +111,7 @@ const DEFAULT_FONTS = [{ family: "Inter", weights: [400, 700, 900] }];
 /**
  * Resolves a design file's `FONTS` export (or the default) into a flat,
  * Satori-ready fonts array: [{ name, data, weight, style }, ...].
- * Dedupes by family+weight across a batch via the module-level cache above,
+ * Dedupes by family+weight across a batch via the in-memory cache above,
  * so rendering many files that share a font only fetches it once.
  *
  * @param {Array<{ family: string, weights?: number[] }>} [fontsSpec]

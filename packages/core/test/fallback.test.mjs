@@ -2,16 +2,19 @@ import { test, beforeEach, afterEach, mock } from "node:test";
 import assert from "node:assert/strict";
 import { collectText, loadFallbackFonts } from "../src/fallback.mjs";
 import { resetFontCache } from "../src/fonts.mjs";
+import { isolateCache } from "./helpers.mjs";
 
 const realFetch = globalThis.fetch;
 let cssRequests;
 let failFamilies;
+let cacheCtx;
 
 const node = (...children) => ({ type: "div", props: { children } });
 const inter = (...weights) => weights.map((weight) => ({ name: "Inter", data: new ArrayBuffer(1), weight, style: "normal" }));
 const bytes = (entry) => Buffer.from(entry.data).toString();
 
-beforeEach(() => {
+beforeEach(async () => {
+  cacheCtx = await isolateCache();
   resetFontCache();
   cssRequests = [];
   failFamilies = new Set();
@@ -30,9 +33,10 @@ beforeEach(() => {
   mock.method(console, "warn", () => {});
 });
 
-afterEach(() => {
+afterEach(async () => {
   globalThis.fetch = realFetch;
   mock.restoreAll();
+  await cacheCtx.cleanup();
 });
 
 test("collectText walks nested children, arrays, numbers, and ignores null/boolean", () => {

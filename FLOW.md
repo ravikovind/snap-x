@@ -163,6 +163,10 @@ export const FONTS = [
 
 Omitted → defaults to `[{ family: "Inter", weights: [400, 700, 900] }]`.
 
+### Font cache
+
+`fonts.mjs` has two layers: an in-memory map (per process) and a persistent disk cache, keyed by `sha256(family, weight, text)` → `<hash>.ttf` in `$SNAP_X_CACHE_DIR` / `$XDG_CACHE_HOME/snap-x/fonts` / `~/.cache/snap-x/fonts`. A cached font needs no network, so renders work offline after the first run. Rules: writes are write-then-rename (safe with concurrent runs); an empty/corrupt file is treated as a miss; failed downloads (including a non-2xx font file) are never written; an Inter *fallback* is stored as Inter, never under the missing family's key; any cache read/write error silently falls back to the network. `resetFontCache()` clears memory only. Clear the cache by deleting the directory.
+
 ### Script fallback (automatic)
 
 Satori falls back per glyph across *every* loaded font, whatever `fontFamily` a node names. `renderDesign` uses that: after building a design's tree it collects the text (`fallback.mjs › collectText`), and for each script the text contains that isn't Latin/Latin-1 (CJK → Noto Sans JP, Hangul → KR, Arabic, Hebrew, Thai, Devanagari, Bengali, plus Cyrillic/Greek/Latin-ext → Noto Sans) it fetches a **subset containing only those characters** via Google's `text=` parameter (a few KB), at the same weights as the primary fonts, and appends it *after* the primary fonts so they always win. A fallback that can't be fetched warns and is skipped. Emoji are not covered.
