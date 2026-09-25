@@ -64,7 +64,7 @@ export function posterCard({
         eyebrow ? {
           type: "div",
           props: {
-            style: { display: "flex", alignItems: "center", gap: 10, zIndex: 1 },
+            style: { display: "flex", alignItems: "center", gap: 10 },
             children: [
               { type: "div", props: { style: { width: 8, height: 8, borderRadius: 999, background: t.accent, display: "flex" }, children: [] } },
               { type: "div", props: { style: { color: t.accent, fontSize: 15, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", display: "flex" }, children: [eyebrow] } },
@@ -73,16 +73,16 @@ export function posterCard({
         } : null,
 
         // Title
-        { type: "div", props: { style: { color: t.text, fontSize: titleSize, fontWeight: 900, lineHeight: 1.06, letterSpacing: "-0.025em", display: "flex", flexWrap: "wrap", justifyContent: "center", zIndex: 1 }, children: [title] } },
+        { type: "div", props: { style: { color: t.text, fontSize: titleSize, fontWeight: 900, lineHeight: 1.06, letterSpacing: "-0.025em", display: "flex", flexWrap: "wrap", justifyContent: "center" }, children: [title] } },
 
         // Subtitle
-        subtitle ? { type: "div", props: { style: { color: t.textMuted, fontSize: 24, fontWeight: 400, lineHeight: 1.4, display: "flex", flexWrap: "wrap", justifyContent: "center", maxWidth: 760, zIndex: 1 }, children: [subtitle] } } : null,
+        subtitle ? { type: "div", props: { style: { color: t.textMuted, fontSize: 24, fontWeight: 400, lineHeight: 1.4, display: "flex", flexWrap: "wrap", justifyContent: "center", maxWidth: 760 }, children: [subtitle] } } : null,
 
         // Footer
         footer ? {
           type: "div",
           props: {
-            style: { position: "absolute", bottom: 48, display: "flex", alignItems: "center", gap: 10, zIndex: 1 },
+            style: { position: "absolute", bottom: 48, display: "flex", alignItems: "center", gap: 10 },
             children: [
               { type: "div", props: { style: { height: 1, width: 40, background: t.accentMuted, display: "flex" }, children: [] } },
               { type: "div", props: { style: { color: t.textMuted, fontSize: 15, letterSpacing: "0.08em", display: "flex" }, children: [footer] } },

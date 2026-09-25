@@ -5,6 +5,7 @@
  */
 
 import { getTheme } from "../themes/index.mjs";
+import { lucideIcon } from "../icons.mjs";
 
 export const FORMAT = { width: 1280, height: 720 };
 
@@ -52,9 +53,9 @@ export function thumbnailCard({
         eyebrow ? {
           type: "div",
           props: {
-            style: { display: "flex", alignItems: "center", gap: 10, zIndex: 1 },
+            style: { display: "flex", alignItems: "center", gap: 10 },
             children: [
-              { type: "div", props: { style: { width: 8, height: 8, borderRadius: 999, background: t.accent, display: "flex" }, children: [] } },
+              lucideIcon("Rocket", { size: 16, color: t.accent }),
               { type: "div", props: { style: { color: t.accent, fontSize: 15, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", display: "flex" }, children: [eyebrow] } },
             ],
           },
@@ -64,7 +65,7 @@ export function thumbnailCard({
         {
           type: "div",
           props: {
-            style: { flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 18, zIndex: 1 },
+            style: { flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 18 },
             children: [
               { type: "div", props: { style: { color: t.text, fontSize: titleSize, fontWeight: 900, lineHeight: 1.06, letterSpacing: "-0.03em", display: "flex", flexWrap: "wrap", maxWidth: 1000 }, children: [title] } },
               subtitle ? { type: "div", props: { style: { color: t.textMuted, fontSize: 22, fontWeight: 400, lineHeight: 1.4, display: "flex", flexWrap: "wrap", maxWidth: 820 }, children: [subtitle] } } : null,
@@ -76,7 +77,7 @@ export function thumbnailCard({
         tag ? {
           type: "div",
           props: {
-            style: { display: "flex", zIndex: 1 },
+            style: { display: "flex" },
             children: [{
               type: "div",
               props: {

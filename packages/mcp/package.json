@@ -1,0 +1,22 @@
+{
+  "name": "@snap-x/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for snap-x — exposes image generation as tools for Cursor, Windsurf, Claude Desktop, and other MCP-compatible agents.",
+  "type": "module",
+  "main": "src/index.mjs",
+  "bin": {
+    "snap-x-mcp": "./src/index.mjs"
+  },
+  "scripts": {
+    "start": "node src/index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@snap-x/core": "*"
+  },
+  "keywords": ["snap-x", "mcp", "og-images", "social-cards"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

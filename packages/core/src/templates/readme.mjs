@@ -1,23 +1,25 @@
 /**
  * README Card — 1280×640
  * GitHub social preview / repository card.
- * Shows: repo name, description, tech stack pills, stars/stats.
+ * Shows: repo name, description, tech stack pills, stats.
  */
 
 import { getTheme } from "../themes/index.mjs";
+import { lucideIcon } from "../icons.mjs";
 
 export const FORMAT = { width: 1280, height: 640 };
 
 export function readmeCard({
   name = "",
   description = "",
-  stack = [],      // ["Node.js", "Satori", "Resvg"]
-  stats = [],      // [{ label: "stars", value: "1.2k" }]
+  stack = [],
+  stats = [],
   owner = "",
   theme: themeName = "dark",
   themeOverride = {},
 }) {
   const t = { ...getTheme(themeName), ...themeOverride };
+  const nameFontSize = name.length > 25 ? 52 : name.length > 18 ? 62 : 72;
 
   return {
     type: "div",
@@ -26,83 +28,151 @@ export function readmeCard({
         width: 1280, height: 640,
         background: t.bg,
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
         fontFamily: t.fontDisplay,
-        padding: "64px 80px",
         position: "relative",
         overflow: "hidden",
       },
       children: [
-        // Glow top-right
+        // Left accent bar
         {
           type: "div",
           props: {
-            style: { position: "absolute", top: -60, right: -60, width: 400, height: 400, background: `radial-gradient(circle, ${t.accentMuted.replace("0.25","0.09")} 0%, transparent 65%)`, display: "flex" },
+            style: {
+              width: 5, alignSelf: "stretch", flexShrink: 0,
+              background: `linear-gradient(to bottom, ${t.accent} 0%, ${t.accentMuted} 60%, transparent 100%)`,
+              display: "flex",
+            },
             children: [],
           },
         },
 
-        // Top: owner/name
+        // Glow top-right
         {
           type: "div",
           props: {
-            style: { display: "flex", flexDirection: "column", gap: 10, zIndex: 1 },
-            children: [
-              owner ? { type: "div", props: { style: { color: t.textMuted, fontSize: 18, fontWeight: 400, letterSpacing: "0.02em", display: "flex" }, children: [`${owner} /`] } } : null,
-              { type: "div", props: { style: { color: t.text, fontSize: 72, fontWeight: 900, lineHeight: 1, letterSpacing: "-0.03em", display: "flex" }, children: [name] } },
-            ].filter(Boolean),
+            style: {
+              position: "absolute", top: -80, right: -80,
+              width: 500, height: 500,
+              background: `radial-gradient(circle, ${t.accentMuted.replace("0.25", "0.08")} 0%, transparent 65%)`,
+              display: "flex",
+            },
+            children: [],
           },
         },
 
-        // Middle: description
-        description ? {
-          type: "div",
-          props: {
-            style: { color: t.textMuted, fontSize: 24, fontWeight: 400, lineHeight: 1.4, maxWidth: 900, display: "flex", flexWrap: "wrap", zIndex: 1 },
-            children: [description.length > 120 ? description.slice(0, 120).trimEnd() + "…" : description],
-          },
-        } : null,
-
-        // Bottom: stack pills + stats
+        // Main content
         {
           type: "div",
           props: {
-            style: { display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 1 },
+            style: {
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              padding: "56px 72px 52px",
+            },
             children: [
-              // Stack pills
+              // Center block: owner + name + description (vertically centered)
               {
                 type: "div",
                 props: {
-                  style: { display: "flex", gap: 10 },
-                  children: stack.slice(0, 5).map((s) => ({
-                    type: "div",
-                    props: { style: { border: `1px solid ${t.borderColor}`, borderRadius: 6, padding: "6px 14px", color: t.textMuted, fontSize: 14, fontWeight: 600, letterSpacing: "0.04em", display: "flex" }, children: [s] },
-                  })),
+                  style: { flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 24 },
+                  children: [
+                    // Owner + name
+                    {
+                      type: "div",
+                      props: {
+                        style: { display: "flex", flexDirection: "column", gap: 8 },
+                        children: [
+                          owner ? {
+                            type: "div",
+                            props: {
+                              style: { display: "flex", alignItems: "center", gap: 6 },
+                              children: [
+                                lucideIcon("Layers", { size: 14, color: t.textMuted }),
+                                { type: "div", props: { style: { color: t.textMuted, fontSize: 16, fontWeight: 400, letterSpacing: "0.04em", display: "flex" }, children: [owner] } },
+                              ],
+                            },
+                          } : null,
+                          { type: "div", props: { style: { color: t.text, fontSize: nameFontSize, fontWeight: 900, lineHeight: 1.0, letterSpacing: "-0.03em", display: "flex", flexWrap: "wrap" }, children: [name] } },
+                        ].filter(Boolean),
+                      },
+                    },
+                    // Description
+                    description ? {
+                      type: "div",
+                      props: {
+                        style: {
+                          color: t.textMuted,
+                          fontSize: 22,
+                          fontWeight: 400,
+                          lineHeight: 1.5,
+                          maxWidth: 860,
+                          display: "flex",
+                          flexWrap: "wrap",
+                          borderLeft: `2px solid ${t.accentMuted}`,
+                          paddingLeft: 20,
+                        },
+                        children: [description.length > 140 ? description.slice(0, 140).trimEnd() + "…" : description],
+                      },
+                    } : null,
+                  ].filter(Boolean),
                 },
               },
 
-              // Stats
-              stats.length > 0 ? {
+              // Bottom: stack pills + stats
+              {
                 type: "div",
                 props: {
-                  style: { display: "flex", gap: 28 },
-                  children: stats.slice(0, 3).map((s) => ({
-                    type: "div",
-                    props: {
-                      style: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2 },
-                      children: [
-                        { type: "div", props: { style: { color: t.text, fontSize: 28, fontWeight: 900, display: "flex" }, children: [s.value] } },
-                        { type: "div", props: { style: { color: t.textMuted, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase", display: "flex" }, children: [s.label] } },
-                      ],
-                    },
-                  })),
+                  style: { display: "flex", alignItems: "center", justifyContent: "space-between" },
+                  children: [
+                    // Stack pills
+                    stack.length > 0 ? {
+                      type: "div",
+                      props: {
+                        style: { display: "flex", gap: 10, flexWrap: "wrap" },
+                        children: stack.slice(0, 5).map((s) => ({
+                          type: "div",
+                          props: {
+                            style: {
+                              border: `1px solid ${t.borderAccent}`,
+                              borderRadius: 6,
+                              padding: "7px 16px",
+                              color: t.accent,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              letterSpacing: "0.05em",
+                              display: "flex",
+                            },
+                            children: [s],
+                          },
+                        })),
+                      },
+                    } : null,
+
+                    // Stats
+                    stats.length > 0 ? {
+                      type: "div",
+                      props: {
+                        style: { display: "flex", gap: 32 },
+                        children: stats.slice(0, 3).map((s) => ({
+                          type: "div",
+                          props: {
+                            style: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2 },
+                            children: [
+                              { type: "div", props: { style: { color: t.text, fontSize: 30, fontWeight: 900, letterSpacing: "-0.02em", display: "flex" }, children: [s.value] } },
+                              { type: "div", props: { style: { color: t.textMuted, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", display: "flex" }, children: [s.label] } },
+                            ],
+                          },
+                        })),
+                      },
+                    } : null,
+                  ].filter(Boolean),
                 },
-              } : null,
+              },
             ].filter(Boolean),
           },
         },
-      ].filter(Boolean),
+      ],
     },
   };
 }

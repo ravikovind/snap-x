@@ -1,27 +1,34 @@
 {
   "name": "@snap-x/core",
-  "version": "0.1.0",
-  "description": "Core image generation engine for snap-x — Satori + Resvg, zero headless browser.",
+  "version": "0.2.0",
+  "description": "HTML + Playwright image generation engine for snap-x — OG, cover, thumbnail, poster, readme-card.",
   "type": "module",
   "main": "src/index.mjs",
   "bin": {
     "snap-x": "./src/cli.mjs"
   },
+  "files": [
+    "src/",
+    "default-templates/"
+  ],
   "exports": {
     ".": "./src/index.mjs",
-    "./render": "./src/render.mjs",
-    "./templates/*": "./src/templates/*.mjs",
-    "./themes/*": "./src/themes/*.mjs"
+    "./render": "./src/render-playwright.mjs",
+    "./render-fast": "./src/render-fast.mjs",
+    "./config": "./src/config.mjs"
   },
   "scripts": {
     "start": "node src/cli.mjs"
   },
   "dependencies": {
-    "@resvg/resvg-js": "^2.6.2",
     "gray-matter": "^4.0.3",
-    "satori": "^0.11.4"
+    "playwright-core": "^1.48.0"
   },
-  "keywords": ["og-images", "satori", "resvg", "social-cards", "snap-x"],
+  "optionalDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "satori": "^0.33.5"
+  },
+  "keywords": ["og-images", "playwright", "social-cards", "snap-x"],
   "license": "MIT",
   "engines": {
     "node": ">=18"

@@ -4,6 +4,7 @@
  */
 
 import { getTheme } from "../themes/index.mjs";
+import { lucideIcon } from "../icons.mjs";
 
 export const FORMAT = { width: 1200, height: 630 };
 
@@ -110,7 +111,16 @@ export function ogCard({
                         ],
                       },
                     },
-                    domain ? { type: "div", props: { style: { color: t.textMuted.replace("0.50", "0.22"), fontSize: 13, display: "flex" }, children: [domain] } } : null,
+                    domain ? {
+                      type: "div",
+                      props: {
+                        style: { display: "flex", alignItems: "center", gap: 4, color: t.textMuted.replace("0.50", "0.22") },
+                        children: [
+                          { type: "div", props: { style: { fontSize: 13, display: "flex" }, children: [domain] } },
+                          lucideIcon("ArrowUpRight", { size: 13, color: t.textMuted.replace("0.50", "0.18") }),
+                        ],
+                      },
+                    } : null,
                   ].filter(Boolean),
                 },
               },
@@ -146,7 +156,16 @@ export function ogCard({
                         })),
                       },
                     },
-                    domain ? { type: "div", props: { style: { color: t.accent, fontSize: 22, fontWeight: 900, letterSpacing: "-0.02em", display: "flex" }, children: [domain] } } : null,
+                    domain ? {
+                      type: "div",
+                      props: {
+                        style: { display: "flex", alignItems: "center", gap: 6 },
+                        children: [
+                          lucideIcon("Zap", { size: 18, color: t.accent }),
+                          { type: "div", props: { style: { color: t.accent, fontSize: 22, fontWeight: 900, letterSpacing: "-0.02em", display: "flex" }, children: [domain] } },
+                        ],
+                      },
+                    } : null,
                   ].filter(Boolean),
                 },
               },

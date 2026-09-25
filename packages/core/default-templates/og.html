@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>OG Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.50);
+    --accent: #e5383b;
+    --accent-muted: rgba(229,56,59,0.25);
+    --border-accent: rgba(229,56,59,0.35);
+    --font: 'Inter', sans-serif;
+  }
+  [data-theme="light"] {
+    --bg: #ffffff;
+    --text: #0a0a0a;
+    --muted: rgba(0,0,0,0.50);
+    --accent: #e5383b;
+    --accent-muted: rgba(229,56,59,0.15);
+    --border-accent: rgba(229,56,59,0.30);
+  }
+
+  html, body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .card {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    background: var(--bg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Glow top-left */
+  .glow {
+    position: absolute;
+    top: -120px;
+    left: -80px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(229,56,59,0.10) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  /* Outer frame */
+  .frame {
+    position: absolute;
+    top: 28px; left: 28px; right: 28px; bottom: 28px;
+    border: 1px solid var(--border-accent);
+    border-radius: 14px;
+    pointer-events: none;
+  }
+
+  /* Left accent bar */
+  .accent-bar {
+    position: absolute;
+    top: 28px; left: 28px;
+    width: 4px;
+    height: calc(100% - 56px);
+    background: linear-gradient(to bottom, var(--accent) 0%, var(--accent-muted) 80%, transparent 100%);
+    border-radius: 14px 0 0 14px;
+  }
+
+  /* Corner marks */
+  .corner {
+    position: absolute;
+    color: var(--accent-muted);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    font-family: monospace;
+  }
+  .corner-tl { top: 20px; left: 22px; }
+  .corner-tr { top: 20px; right: 22px; }
+  .corner-bl { bottom: 20px; left: 22px; }
+  .corner-br { bottom: 20px; right: 22px; }
+
+  /* Content area */
+  .content {
+    position: absolute;
+    top: 52px; left: 68px; right: 52px; bottom: 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Top row */
+  .top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .label-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .label-text {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .domain-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: rgba(255,255,255,0.20);
+    font-size: 13px;
+  }
+  [data-theme="light"] .domain-badge { color: rgba(0,0,0,0.20); }
+
+  /* Middle */
+  .middle {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 0 16px;
+    gap: 16px;
+    max-width: 900px;
+  }
+  .title {
+    color: var(--text);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+  }
+  .desc {
+    color: var(--muted);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* Separator */
+  .sep {
+    height: 1px;
+    background: linear-gradient(to right, var(--accent) 0%, var(--accent-muted) 55%, transparent 100%);
+    margin-bottom: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Bottom row */
+  .bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tag-pill {
+    border: 1px solid var(--border-accent);
+    border-radius: 6px;
+    padding: 5px 12px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .domain-brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .domain-brand-text {
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  /* Zap icon SVG */
+  .icon-zap { color: var(--accent); }
+  .icon-arrow { opacity: 0.4; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow"></div>
+  <div class="frame"></div>
+  <div class="accent-bar"></div>
+  <span class="corner corner-tl">+</span>
+  <span class="corner corner-tr">+</span>
+  <span class="corner corner-bl">+</span>
+  <span class="corner corner-br">+</span>
+
+  <div class="content">
+    <!-- Top row -->
+    <div class="top-row">
+      <div class="label">
+        <div class="label-dot"></div>
+        <span class="label-text snap-label">snap-x</span>
+      </div>
+      <div class="domain-badge snap-domain-badge">
+        <span class="snap-domain-top"></span>
+        <svg class="icon-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+    </div>
+
+    <!-- Middle: title + desc -->
+    <div class="middle">
+      <div class="title snap-title">My Project</div>
+      <div class="desc snap-desc">A short description of what this project does.</div>
+    </div>
+
+    <!-- Separator -->
+    <div class="sep"></div>
+
+    <!-- Bottom row -->
+    <div class="bottom-row">
+      <div class="tags snap-tags"></div>
+      <div class="domain-brand snap-domain-brand">
+        <svg class="icon-zap" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span class="domain-brand-text snap-domain-bottom"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const p = new URLSearchParams(location.search);
+  const get = (k, fallback = '') => p.get(k) || fallback;
+
+  // Theme
+  const theme = get('theme', 'dark');
+  if (theme === 'light') document.documentElement.dataset.theme = 'light';
+
+  // Custom font
+  const font = get('font', 'Inter');
+  if (font !== 'Inter') {
+    const link = document.createElement('link');
+    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@400;700;900&display=swap`;
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+    document.documentElement.style.setProperty('--font', `'${font}', sans-serif`);
+  }
+
+  const set = (sel, val, hide = true) => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    if (val) { el.textContent = val; el.style.display = ''; }
+    else if (hide) el.style.display = 'none';
+  };
+
+  const title = get('title', 'My Project');
+  const description = get('description', '');
+  const domain = get('domain', '');
+  const tagsRaw = get('tags', '');
+  const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean).slice(0, 3) : [];
+
+  // Title with dynamic font size
+  const titleEl = document.querySelector('.snap-title');
+  if (titleEl) {
+    titleEl.textContent = title;
+    const len = title.length;
+    titleEl.style.fontSize = len > 70 ? '40px' : len > 50 ? '48px' : len > 35 ? '54px' : '62px';
+  }
+
+  set('.snap-desc', description);
+
+  // Label = domain or title
+  set('.snap-label', domain || title);
+
+  // Domain top badge
+  if (domain) {
+    set('.snap-domain-top', domain);
+    document.querySelector('.snap-domain-badge').style.display = 'flex';
+  } else {
+    document.querySelector('.snap-domain-badge').style.display = 'none';
+  }
+
+  // Tags
+  const tagsContainer = document.querySelector('.snap-tags');
+  if (tags.length > 0) {
+    tagsContainer.innerHTML = tags.map(t =>
+      `<span class="tag-pill">${t}</span>`
+    ).join('');
+  } else {
+    tagsContainer.style.display = 'none';
+  }
+
+  // Domain brand bottom
+  if (domain) {
+    set('.snap-domain-bottom', domain);
+    document.querySelector('.snap-domain-brand').style.display = 'flex';
+  } else {
+    document.querySelector('.snap-domain-brand').style.display = 'none';
+  }
+</script>
+</body>
+</html>

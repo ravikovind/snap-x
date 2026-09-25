@@ -1,9 +1,9 @@
 # Step 3: Generate images
 
-## Option A — CLI (recommended for standard projects)
+## Primary — CLI (recommended)
 
 ```bash
-npx @snap-x/core \
+npx snap-x build \
   --title "Your Title" \
   --desc "Your description" \
   --domain "yourdomain.com" \
@@ -13,59 +13,43 @@ npx @snap-x/core \
 ```
 
 Add `--format og` to generate only one format.
+Add `--fast` to use Satori (no browser, useful in CI).
 
-## Option B — Custom script (when you need logo, screenshot, or non-standard layout)
+## First-time setup
 
-Write a `snap-output/generate.mjs` script:
-
-```js
-import { renderAll } from "@snap-x/core/render";
-import { ogCard } from "@snap-x/core/templates/og";
-import { getFonts } from "@snap-x/core/fonts";
-
-const fonts = await getFonts("Inter", [400, 700, 900]);
-
-await renderAll([
-  {
-    name: "og.png",
-    node: ogCard({
-      label: "My Project",
-      title: "Your Title Here",
-      description: "One strong supporting claim.",
-      tags: ["Open Source", "Node.js"],
-      domain: "myproject.com",
-      theme: "dark",
-    }),
-    width: 1200,
-    height: 630,
-  },
-], "snap-output/", { fonts });
-```
-
-Run: `node snap-output/generate.mjs`
-
-## Theme override example
-
-To use the project's exact brand colors instead of a built-in theme:
-
-```js
-ogCard({
-  title: "...",
-  theme: "dark",
-  themeOverride: {
-    accent: "#eb1d25",
-    bg: "#000000",
-    surface: "#141414",
-  },
-})
-```
-
-## Install snap-x/core locally
+If the project hasn't been initialized:
 
 ```bash
-npm install @snap-x/core
-# or
-npx @snap-x/core --help
+npx snap-x init        # creates snap-x.config.json + snap-x/templates/*.html
+npx snap-x build       # renders via Playwright
+```
+
+Install browser if needed:
+```bash
+npx snap-x install-browser
+```
+
+## Config-driven build (no CLI flags needed)
+
+If `snap-x.config.json` exists at the project root, just run:
+
+```bash
+npx snap-x build
+```
+
+The config sets title, description, domain, tags, theme, font, outDir, and formats.
+
+## Custom templates
+
+Edit `snap-x/templates/*.html` directly to customize the visual design.
+Templates are plain HTML/CSS — no build step required.
+
+Each template receives data via URL search params:
+- `?title=...&description=...&domain=...&tags=Tag1,Tag2&theme=dark&font=Inter`
+
+Preview templates in browser:
+```bash
+npx snap-x preview
 ```
 
 ## What the output directory should contain after this step
@@ -75,6 +59,6 @@ snap-output/
   og.png           ← 1200×630
   thumbnail.png    ← 1280×720
   cover.png        ← 1500×500
-  poster.png       ← 1080×1080
+  poster.png       ← 1080×1920
   readme-card.png  ← 1280×640
 ```

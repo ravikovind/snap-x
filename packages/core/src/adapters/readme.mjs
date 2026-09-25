@@ -1,7 +1,18 @@
 import fs from "fs";
 import path from "path";
 
-const STACK_KEYWORDS = ["node", "react", "next", "vue", "svelte", "typescript", "python", "rust", "go", "satori", "resvg", "tailwind", "prisma", "supabase"];
+const STACK_MAP = {
+  "next.js": "Next.js", "nextjs": "Next.js", "next js": "Next.js",
+  "react": "React", "vue": "Vue", "svelte": "Svelte", "astro": "Astro",
+  "typescript": "TypeScript", "javascript": "JavaScript",
+  "node.js": "Node.js", "nodejs": "Node.js",
+  "python": "Python", "rust": "Rust", "golang": "Go", " go ": "Go",
+  "tailwind": "Tailwind", "prisma": "Prisma", "supabase": "Supabase",
+  "satori": "Satori", "resvg": "Resvg",
+  "postgres": "Postgres", "mongodb": "MongoDB", "redis": "Redis",
+  "docker": "Docker", "vercel": "Vercel", "cloudflare": "Cloudflare",
+  "zoho": "Zoho", "openai": "OpenAI", "anthropic": "Anthropic",
+};
 
 export async function readReadme(dir) {
   const candidates = ["README.md", "readme.md", "Readme.md"];
@@ -17,7 +28,14 @@ export async function readReadme(dir) {
   const description = lines.find((l) => l.trim() && !l.startsWith("#") && !l.startsWith("!") && l.length > 20)?.trim() ?? "";
 
   const lower = content.toLowerCase();
-  const stack = STACK_KEYWORDS.filter((k) => lower.includes(k));
+  const seen = new Set();
+  const stack = [];
+  for (const [keyword, display] of Object.entries(STACK_MAP)) {
+    if (lower.includes(keyword) && !seen.has(display)) {
+      seen.add(display);
+      stack.push(display);
+    }
+  }
 
   return { name: h1, description, stack };
 }

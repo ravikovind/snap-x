@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>Thumbnail Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.50);
+    --accent: #e5383b;
+    --accent-muted: rgba(229,56,59,0.25);
+    --border-accent: rgba(229,56,59,0.35);
+    --font: 'Inter', sans-serif;
+  }
+  [data-theme="light"] {
+    --bg: #ffffff;
+    --text: #0a0a0a;
+    --muted: rgba(0,0,0,0.50);
+    --accent: #e5383b;
+    --accent-muted: rgba(229,56,59,0.15);
+    --border-accent: rgba(229,56,59,0.30);
+  }
+
+  html, body {
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .card {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    background: var(--bg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 64px 80px;
+  }
+
+  /* Accent glow bottom-right */
+  .glow-br {
+    position: absolute;
+    bottom: -160px; right: -100px;
+    width: 700px; height: 600px;
+    background: radial-gradient(circle, rgba(229,56,59,0.14) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  /* Subtle top-left glow */
+  .glow-tl {
+    position: absolute;
+    top: -80px; left: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(229,56,59,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  /* Top: eyebrow */
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .eyebrow-text {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Center: title + subtitle */
+  .center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .title {
+    color: var(--text);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.4;
+    max-width: 800px;
+  }
+
+  /* Bottom: tag pill */
+  .bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+  .tag-pill {
+    background: var(--accent);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 8px;
+  }
+  .bottom-domain {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow-br"></div>
+  <div class="glow-tl"></div>
+
+  <!-- Eyebrow -->
+  <div class="eyebrow">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <span class="eyebrow-text snap-eyebrow">snap-x</span>
+  </div>
+
+  <!-- Center -->
+  <div class="center">
+    <div class="title snap-title">My Project</div>
+    <div class="subtitle snap-subtitle">A short description of what this project does.</div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="bottom">
+    <span class="tag-pill snap-tag">Open Source</span>
+    <span class="bottom-domain snap-domain"></span>
+  </div>
+</div>
+
+<script>
+  const p = new URLSearchParams(location.search);
+  const get = (k, fallback = '') => p.get(k) || fallback;
+
+  const theme = get('theme', 'dark');
+  if (theme === 'light') document.documentElement.dataset.theme = 'light';
+
+  const font = get('font', 'Inter');
+  if (font !== 'Inter') {
+    const link = document.createElement('link');
+    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@400;700;900&display=swap`;
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+    document.documentElement.style.setProperty('--font', `'${font}', sans-serif`);
+  }
+
+  const set = (sel, val) => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    if (val) { el.textContent = val; el.style.display = ''; }
+    else el.style.display = 'none';
+  };
+
+  const title = get('title', 'My Project');
+  const description = get('description', '');
+  const domain = get('domain', '');
+  const tagsRaw = get('tags', '');
+  const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+  // Title font size
+  const titleEl = document.querySelector('.snap-title');
+  if (titleEl) {
+    titleEl.textContent = title;
+    const len = title.length;
+    titleEl.style.fontSize = len > 60 ? '52px' : len > 40 ? '64px' : len > 25 ? '76px' : '88px';
+  }
+
+  set('.snap-subtitle', description.length > 130 ? description.slice(0, 130).trimEnd() + '…' : description);
+
+  // Eyebrow: domain or title
+  set('.snap-eyebrow', domain || 'snap-x');
+
+  // Tag: first tag or fallback
+  const tag = tags[0] || '';
+  if (tag) {
+    set('.snap-tag', tag);
+  } else {
+    document.querySelector('.snap-tag').style.display = 'none';
+  }
+
+  // Domain bottom-right
+  set('.snap-domain', domain);
+</script>
+</body>
+</html>
