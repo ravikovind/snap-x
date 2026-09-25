@@ -1,13 +1,20 @@
 # Changelog
 
+## 0.5.0 (core) / 0.1.0 (cli) / 0.2.1 (mcp)
+
+- **New `@snap-x/cli`** owns the `snap-x` command: `npx @snap-x/cli check|render …`, or `npm install -g @snap-x/cli` for the short `snap-x`
+- `@snap-x/core` is now library-only (its `bin` moved to `@snap-x/cli`); the CLI implementation is still exported as `@snap-x/core/cli`
+- `@snap-x/mcp` updated to depend on `@snap-x/core ^0.5.0`
+- Migration: `npx @snap-x/core …` → `npx @snap-x/cli …`
+
 ## 0.4.0 — first public release
 
 snap-x is now a **render-only** pipeline: a self-contained `.mjs` design file in, a PNG out. No browser, no config, no auto-detection.
 
 ### Packages
-(The unscoped `snap-x` name is unavailable on npm — too similar to the existing `snapx` — so the CLI ships inside `@snap-x/core`.)
+(The unscoped `snap-x` name is unavailable on npm — too similar to the existing `snapx`.)
 
-- `@snap-x/core` — the CLI (`npx @snap-x/core check|render …`, or `snap-x` after a global install) and the engine: Satori renderer, font loader, programmatic API
+- `@snap-x/core` — the CLI and engine: Satori renderer, font loader, programmatic API (0.4.0 shipped the `snap-x` bin; it moved to `@snap-x/cli` in 0.5.0)
 - `@snap-x/mcp` 0.2.0 — MCP server: `render_designs`, `check_designs`, `list_formats`
 
 ### Breaking changes (from the pre-release tooling)

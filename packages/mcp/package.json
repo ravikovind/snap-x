@@ -1,6 +1,6 @@
 {
   "name": "@snap-x/mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "MCP server for snap-x — exposes render/check for self-contained Satori .mjs design files as tools for Cursor, Windsurf, Claude Desktop, and other MCP-compatible agents.",
   "author": {
     "name": "Ravi Kovind",
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@snap-x/core": "^0.4.0"
+    "@snap-x/core": "^0.5.0"
   },
   "keywords": [
     "snap-x",

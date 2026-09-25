@@ -37,7 +37,7 @@ const REFERENCE_FORMATS = {
 // ─── Server setup ─────────────────────────────────────────────────────────────
 
 const server = new Server(
-  { name: "snap-x", version: "0.2.0" },
+  { name: "snap-x", version: "0.2.1" },
   { capabilities: { tools: {} } }
 );
 

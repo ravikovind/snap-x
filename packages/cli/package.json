@@ -1,32 +1,22 @@
 {
-  "name": "@snap-x/core",
-  "version": "0.5.0",
-  "description": "Engine for snap-x: renders self-contained Satori .mjs design files to PNG (renderer, font loader, checker). Use @snap-x/cli for the command.",
+  "name": "@snap-x/cli",
+  "version": "0.1.0",
+  "description": "The snap-x command: render self-contained Satori .mjs design files to PNG. No browser, no config.",
   "author": {
     "name": "Ravi Kovind",
     "url": "https://ravikovind.com"
   },
   "type": "module",
-  "main": "src/index.mjs",
+  "bin": {
+    "snap-x": "bin.mjs"
+  },
   "files": [
-    "src/",
+    "bin.mjs",
     "LICENSE",
     "README.md"
   ],
-  "exports": {
-    ".": "./src/index.mjs",
-    "./render": "./src/render.mjs",
-    "./check": "./src/check.mjs",
-    "./fonts": "./src/fonts.mjs",
-    "./cli": "./src/cli.mjs"
-  },
-  "scripts": {
-    "start": "node src/cli.mjs",
-    "test": "node --test test/*.test.mjs"
-  },
   "dependencies": {
-    "@resvg/resvg-js": "^2.6.2",
-    "satori": "^0.33.5"
+    "@snap-x/core": "^0.5.0"
   },
   "keywords": [
     "og-images",
@@ -34,7 +24,7 @@
     "social-cards",
     "snap-x",
     "claude-skill",
-    "mcp"
+    "cli"
   ],
   "license": "MIT",
   "engines": {
@@ -43,7 +33,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ravikovind/snap-x.git",
-    "directory": "packages/core"
+    "directory": "packages/cli"
   },
   "homepage": "https://github.com/ravikovind/snap-x#readme",
   "bugs": {

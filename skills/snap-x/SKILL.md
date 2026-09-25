@@ -236,7 +236,7 @@ Write `designs/*.mjs` — one file per format needed, each self-contained (FORMA
 
 Each file is a valid Satori tree. Follow the Satori rules above. Use async functions when loading local assets.
 
-Run `npx @snap-x/core check designs/*.mjs` after writing. Fix any errors before proceeding.
+Run `npx @snap-x/cli check designs/*.mjs` after writing. Fix any errors before proceeding.
 
 **Gate:** `snap-x check` passes with zero errors.
 
@@ -246,7 +246,7 @@ Run `npx @snap-x/core check designs/*.mjs` after writing. Fix any errors before 
 
 **Read:** `references/step-4-render.md`
 
-Run `npx @snap-x/core render designs/*.mjs --out <dir>`, verify output images, write `share-copy.txt` with placement instructions.
+Run `npx @snap-x/cli render designs/*.mjs --out <dir>`, verify output images, write `share-copy.txt` with placement instructions.
 
 **Gate:** All PNGs exist. `share-copy.txt` tells the user exactly where each image goes.
 

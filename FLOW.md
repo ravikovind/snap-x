@@ -273,7 +273,8 @@ Skill files: `skills/snap-x/SKILL.md` + `skills/snap-x/references/`
 
 | Package | Description |
 |---------|-------------|
-| `@snap-x/core` | The CLI (`snap-x check` / `snap-x render`) and engine: Satori renderer, Google Font loader, programmatic API |
+| `@snap-x/cli` | The `snap-x` command (`check` / `render`) — thin package that owns the bin and runs `@snap-x/core`'s `./cli` |
+| `@snap-x/core` | The engine: Satori renderer, Google Font loader, checker, programmatic API (the CLI implementation lives here as `./cli`) |
 | `@snap-x/mcp` | MCP server exposing `render_designs` / `check_designs` / `list_formats` as agent tools |
 
 ---
@@ -308,6 +309,7 @@ Lets Cursor, Windsurf, Claude Desktop, and other agents render/check design file
 ```
 snap-x/
 ├── packages/
+│   ├── cli/                      bin.mjs → @snap-x/core/cli (owns the `snap-x` command)
 │   ├── core/
 │   │   ├── src/
 │   │   │   ├── cli.mjs           entry — check / render
@@ -342,7 +344,7 @@ snap-x/
 ## Quick start
 
 ```bash
-npm install -g @snap-x/core
+npm install -g @snap-x/cli
 
 # write designs/og.mjs by hand, or let Claude do it:
 ```

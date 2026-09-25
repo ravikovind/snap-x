@@ -5,8 +5,8 @@
 Render-only Satori pipeline: write a self-contained `.mjs` design file, get a PNG. No browser. No config. No auto-detection. Pure Node.js.
 
 ```bash
-npx @snap-x/core check  designs/*.mjs             # validate
-npx @snap-x/core render designs/*.mjs --out out   # Satori → PNG
+npx @snap-x/cli check  designs/*.mjs             # validate
+npx @snap-x/cli render designs/*.mjs --out out   # Satori → PNG
 ```
 
 That's the whole surface. Everything else — what the image says, what it looks like, what font it uses — lives in the `.mjs` file itself, not in flags or a config file.
@@ -70,7 +70,7 @@ Nothing stops you from writing `.mjs` files by hand instead — the skill just a
 ## Quick start
 
 ```bash
-npm install -g @snap-x/core   # gives you the `snap-x` command; or skip installing and use `npx @snap-x/core …`
+npm install -g @snap-x/cli   # gives you the `snap-x` command; or skip installing and use `npx @snap-x/cli …`
 ```
 
 Write a design file:
@@ -317,7 +317,8 @@ Claude inspects your project, plans the design, writes the `.mjs` design files, 
 
 | Package | Description |
 |---|---|
-| [`@snap-x/core`](packages/core) | The CLI (`snap-x check` / `snap-x render`) and engine: Satori renderer, font loader, programmatic API |
+| [`@snap-x/cli`](packages/cli) | The `snap-x` command: `check` and `render` |
+| [`@snap-x/core`](packages/core) | The engine: Satori renderer, font loader, checker, programmatic API |
 | [`@snap-x/mcp`](packages/mcp) | MCP server exposing the same render/check as agent tools |
 
 ---

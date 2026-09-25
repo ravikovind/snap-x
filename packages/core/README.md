@@ -1,12 +1,17 @@
 # @snap-x/core
 
-Render-only Satori pipeline: a self-contained `.mjs` design file in, a PNG out. No browser, no config.
+The engine behind [snap-x](https://github.com/ravikovind/snap-x): renders a self-contained Satori `.mjs` design file to PNG. No browser, no config.
 
-```bash
-npm install -g @snap-x/core   # provides the `snap-x` command; or run `npx @snap-x/core …`
+**Want the command?** Use [`@snap-x/cli`](https://www.npmjs.com/package/@snap-x/cli): `npx @snap-x/cli render designs/*.mjs`.
 
-snap-x check  designs/*.mjs
-snap-x render designs/*.mjs --out snap-output
+This package is the library:
+
+```js
+import { renderDesign, checkDesign, resolveFonts, collectFontsSpec } from "@snap-x/core";
+
+const files = ["designs/og.mjs"];
+const fonts = await resolveFonts(await collectFontsSpec(files));
+await renderDesign(files[0], "snap-output", fonts);
 ```
 
 A design file exports `FORMAT`, optionally `FONTS`, and a zero-argument default export (a Satori tree, or a function returning one):
@@ -16,13 +21,7 @@ export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 export const FONTS  = [{ family: "Inter", weights: [400, 700, 900] }]; // optional
 
 export default function () {
-  return {
-    type: "div",
-    props: {
-      style: { width: 1200, height: 630, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" },
-      children: [{ type: "div", props: { style: { color: "#fff", fontSize: 56, display: "flex" }, children: ["Hello"] } }],
-    },
-  };
+  return { type: "div", props: { style: { width: 1200, height: 630, background: "#000", display: "flex" }, children: [] } };
 }
 ```
 

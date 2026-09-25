@@ -3,9 +3,9 @@
 ## Render
 
 ```bash
-npx @snap-x/core render designs/*.mjs --out snap-output/
+npx @snap-x/cli render designs/*.mjs --out snap-output/
 # or a single file:
-npx @snap-x/core render designs/og.mjs --out snap-output/
+npx @snap-x/cli render designs/og.mjs --out snap-output/
 ```
 
 Expected output:
