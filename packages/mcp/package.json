@@ -12,11 +12,33 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@snap-x/core": "*"
+    "@snap-x/core": "^0.4.0"
   },
-  "keywords": ["snap-x", "mcp", "og-images", "social-cards"],
+  "keywords": [
+    "snap-x",
+    "mcp",
+    "og-images",
+    "social-cards"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=18"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ravikovind/snap-x.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/ravikovind/snap-x#readme",
+  "bugs": {
+    "url": "https://github.com/ravikovind/snap-x/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "src/",
+    "LICENSE",
+    "README.md"
+  ]
 }

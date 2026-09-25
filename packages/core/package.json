@@ -8,7 +8,9 @@
     "snap-x": "./src/cli.mjs"
   },
   "files": [
-    "src/"
+    "src/",
+    "LICENSE",
+    "README.md"
   ],
   "exports": {
     ".": "./src/index.mjs",
@@ -24,9 +26,28 @@
     "@resvg/resvg-js": "^2.6.2",
     "satori": "^0.33.5"
   },
-  "keywords": ["og-images", "satori", "social-cards", "snap-x", "claude-skill", "mcp"],
+  "keywords": [
+    "og-images",
+    "satori",
+    "social-cards",
+    "snap-x",
+    "claude-skill",
+    "mcp"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ravikovind/snap-x.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/ravikovind/snap-x#readme",
+  "bugs": {
+    "url": "https://github.com/ravikovind/snap-x/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
