@@ -20,10 +20,18 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { renderDesign, checkDesign, resolveFonts, resetFontCache, collectFontsSpec } from "@snap-x/core";
 import path from "path";
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
+
+const GUIDE_URI = "snap-x://design-guide";
+const readGuide = () => fs.readFile(fileURLToPath(new URL("./design-guide.md", import.meta.url)), "utf8");
 
 // Reference only — not read by render_designs/check_designs, which accept any FORMAT.
 const REFERENCE_FORMATS = {
@@ -37,8 +45,8 @@ const REFERENCE_FORMATS = {
 // ─── Server setup ─────────────────────────────────────────────────────────────
 
 const server = new Server(
-  { name: "snap-x", version: "0.2.1" },
-  { capabilities: { tools: {} } }
+  { name: "snap-x", version: "0.3.0" },
+  { capabilities: { tools: {}, resources: {}, prompts: {} } }
 );
 
 // ─── List tools ───────────────────────────────────────────────────────────────
@@ -48,7 +56,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "render_designs",
       description:
-        "Render one or more self-contained Satori .mjs design files to PNG (pure Node.js, no browser). Each file must export FORMAT ({width, height, name?}) and a default export (a Satori tree object, or a zero-argument function returning one). Optionally exports FONTS ([{family, weights?}]) — defaults to Inter 400/700/900 if omitted.",
+        "Render one or more self-contained Satori .mjs design files to PNG (pure Node.js, no browser). Each file must export FORMAT ({width, height, name?}) and a default export (a Satori tree object, or a zero-argument function returning one). Optionally exports FONTS ([{family, weights?}]) — defaults to Inter 400/700/900 if omitted. Read the resource snap-x://design-guide (or use the design_cards prompt) for the design rules before writing files.",
       inputSchema: {
         type: "object",
         properties: {
@@ -181,6 +189,44 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   return {
     content: [{ type: "text", text: `Unknown tool: ${name}` }],
     isError: true,
+  };
+});
+
+// ─── Resources & prompts (the design rules, for agents that don't have the /snap-x skill) ─────────
+
+server.setRequestHandler(ListResourcesRequestSchema, async () => ({
+  resources: [{
+    uri: GUIDE_URI, name: "snap-x design guide", mimeType: "text/markdown",
+    description: "How to write snap-x design files: workflow, file format, Satori rules, fonts, glyph and text-fit pitfalls, logos, contrast.",
+  }],
+}));
+
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  if (request.params.uri !== GUIDE_URI) throw new Error(`Unknown resource: ${request.params.uri}`);
+  return { contents: [{ uri: GUIDE_URI, mimeType: "text/markdown", text: await readGuide() }] };
+});
+
+server.setRequestHandler(ListPromptsRequestSchema, async () => ({
+  prompts: [{
+    name: "design_cards",
+    description: "Design and render branded images (OG/README cards, banners, posters) for a project, website or brief, following the snap-x design guide.",
+    arguments: [
+      { name: "source", description: "The repo path, website URL, or a written brief to make images for.", required: true },
+      { name: "formats", description: "Which images to make, e.g. \"OG 1200x630 and README card 1280x640\". Default: whatever the project needs.", required: false },
+    ],
+  }],
+}));
+
+server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+  if (request.params.name !== "design_cards") throw new Error(`Unknown prompt: ${request.params.name}`);
+  const { source = "", formats = "" } = request.params.arguments ?? {};
+  const guide = await readGuide();
+  return {
+    description: "Design and render branded images with snap-x",
+    messages: [{
+      role: "user",
+      content: { type: "text", text: `Make branded images for: ${source || "(ask the user what to make images for)"}\n${formats ? `Formats: ${formats}\n` : ""}\nWrite self-contained snap-x design files, validate them with check_designs, render them with render_designs, then look at every PNG and fix what you see. Follow this guide:\n\n${guide}` },
+    }],
   };
 });
 
