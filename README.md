@@ -64,6 +64,12 @@ Same idea for [heyreach.io](https://www.heyreach.io), read from the live site (c
 
 ![heyreach senders](examples/heyreach/senders.png)
 
+### A personal cover: Ravi Kovind
+
+A LinkedIn banner built from a written spec ([`plan.md`](examples/ravikovind/plan.md): exact copy, danger zones, palette, QA gates) in [`examples/ravikovind/`](examples/ravikovind): a 1584×396 cover with a `@2x` export and QA overlays that prove nothing important lands under LinkedIn's avatar or the mobile crop. It shows the `_helper.mjs` pattern too: one shared builder, four small entry files.
+
+![ravi kovind linkedin cover](examples/ravikovind/ravi-kovind-linkedin-cover.png)
+
 ---
 
 ## How it works
@@ -141,7 +147,7 @@ snap-x render <paths...> [--out <dir>]
 
 `<paths...>` accepts any mix of:
 - a literal file — `designs/og.mjs`
-- a directory — `designs/` (expands to every `.mjs` inside)
+- a directory — `designs/` (expands to every `.mjs` inside; files starting with `_` are treated as shared helpers and skipped)
 - a glob with one trailing `*` — `designs/*.mjs`
 
 | Flag | Default | Description |

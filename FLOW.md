@@ -119,6 +119,10 @@ export default async function () {
 }
 ```
 
+### Shared helpers (`_` prefix)
+
+A file whose name starts with `_` (e.g. `_cover.mjs`) is a helper: `snap-x render`/`check` skip it when expanding a directory or glob, but other designs can `import` it. `examples/ravikovind/` uses this to build one composition and render it several ways (1×, @2×, QA overlay, mobile crop). Each design file still exports its own `FORMAT` and `FONTS`.
+
 ### Static tree (baked, no function)
 
 ```js
@@ -328,7 +332,8 @@ snap-x/
 │       └── share-copy.txt        where each image goes (Step 4)
 │                                 regenerate: `npm run examples`
 │   ├── open-notifier/            second example, built from a website (no repo): og + notifications
-│   └── heyreach/                 third example, from a website: og + senders
+│   ├── heyreach/                 third example, from a website: og + senders
+│   └── ravikovind/               personal LinkedIn cover from a written spec (plan.md): 1x, @2x, QA overlay, mobile crop; shared `_cover.mjs` builder
 │                                 each folder: designs/*.mjs · *.png · snap-plan.md · share-copy.txt
 ├── scripts/
 │   └── examples.mjs              `npm run examples` — renders/checks every examples/*/designs
