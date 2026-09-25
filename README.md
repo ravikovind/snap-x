@@ -16,22 +16,30 @@ npx snap-x render  # Satori → PNG
 
 ## Examples
 
-| OG (1200×630) | Thumbnail (1280×720) |
-|---|---|
-| ![og](examples/og.png) | ![thumbnail](examples/thumbnail.png) |
+> All generated with `snap-x render --font Saira` — snap-x's own images, made by snap-x.
 
-| Cover (1500×500) | README card (1280×640) |
-|---|---|
-| ![cover](examples/cover.png) | ![readme-card](examples/readme-card.png) |
+**OG card** — 1200×630
+
+![og](examples/og.png)
+
+**Thumbnail** — 1280×720
+
+![thumbnail](examples/thumbnail.png)
+
+**Cover banner** — 1500×500
+
+![cover](examples/cover.png)
+
+**README card** — 1280×640
+
+![readme-card](examples/readme-card.png)
 
 <details>
-<summary>Poster (1080×1920)</summary>
+<summary>Poster — 1080×1920</summary>
 
 ![poster](examples/poster.png)
 
 </details>
-
-> All generated with `snap-x render --font Saira` — snap-x's own images, made by snap-x.
 
 ---
 
