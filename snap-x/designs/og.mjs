@@ -13,9 +13,9 @@ export default function () {
 
   const lines = [
     { prompt: "$", cmd: "npx snap-x render designs/*.mjs", out: null },
-    { prompt: " ", cmd: null, out: "✔  og.png        (67 KB)" },
-    { prompt: " ", cmd: null, out: "✔  cover.png     (66 KB)" },
-    { prompt: " ", cmd: null, out: "✔  poster.png   (124 KB)" },
+    { prompt: " ", cmd: null, out: "→  og.png        (67 KB)" },
+    { prompt: " ", cmd: null, out: "→  cover.png     (66 KB)" },
+    { prompt: " ", cmd: null, out: "→  poster.png   (124 KB)" },
   ];
 
   return {
