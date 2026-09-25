@@ -77,6 +77,8 @@ test("underscore-prefixed helper files are skipped in directories and globs", as
   assert.ok(sub.includes("real.mjs") && !sub.includes("_helper.mjs"));
 });
 
-test("an underscore file passed explicitly is still resolved", async () => {
-  assert.deepEqual(base(await resolveDesignFiles([path.join(dir, "_shared.mjs")])), ["_shared.mjs"]);
+test("underscore files are skipped even when passed explicitly (shells expand globs into explicit paths)", async () => {
+  assert.deepEqual(await resolveDesignFiles([path.join(dir, "_shared.mjs")]), []);
+  const expandedByShell = [path.join(dir, "_shared.mjs"), path.join(dir, "og.mjs"), path.join(dir, "cover.mjs")];
+  assert.deepEqual(base(await resolveDesignFiles(expandedByShell)), ["og.mjs", "cover.mjs"]);
 });

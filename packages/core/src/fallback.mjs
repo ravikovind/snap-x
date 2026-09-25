@@ -22,6 +22,11 @@ const SCRIPTS = [
   { family: "Noto Sans", re: /[Ā-ɏͰ-ϿЀ-ԯḀ-ỿ]/g },
 ];
 
+const FALLBACK_TESTS = SCRIPTS.map(({ re }) => new RegExp(re.source));
+
+/** True if `ch` belongs to a script for which loadFallbackFonts() will add a Noto subset. */
+export const coveredByFallback = (ch) => FALLBACK_TESTS.some((re) => re.test(ch));
+
 /** Concatenates every text node in a Satori tree. */
 export function collectText(node) {
   if (node == null || typeof node === "boolean") return "";

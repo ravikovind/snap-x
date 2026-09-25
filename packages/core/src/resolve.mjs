@@ -4,8 +4,8 @@ import { existsSync, statSync } from "fs";
 
 /**
  * Expands literal files, directories, and single-`*`-wildcard globs into a flat, deduped list of absolute .mjs paths.
- * Files whose name starts with `_` are helpers (shared builders etc.): skipped when a directory or glob is expanded,
- * but still honoured when passed explicitly.
+ * Files whose name starts with `_` are helpers (shared builders etc.) and are ALWAYS skipped — including when named
+ * explicitly, because a shell expands `designs/*.mjs` into explicit paths before the CLI sees a glob.
  */
 export async function resolveDesignFiles(patterns) {
   const out = [];
@@ -33,7 +33,7 @@ export async function resolveDesignFiles(patterns) {
       continue;
     }
 
-    out.push(abs);
+    if (isDesign(path.basename(abs))) out.push(abs);
   }
   return [...new Set(out)];
 }

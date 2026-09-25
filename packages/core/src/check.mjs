@@ -5,6 +5,8 @@
  */
 
 import { loadDesignModule } from "./load.mjs";
+import { collectText } from "./fallback.mjs";
+import { findUncoveredChars } from "./glyphs.mjs";
 
 const UNSUPPORTED_DISPLAY = new Set([
   "block",
@@ -62,6 +64,14 @@ export async function checkDesign(designPath, { fonts } = {}) {
 
   // Traverse tree
   traverseNode(tree, errors, warnings, "root");
+
+  // Characters no loaded font can draw render as blank boxes (Satori doesn't error) — flag them.
+  if (fonts?.length) {
+    const missing = findUncoveredChars(collectText(tree), fonts);
+    if (missing.length > 0) {
+      warnings.push(`no loaded font has: ${missing.map((c) => `"${c}"`).join(" ")} — these render as blank boxes. Draw them as inline SVG/shapes, or pick a font that includes them.`);
+    }
+  }
 
   // Actual Satori render — catches errors structural checks can't see
   // (bad image data URIs, invalid font weights, malformed SVG paths, etc.)
