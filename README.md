@@ -13,6 +13,27 @@ npx snap-x build   # render all images via Playwright
 
 ---
 
+## Examples
+
+| OG (1200×630) | Thumbnail (1280×720) |
+|---|---|
+| ![og](examples/og.png) | ![thumbnail](examples/thumbnail.png) |
+
+| Cover (1500×500) | README card (1280×640) |
+|---|---|
+| ![cover](examples/cover.png) | ![readme-card](examples/readme-card.png) |
+
+<details>
+<summary>Poster (1080×1920)</summary>
+
+![poster](examples/poster.png)
+
+</details>
+
+> All generated with `snap-x --fast --font Saira` — snap-x's own images, made by snap-x.
+
+---
+
 ## What it generates
 
 | Format | Size | Use case |

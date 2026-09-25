@@ -1,12 +1,12 @@
 /**
- * Poster — 1080×1080
- * Instagram, WhatsApp, square social share.
+ * Poster — 1080×1920
+ * Instagram story, vertical social share.
  * Centered, bold, minimal.
  */
 
 import { getTheme } from "../themes/index.mjs";
 
-export const FORMAT = { width: 1080, height: 1080 };
+export const FORMAT = { width: 1080, height: 1920 };
 
 export function posterCard({
   eyebrow = "",
@@ -23,7 +23,7 @@ export function posterCard({
     type: "div",
     props: {
       style: {
-        width: 1080, height: 1080,
+        width: 1080, height: 1920,
         background: t.bg,
         display: "flex",
         flexDirection: "column",
