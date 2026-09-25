@@ -12,7 +12,8 @@
  * Tools:
  *   - render_designs   render one or more .mjs design files to PNG
  *   - check_designs    validate one or more .mjs design files
- *   - list_formats     common social-image dimensions, for reference only
+ *   - preview_guides   draw a platform's danger zones over designs (profile-photo overlap, crops, safe area)
+ *   - list_formats     platform formats: sizes, no-alpha rules, placement zones (YouTube, X, LinkedIn, Play, App Store …)
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -25,7 +26,7 @@ import {
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { renderDesign, checkDesign, resolveFonts, resetFontCache, collectFontsSpec } from "@snap-x/core";
+import { renderDesign, checkDesign, resolveFonts, resetFontCache, collectFontsSpec, renderGuides, FORMATS, findFormat } from "@snap-x/core";
 import path from "path";
 import fs from "fs/promises";
 import { fileURLToPath } from "url";
@@ -33,19 +34,10 @@ import { fileURLToPath } from "url";
 const GUIDE_URI = "snap-x://design-guide";
 const readGuide = () => fs.readFile(fileURLToPath(new URL("./design-guide.md", import.meta.url)), "utf8");
 
-// Reference only — not read by render_designs/check_designs, which accept any FORMAT.
-const REFERENCE_FORMATS = {
-  og:           { width: 1200, height: 630,  description: "Open Graph / Twitter card" },
-  cover:        { width: 1500, height: 500,  description: "GitHub / Twitter banner" },
-  thumbnail:    { width: 1280, height: 720,  description: "YouTube / blog thumbnail" },
-  poster:       { width: 1080, height: 1920, description: "Instagram story / vertical" },
-  "readme-card": { width: 1280, height: 640, description: "GitHub README card" },
-};
-
 // ─── Server setup ─────────────────────────────────────────────────────────────
 
 const server = new Server(
-  { name: "snap-x", version: "0.3.0" },
+  { name: "snap-x", version: "0.4.0" },
   { capabilities: { tools: {}, resources: {}, prompts: {} } }
 );
 
@@ -90,12 +82,26 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       },
     },
     {
-      name: "list_formats",
+      name: "preview_guides",
       description:
-        "Common social-image dimensions, for reference when deciding what to design. snap-x itself has no fixed format list — any FORMAT {width, height} is valid.",
+        "Draw a platform format's danger zones over each design and write <name>.guides.png (red = avoid, dashed cyan = safe area) plus <name>.mobile.png when the platform crops on phones. Use it for banners and covers (LinkedIn, X, YouTube channel art), story-size posters and thumbnails to check that text isn't under a profile photo, duration badge or cropped edge. The format is matched from each design's FORMAT size, or pass `format`.",
       inputSchema: {
         type: "object",
-        properties: {},
+        properties: {
+          files: { type: "array", items: { type: "string" }, description: "Absolute paths to the .mjs design files." },
+          format: { type: "string", description: "Format id (see list_formats), e.g. linkedin-cover. Optional — inferred from the design's size." },
+          outDir: { type: "string", description: "Where to write the overlay PNGs. Defaults to ./snap-guides next to the first file." },
+        },
+        required: ["files"],
+      },
+    },
+    {
+      name: "list_formats",
+      description:
+        "Platform image formats snap-x knows: id, size, whether the platform forbids an alpha channel (App Store / Google Play — set FORMAT.alpha = false), notes, and placement zones. Covers link previews, YouTube thumbnails and channel art, X/LinkedIn/Instagram covers and posts, Google Play graphics and screenshots, and App Store screenshots. Pass `format` for one format's full details. Any FORMAT {width, height} is still valid.",
+      inputSchema: {
+        type: "object",
+        properties: { format: { type: "string", description: "A format id, alias or WxH (e.g. app-store-iphone-6.9, thumbnail, 1584x396)." } },
         required: [],
       },
     },
@@ -108,17 +114,46 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   if (name === "list_formats") {
-    const lines = Object.entries(REFERENCE_FORMATS).map(
-      ([id, f]) => `• ${id.padEnd(12)} ${f.width}×${f.height}  ${f.description}`
-    );
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Common social-image dimensions (reference only — any size works):\n\n${lines.join("\n")}`,
-        },
-      ],
-    };
+    const zoneText = (z) => (z.type === "circle" ? `circle (${z.cx},${z.cy}) r=${z.r}` : `rect x=${z.x} y=${z.y} ${z.w}×${z.h}`) + (z.label ? `  ${z.label}` : "");
+    if (args?.format) {
+      const f = findFormat(args.format);
+      if (!f) return { content: [{ type: "text", text: `Unknown format "${args.format}". Call list_formats with no arguments to see them.` }], isError: true };
+      const lines = [
+        `${f.id}  ${f.width}×${f.height}${f.alpha === false ? "  (no alpha channel — set FORMAT.alpha = false)" : ""}`,
+        f.platform + (f.verified ? "" : "   [not verified against official docs — re-check before launch]"),
+        f.notes,
+        ...(f.source ? [`source: ${f.source}`] : []),
+        ...(f.avoid ?? []).map((z) => `avoid  ${zoneText(z)}`),
+        ...(f.safe ? [`safe   ${zoneText(f.safe)}`] : []),
+        ...(f.mobileCrop ? [`mobile crop: x ${f.mobileCrop.x} → ${f.mobileCrop.x + f.mobileCrop.w}`] : []),
+      ];
+      return { content: [{ type: "text", text: lines.join("\n") }] };
+    }
+    const w = Math.max(...FORMATS.map((f) => f.id.length));
+    const lines = FORMATS.map((f) => {
+      const tags = [f.alpha === false ? "no-alpha" : "", f.avoid || f.safe ? "zones" : "", f.verified ? "" : "unverified"].filter(Boolean).join(" ");
+      return `• ${f.id.padEnd(w)}  ${`${f.width}×${f.height}`.padEnd(10)} ${f.platform}${tags ? `  [${tags}]` : ""}`;
+    });
+    return { content: [{ type: "text", text: `snap-x platform formats (any FORMAT size also works):\n\n${lines.join("\n")}\n\nCall list_formats with \`format\` for notes and placement zones.` }] };
+  }
+
+  if (name === "preview_guides") {
+    const files = args.files ?? [];
+    if (files.length === 0) return { content: [{ type: "text", text: "No files provided." }], isError: true };
+    const outDir = args.outDir ?? path.join(path.dirname(files[0]), "snap-guides");
+    try {
+      await fs.mkdir(outDir, { recursive: true });
+      resetFontCache();
+      const fonts = await resolveFonts(await collectFontsSpec(files));
+      const written = [];
+      for (const f of files) written.push(...(await renderGuides(f, outDir, fonts, { formatId: args.format })));
+      const text = written.length
+        ? [`Wrote ${written.length} guide image(s) to ${outDir} (red = avoid, dashed cyan = safe area):`, ...written.map((p) => `  • ${path.basename(p)}`), "View them and move anything out of the red zones."].join("\n")
+        : "No guide images written: none of the designs match a format with placement zones. Pass `format` (see list_formats) or use a platform size.";
+      return { content: [{ type: "text", text }] };
+    } catch (err) {
+      return { content: [{ type: "text", text: `Error creating guides: ${err.message}` }], isError: true };
+    }
   }
 
   if (name === "check_designs") {

@@ -1,7 +1,7 @@
 {
   "name": "@snap-x/mcp",
-  "version": "0.3.0",
-  "description": "MCP server for snap-x \u2014 render/check tools plus a design guide (resource + prompt) for Cursor, Windsurf, Claude Desktop, and other MCP-compatible agents.",
+  "version": "0.4.0",
+  "description": "MCP server for snap-x \u2014 render/check/guides tools, platform formats, and a design guide (resource + prompt) for Cursor, Windsurf, Claude Desktop, and other MCP-compatible agents.",
   "author": {
     "name": "Ravi Kovind",
     "url": "https://ravikovind.com"
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@snap-x/core": "^0.5.1"
+    "@snap-x/core": "^0.6.0"
   },
   "keywords": [
     "snap-x",
