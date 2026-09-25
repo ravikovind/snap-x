@@ -4,7 +4,7 @@
  * Rules: must export FORMAT + default, tree must use display:flex only.
  */
 
-import path from "path";
+import { loadDesignModule } from "./load.mjs";
 
 const UNSUPPORTED_DISPLAY = new Set([
   "block",
@@ -28,7 +28,7 @@ export async function checkDesign(designPath, { fonts } = {}) {
 
   let mod;
   try {
-    mod = await import(`${designPath}?check=${Date.now()}`);
+    mod = await loadDesignModule(designPath);
   } catch (err) {
     return { errors: [`Cannot import file: ${err.message}`], warnings };
   }

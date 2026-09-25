@@ -32,7 +32,7 @@ snap-x render <paths...> [--out <dir>]
   ├── collectFontsSpec(files)       read each file's FONTS export, merge into one spec
   ├── resolveFonts(spec)            fetch + cache Google Fonts (dedup by family+weight; falls back to Inter on failure)
   └── for each design file:
-        import(designPath)          dynamic ESM import
+        loadDesignModule(designPath)  dynamic ESM import — once per file version, so top-level code runs once
         await mod.default()         call design function — no arguments
         loadFallbackFonts(tree)     Noto subsets for any non-Latin scripts in the text
         satori(tree, {w,h,fonts})   tree → SVG string
@@ -314,6 +314,7 @@ snap-x/
 │   │   │   ├── resolve.mjs       files / directories / `*` globs → .mjs paths
 │   │   │   ├── render.mjs        Satori → resvg → PNG
 │   │   │   ├── check.mjs         structural validation + real Satori render check
+│   │   │   ├── load.mjs          imports a design once per file version (mtime-keyed)
 │   │   │   ├── fonts.mjs         Google Fonts loader/cache, FONTS-spec resolution
 │   │   │   ├── fallback.mjs      per-design script fallback fonts (CJK, Arabic, …)
 │   │   │   └── index.mjs         programmatic API (used by @snap-x/mcp)

@@ -10,9 +10,10 @@
 
 import path from "path";
 import fs from "fs/promises";
+import { loadDesignModule } from "./load.mjs";
 
 export async function renderDesign(designPath, outDir, fonts) {
-  const mod = await import(`${designPath}?t=${Date.now()}`);
+  const mod = await loadDesignModule(designPath);
 
   if (!mod.FORMAT) throw new Error(`${path.basename(designPath)}: missing export FORMAT`);
   if (!mod.default) throw new Error(`${path.basename(designPath)}: missing default export`);

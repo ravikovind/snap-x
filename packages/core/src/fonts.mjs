@@ -12,6 +12,7 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import { createHash } from "crypto";
+import { loadDesignModule } from "./load.mjs";
 
 const cache = new Map();
 
@@ -147,7 +148,7 @@ export function resetFontCache() {
 export async function collectFontsSpec(designPaths) {
   const spec = [];
   for (const p of designPaths) {
-    const mod = await import(`${p}?fonts=${Date.now()}`);
+    const mod = await loadDesignModule(p);
     if (mod.FONTS?.length) spec.push(...mod.FONTS);
   }
   return spec;
