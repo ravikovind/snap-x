@@ -1,0 +1,10 @@
+Kite - image pack (generated with /snap-x)
+
+appstore-1-itinerary.png (1320x2868) -> App Store Connect, iPhone 6.9" screenshot #1
+appstore-2-vote.png      (1320x2868) -> App Store iPhone 6.9" screenshot #2
+appstore-3-packing.png   (1320x2868) -> App Store iPhone 6.9" screenshot #3
+play-feature-graphic.png (1024x500)  -> Google Play feature graphic
+youtube-thumbnail.png    (1280x720)  -> YouTube launch video thumbnail ("Plan the hike" + boot emoji)
+
+Regenerate: node packages/core/src/cli.mjs render designs/*.mjs --out .
+Note: MOCK - phone screens are generic shapes; labels (Saturday/Sunday, Trail A-D, packing items), vote bars and avatar dots are placeholders, not real data. Replace with real app screenshots before submission (Apple requires app in use). Store PNGs are opaque RGB. The "K" tile is a placeholder mark, not a logo.

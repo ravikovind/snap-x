@@ -74,7 +74,7 @@ Tools: `render_designs`, `check_designs`, `preview_guides`, `list_formats`. The 
 
 ## Examples
 
-[`examples/`](examples) has complete packs made with the skill — snap-x itself, Open Notifier, HeyReach and a LinkedIn cover. Each has its designs, assets, plan and output. Regenerate all with `npm run examples`.
+[`examples/`](examples) has complete packs made with the skill — snap-x itself, Open Notifier, HeyReach, a LinkedIn cover, and a store-listing pack (App Store and Play screenshots, YouTube thumbnail) built from a written brief. Each has its designs, assets, plan and output. Regenerate all with `npm run examples`.
 
 ## Packages
 

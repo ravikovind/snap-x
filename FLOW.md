@@ -336,6 +336,7 @@ snap-x/
 │                                 regenerate: `npm run examples`
 │   ├── open-notifier/            second example, built from a website (no repo): og + notifications
 │   ├── heyreach/                 third example, from a website: og + senders
+│   ├── kite/                     store-listing pack from a written brief: 3 App Store shots, Play feature graphic, YouTube thumbnail (emoji), `alpha: false`
 │   └── ravikovind/               personal LinkedIn cover from a written spec (plan.md): 1x, @2x, QA overlay, mobile crop; shared `_cover.mjs` builder
 │                                 each folder: designs/*.mjs · *.png · snap-plan.md · share-copy.txt
 ├── scripts/
