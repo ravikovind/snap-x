@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>snap-x — Branded images from code</title>
+  <meta name="description" content="Turn any project into a full image pack — OG cards, thumbnails, covers, posters. One command. No browser. Pure Node.js." />
+  <meta property="og:title" content="snap-x — Branded images from code" />
+  <meta property="og:description" content="Claude writes it. snap-x renders it. Generate OG cards, thumbnails, covers and posters from self-contained design files." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #eb1d25;
+      --red-dim: rgba(235, 29, 37, 0.15);
+      --bg: #070707;
+      --surface: #0e0e0e;
+      --surface2: #141414;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --ink: #f5f5f5;
+      --muted: rgba(255,255,255,0.5);
+      --muted2: rgba(255,255,255,0.28);
+      --font-display: 'Saira', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-display);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ──────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: rgba(7,7,7,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-square {
+      width: 28px;
+      height: 28px;
+      background: var(--red);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 12px;
+      color: #fff;
+      letter-spacing: -0.5px;
+      font-family: var(--font-display);
+    }
+
+    .logo-text {
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 2px;
+      color: var(--ink);
+      font-family: var(--font-display);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-family: var(--font-mono);
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--ink); }
+
+    .nav-npm {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-npm:hover { border-color: rgba(255,255,255,0.3); color: var(--ink); }
+    .nav-npm .prompt { color: var(--red); }
+
+    /* ── HERO ─────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 2rem 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(235,29,37,0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-glow-left {
+      position: absolute;
+      bottom: -100px;
+      left: -200px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(235,29,37,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--red-dim);
+      border: 1px solid rgba(235,29,37,0.3);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--red);
+      margin-bottom: 2rem;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    h1 {
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      max-width: 900px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--red);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 4rem;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 28px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .btn-primary:hover { background: #ff2d35; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(235,29,37,0.35); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 14px 28px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.05); }
+
+    /* ── TERMINAL ─────────────────────────────────────────── */
+    .terminal-wrap {
+      width: 100%;
+      max-width: 640px;
+      position: relative;
+    }
+
+    .terminal {
+      background: #0d0d0d;
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+      text-align: left;
+    }
+
+    .terminal-bar {
+      background: #1a1a1a;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .t-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .t-red { background: #ff5f57; }
+    .t-yellow { background: #febc2e; }
+    .t-green { background: #28c840; }
+
+    .t-title {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--muted2);
+    }
+
+    .terminal-body {
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .t-line { display: flex; align-items: flex-start; gap: 8px; }
+    .t-prompt { color: var(--red); user-select: none; flex-shrink: 0; }
+    .t-cmd { color: #c9d1d9; }
+    .t-out { color: var(--muted); padding-left: 0; }
+    .t-success { color: #3fb950; }
+    .t-file { color: #79c0ff; }
+    .t-dim { color: var(--muted2); }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--red);
+      vertical-align: middle;
+      animation: blink 1.2s step-end infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ── SECTION COMMONS ──────────────────────────────────── */
+    section {
+      padding: 100px 2rem;
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    h2 em { font-style: normal; color: var(--red); }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin-bottom: 3.5rem;
+      font-weight: 400;
+    }
+
+    /* ── FEATURES ─────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .feature-card {
+      background: var(--bg);
+      padding: 32px;
+      transition: background 0.2s;
+    }
+    .feature-card:hover { background: var(--surface); }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--red-dim);
+      border: 1px solid rgba(235,29,37,0.25);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-family: var(--font-display);
+      font-weight: 400;
+    }
+
+    /* ── HOW IT WORKS ─────────────────────────────────────── */
+    .how-wrap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+
+    .how-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+    }
+
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--red);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .how-step h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .how-step p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-weight: 400;
+    }
+
+    .step-arrow {
+      position: absolute;
+      top: 50%;
+      right: -16px;
+      transform: translateY(-50%);
+      color: var(--muted2);
+      font-size: 20px;
+      z-index: 1;
+    }
+
+    .code-pill {
+      display: inline-block;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #79c0ff;
+      margin-top: 12px;
+    }
+
+    /* ── FORMATS ──────────────────────────────────────────── */
+    .formats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .format-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+    .format-card:hover { border-color: rgba(235,29,37,0.35); background: var(--surface2); }
+
+    .format-dims {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted2);
+      margin-bottom: 6px;
+    }
+
+    .format-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .format-platform {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .format-visual {
+      margin-bottom: 12px;
+    }
+
+    .format-rect {
+      background: linear-gradient(135deg, var(--surface2), var(--surface));
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+    }
+
+    /* ── CODE SECTION ─────────────────────────────────────── */
+    .code-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .code-block {
+      background: #0d0d0d;
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .code-bar {
+      background: #1a1a1a;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-filename {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .code-lang {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted2);
+      background: var(--surface2);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    pre {
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      line-height: 1.8;
+      overflow-x: auto;
+      color: #c9d1d9;
+    }
+
+    .kw { color: #ff7b72; }
+    .fn { color: #d2a8ff; }
+    .str { color: #a5d6ff; }
+    .cmt { color: #6e7681; }
+    .num { color: #79c0ff; }
+    .prop { color: #e3b341; }
+
+    /* ── AI SECTION ───────────────────────────────────────── */
+    .ai-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ai-glow {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 300px;
+      background: radial-gradient(ellipse, rgba(235,29,37,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ai-section h2 { margin-bottom: 1rem; }
+
+    .ai-section .section-sub {
+      margin: 0 auto 2.5rem;
+      max-width: 560px;
+    }
+
+    .ai-integrations {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    .integration-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .int-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .slash-cmd {
+      background: var(--red-dim);
+      border: 1px solid rgba(235,29,37,0.35);
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--red);
+      letter-spacing: 0.05em;
+      display: inline-block;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── INSTALL BANNER ───────────────────────────────────── */
+    .install-banner {
+      background: linear-gradient(135deg, rgba(235,29,37,0.08), rgba(235,29,37,0.03));
+      border: 1px solid rgba(235,29,37,0.2);
+      border-radius: 16px;
+      padding: 48px;
+      text-align: center;
+      margin: 0 2rem 80px;
+      max-width: 1160px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .install-banner h2 { margin-bottom: 0.5rem; }
+    .install-banner p { color: var(--muted); margin-bottom: 2rem; font-weight: 400; }
+
+    .install-cmd {
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 16px 24px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .install-cmd:hover { border-color: rgba(255,255,255,0.25); }
+    .install-cmd .prompt { color: var(--red); }
+    .install-cmd .cmd { color: var(--ink); }
+    .copy-icon { color: var(--muted2); font-size: 14px; transition: color 0.2s; }
+    .install-cmd:hover .copy-icon { color: var(--muted); }
+
+    /* ── FOOTER ───────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 2rem;
+      max-width: 1160px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-family: var(--font-mono);
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--ink); }
+
+    .footer-right {
+      font-size: 13px;
+      color: var(--muted2);
+      font-family: var(--font-mono);
+    }
+
+    /* ── DIVIDER ──────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .how-wrap { grid-template-columns: 1fr; }
+      .step-arrow { display: none; }
+      .code-section { grid-template-columns: 1fr; }
+      .ai-section { padding: 40px 24px; }
+      nav .nav-npm { display: none; }
+      h1 { font-size: 2.8rem; }
+    }
+
+    @media (max-width: 540px) {
+      section { padding: 60px 1.25rem; }
+      .hero { padding: 90px 1.25rem 60px; }
+      .install-banner { padding: 32px 20px; margin: 0 1rem 60px; }
+    }
+
+    /* ── SCROLL ANIMATIONS ────────────────────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger-1 { transition-delay: 0.05s; }
+    .stagger-2 { transition-delay: 0.1s; }
+    .stagger-3 { transition-delay: 0.15s; }
+    .stagger-4 { transition-delay: 0.2s; }
+    .stagger-5 { transition-delay: 0.25s; }
+    .stagger-6 { transition-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────── -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-square">SX</div>
+    <span class="logo-text">SNAP-X</span>
+  </a>
+  <div class="nav-right">
+    <a href="https://github.com/ravikovind/snap-x" class="nav-link" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.npmjs.com/package/@snap-x/cli" class="nav-link" target="_blank" rel="noopener">npm</a>
+    <div class="nav-npm" onclick="copyInstall(this)">
+      <span class="prompt">$</span>
+      <span>npx @snap-x/cli</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow-left"></div>
+
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    v0.6.0 — now with MCP server support
+  </div>
+
+  <h1>Claude writes&nbsp;it.<br /><em>snap-x</em> renders&nbsp;it.</h1>
+
+  <p class="hero-sub">
+    Turn any project into a full image pack — OG cards, thumbnails, covers, posters.
+    One command. No browser. Pure Node.js.
+  </p>
+
+  <div class="hero-ctas">
+    <a href="https://github.com/ravikovind/snap-x" class="btn-primary" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+    <a href="https://www.npmjs.com/package/@snap-x/cli" class="btn-secondary" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect width="16" height="16" rx="3" fill="#cc3534"/><path d="M2 12V4h5v6h3V4h2v8H2z" fill="white"/></svg>
+      npm install
+    </a>
+  </div>
+
+  <div class="terminal-wrap">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="t-dot t-red"></div>
+        <div class="t-dot t-yellow"></div>
+        <div class="t-dot t-green"></div>
+        <div class="t-title">snap-x — zsh</div>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line">
+          <span class="t-prompt">$</span>
+          <span class="t-cmd">npx @snap-x/cli render designs/*.mjs --out ./output</span>
+        </div>
+        <div class="t-line">
+          <span class="t-out">  Resolving fonts…</span>
+        </div>
+        <div class="t-line">
+          <span class="t-out t-dim">  Saira 900, JetBrains Mono 400 loaded</span>
+        </div>
+        <div class="t-line t-success">
+          <span>&nbsp;&nbsp;✓ og.png</span>
+          <span class="t-dim" style="margin-left:8px">1200 × 630</span>
+        </div>
+        <div class="t-line t-success">
+          <span>&nbsp;&nbsp;✓ thumbnail.png</span>
+          <span class="t-dim" style="margin-left:8px">1280 × 720</span>
+        </div>
+        <div class="t-line t-success">
+          <span>&nbsp;&nbsp;✓ cover.png</span>
+          <span class="t-dim" style="margin-left:8px">1500 × 500</span>
+        </div>
+        <div class="t-line t-success">
+          <span>&nbsp;&nbsp;✓ poster.png</span>
+          <span class="t-dim" style="margin-left:8px">1080 × 1920</span>
+        </div>
+        <div class="t-line">
+          <span class="t-out" style="color:#3fb950">&nbsp;&nbsp;4 images rendered in 1.2s</span>
+        </div>
+        <div class="t-line" style="margin-top:4px">
+          <span class="t-prompt">$</span>
+          <span class="cursor"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ───────────────────────────────────────────── -->
+<div class="divider"></div>
+<section id="features">
+  <p class="section-label">Features</p>
+  <h2>Everything you need<br/>to ship <em>great images</em></h2>
+  <p class="section-sub">A zero-config render pipeline for branded social and marketing images.</p>
+
+  <div class="features-grid">
+    <div class="feature-card fade-up stagger-1">
+      <div class="feature-icon">🚀</div>
+      <h3>No browser. No config.</h3>
+      <p>Pure Node.js pipeline powered by Satori + resvg-js. Renders 4 images in under 2 seconds, anywhere npm runs.</p>
+    </div>
+    <div class="feature-card fade-up stagger-2">
+      <div class="feature-icon">🎨</div>
+      <h3>Design files as code</h3>
+      <p>Self-contained <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">.mjs</code> files. Everything hardcoded — fonts, colors, assets. Version-controlled, diffable, portable.</p>
+    </div>
+    <div class="feature-card fade-up stagger-3">
+      <div class="feature-icon">🔤</div>
+      <h3>Any Google Font, one line</h3>
+      <p>Load any weight of any Google Font. Emoji rendered as Twemoji. Automatic fallbacks for CJK, Arabic, Hebrew, Devanagari, and more.</p>
+    </div>
+    <div class="feature-card fade-up stagger-4">
+      <div class="feature-icon">📐</div>
+      <h3>Every platform format</h3>
+      <p>OG cards, YouTube thumbnails, X banners, LinkedIn covers, Instagram posts, App Store screenshots, Play Store graphics — built-in.</p>
+    </div>
+    <div class="feature-card fade-up stagger-5">
+      <div class="feature-icon">🤖</div>
+      <h3>AI-native workflow</h3>
+      <p>The <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">/snap-x</code> Claude Code skill analyzes your project, extracts branding, and writes + renders the full image pack automatically.</p>
+    </div>
+    <div class="feature-card fade-up stagger-6">
+      <div class="feature-icon">🔌</div>
+      <h3>MCP server included</h3>
+      <p>Validate and render designs from Cursor, Windsurf, or Claude Desktop via the <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">@snap-x/mcp</code> server.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ───────────────────────────────────────── -->
+<div class="divider"></div>
+<section id="how">
+  <p class="section-label">Workflow</p>
+  <h2>From project to image<br/><em>in three steps</em></h2>
+  <p class="section-sub">Write a design file, check it, render it. Or let Claude do all three.</p>
+
+  <div class="how-wrap">
+    <div class="how-step fade-up stagger-1">
+      <div class="step-num">Step 01</div>
+      <h3>Write a design file</h3>
+      <p>Export a default JSX function from an <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">.mjs</code> file. Declare canvas size, fonts, and layout. Everything in one file — no imports, no config.</p>
+      <span class="code-pill">og.mjs</span>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="how-step fade-up stagger-2">
+      <div class="step-num">Step 02</div>
+      <h3>Check for errors</h3>
+      <p>Run <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">snap-x check</code> to validate your design before rendering. Catch missing fonts, invalid props, and layout issues instantly.</p>
+      <span class="code-pill">snap-x check *.mjs</span>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="how-step fade-up stagger-3">
+      <div class="step-num">Step 03</div>
+      <h3>Render to PNG</h3>
+      <p>Run <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">snap-x render</code> to produce pixel-perfect PNGs. Add <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">--guides</code> to preview placement zones for any platform.</p>
+      <span class="code-pill">snap-x render *.mjs</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── FORMATS ────────────────────────────────────────────── -->
+<div class="divider"></div>
+<section id="formats">
+  <p class="section-label">Formats</p>
+  <h2>Every platform,<br/><em>perfect dimensions</em></h2>
+  <p class="section-sub">Built-in presets for every major platform. Use <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">snap-x formats</code> to list them all.</p>
+
+  <div class="formats-grid">
+    <div class="format-card fade-up stagger-1">
+      <div class="format-visual">
+        <div class="format-rect" style="height:34px;width:100%"></div>
+      </div>
+      <div class="format-dims">1200 × 630</div>
+      <div class="format-name">OG Card</div>
+      <div class="format-platform">Open Graph / Social</div>
+    </div>
+    <div class="format-card fade-up stagger-2">
+      <div class="format-visual">
+        <div class="format-rect" style="height:38px;width:100%"></div>
+      </div>
+      <div class="format-dims">1280 × 720</div>
+      <div class="format-name">Thumbnail</div>
+      <div class="format-platform">YouTube / Blog</div>
+    </div>
+    <div class="format-card fade-up stagger-3">
+      <div class="format-visual">
+        <div class="format-rect" style="height:22px;width:100%"></div>
+      </div>
+      <div class="format-dims">1500 × 500</div>
+      <div class="format-name">Cover</div>
+      <div class="format-platform">X / Twitter</div>
+    </div>
+    <div class="format-card fade-up stagger-4">
+      <div class="format-visual">
+        <div class="format-rect" style="height:16px;width:100%"></div>
+      </div>
+      <div class="format-dims">1584 × 396</div>
+      <div class="format-name">Banner</div>
+      <div class="format-platform">LinkedIn</div>
+    </div>
+    <div class="format-card fade-up stagger-5">
+      <div class="format-visual">
+        <div class="format-rect" style="height:52px;width:72%"></div>
+      </div>
+      <div class="format-dims">1080 × 1350</div>
+      <div class="format-name">Post</div>
+      <div class="format-platform">Instagram</div>
+    </div>
+    <div class="format-card fade-up stagger-6">
+      <div class="format-visual">
+        <div class="format-rect" style="height:62px;width:55%"></div>
+      </div>
+      <div class="format-dims">1080 × 1920</div>
+      <div class="format-name">Story</div>
+      <div class="format-platform">Instagram / WhatsApp</div>
+    </div>
+    <div class="format-card fade-up stagger-1">
+      <div class="format-visual">
+        <div class="format-rect" style="height:68px;width:60%"></div>
+      </div>
+      <div class="format-dims">1320 × 2868</div>
+      <div class="format-name">Screenshot</div>
+      <div class="format-platform">App Store</div>
+    </div>
+    <div class="format-card fade-up stagger-2">
+      <div class="format-visual">
+        <div class="format-rect" style="height:60px;width:58%"></div>
+      </div>
+      <div class="format-dims">1080 × 1920</div>
+      <div class="format-name">Feature Graphic</div>
+      <div class="format-platform">Google Play</div>
+    </div>
+    <div class="format-card fade-up stagger-3">
+      <div class="format-visual">
+        <div class="format-rect" style="height:34px;width:100%"></div>
+      </div>
+      <div class="format-dims">any × any</div>
+      <div class="format-name">Custom</div>
+      <div class="format-platform">Any canvas size</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CODE ───────────────────────────────────────────────── -->
+<div class="divider"></div>
+<section id="code">
+  <p class="section-label">Design Files</p>
+  <h2>Code your design<br/><em>once. Render anywhere.</em></h2>
+  <p class="section-sub">Self-contained <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">.mjs</code> files. No external config. No runtime dependencies. Pure JSX.</p>
+
+  <div class="code-section">
+    <div class="fade-up stagger-1">
+      <div class="code-block">
+        <div class="code-bar">
+          <span class="code-filename">og.mjs</span>
+          <span class="code-lang">design file</span>
+        </div>
+<pre><span class="cmt">/** @type {import('@snap-x/core').Design} */</span>
+<span class="kw">export default</span> {
+  width: <span class="num">1200</span>,
+  height: <span class="num">630</span>,
+  fonts: [
+    { <span class="prop">family</span>: <span class="str">"Saira"</span>, <span class="prop">weight</span>: <span class="num">900</span> },
+    { <span class="prop">family</span>: <span class="str">"Saira"</span>, <span class="prop">weight</span>: <span class="num">400</span> },
+  ],
+  <span class="fn">render</span>() {
+    <span class="kw">return</span> (
+      &lt;<span class="kw">div</span> style=&#123;&#123;
+        <span class="prop">background</span>: <span class="str">"#070707"</span>,
+        <span class="prop">width</span>: <span class="str">"100%"</span>,
+        <span class="prop">height</span>: <span class="str">"100%"</span>,
+        <span class="prop">display</span>: <span class="str">"flex"</span>,
+        <span class="prop">flexDirection</span>: <span class="str">"column"</span>,
+        <span class="prop">padding</span>: <span class="num">64</span>,
+      &#125;&#125;&gt;
+        &lt;<span class="kw">h1</span> style=&#123;&#123;
+          <span class="prop">fontFamily</span>: <span class="str">"Saira"</span>,
+          <span class="prop">fontWeight</span>: <span class="num">900</span>,
+          <span class="prop">fontSize</span>: <span class="num">80</span>,
+          <span class="prop">color</span>: <span class="str">"#f5f5f5"</span>,
+        &#125;&#125;&gt;
+          snap-x
+        &lt;/<span class="kw">h1</span>&gt;
+      &lt;/<span class="kw">div</span>&gt;
+    );
+  },
+};</pre>
+      </div>
+    </div>
+
+    <div class="fade-up stagger-2" style="display:flex;flex-direction:column;gap:16px;justify-content:center;">
+      <h3 style="font-size:1.4rem;font-weight:700;letter-spacing:-0.01em">A design is just a module</h3>
+      <p style="color:var(--muted);font-size:15px;line-height:1.7;font-weight:400">Export a <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">render()</code> function and declare your canvas size and fonts. snap-x handles the rest — font loading, emoji, fallback scripts.</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+          <span style="font-size:14px;color:var(--muted)">No imports or external packages</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+          <span style="font-size:14px;color:var(--muted)">Fonts declared inline, loaded automatically</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+          <span style="font-size:14px;color:var(--muted)">Works with PNG, JPEG, SVG and base64 assets</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+          <span style="font-size:14px;color:var(--muted)">Supports async <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">render()</code> for dynamic assets</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
+          <span style="font-size:14px;color:var(--muted)">Emoji rendered as Twemoji, cached locally</span>
+        </div>
+      </div>
+
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <a href="https://github.com/ravikovind/snap-x/tree/main/examples" class="btn-secondary" style="font-size:13px;padding:10px 18px" target="_blank" rel="noopener">Browse examples →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AI SECTION ─────────────────────────────────────────── -->
+<div class="divider"></div>
+<section style="padding: 80px 2rem;">
+  <div class="ai-section fade-up">
+    <div class="ai-glow"></div>
+    <p class="section-label" style="margin-bottom:16px">AI Integration</p>
+    <h2 style="max-width:600px;margin:0 auto 1rem">Let Claude handle<br/><em>the whole workflow</em></h2>
+    <p class="section-sub">The <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">/snap-x</code> skill in Claude Code analyzes your project, extracts your brand's colors, fonts, and logo, writes all the design files, and renders them — automatically.</p>
+
+    <div class="slash-cmd">/snap-x</div>
+
+    <div class="ai-integrations">
+      <div class="integration-badge">
+        <div class="int-dot"></div>
+        Claude Code
+      </div>
+      <div class="integration-badge">
+        <div class="int-dot"></div>
+        Cursor
+      </div>
+      <div class="integration-badge">
+        <div class="int-dot"></div>
+        Windsurf
+      </div>
+      <div class="integration-badge">
+        <div class="int-dot"></div>
+        Claude Desktop
+      </div>
+    </div>
+
+    <a href="https://github.com/ravikovind/snap-x#claude-code-skill" class="btn-primary" target="_blank" rel="noopener">
+      Set up the skill →
+    </a>
+  </div>
+</section>
+
+<!-- ── INSTALL BANNER ─────────────────────────────────────── -->
+<div class="install-banner fade-up">
+  <h2>Start rendering in <em>30 seconds</em></h2>
+  <p>No account. No API key. Just npm.</p>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+    <div class="install-cmd" onclick="copyInstall(this)" title="Click to copy">
+      <span class="prompt">$</span>
+      <span class="cmd">npm install -g @snap-x/cli</span>
+      <span class="copy-icon">⎘</span>
+    </div>
+    <div class="install-cmd" onclick="copyInstall(this)" title="Click to copy">
+      <span class="prompt">$</span>
+      <span class="cmd">npx @snap-x/cli render og.mjs</span>
+      <span class="copy-icon">⎘</span>
+    </div>
+  </div>
+  <div style="margin-top:2rem;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="https://github.com/ravikovind/snap-x" class="btn-primary" target="_blank" rel="noopener">Read the docs</a>
+    <a href="https://github.com/ravikovind/snap-x/tree/main/examples" class="btn-secondary" target="_blank" rel="noopener">View examples</a>
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
+<div class="divider"></div>
+<footer>
+  <div class="footer-brand">
+    <div class="logo-square">SX</div>
+    <span class="logo-text" style="font-size:15px">SNAP-X</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/ravikovind/snap-x" class="footer-link" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.npmjs.com/package/@snap-x/cli" class="footer-link" target="_blank" rel="noopener">npm</a>
+    <a href="https://www.npmjs.com/package/@snap-x/core" class="footer-link" target="_blank" rel="noopener">Core API</a>
+    <a href="https://www.npmjs.com/package/@snap-x/mcp" class="footer-link" target="_blank" rel="noopener">MCP Server</a>
+    <a href="https://github.com/ravikovind/snap-x/blob/main/CHANGELOG.md" class="footer-link" target="_blank" rel="noopener">Changelog</a>
+  </div>
+  <div class="footer-right">MIT License · v0.6.0</div>
+</footer>
+
+<script>
+  // Scroll-triggered fade-up animations
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+  );
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Copy install command
+  function copyInstall(el) {
+    const cmd = el.querySelector('.cmd')?.textContent || 'npm install -g @snap-x/cli';
+    navigator.clipboard?.writeText(cmd).then(() => {
+      const icon = el.querySelector('.copy-icon');
+      if (icon) { icon.textContent = '✓'; setTimeout(() => { icon.textContent = '⎘'; }, 1500); }
+    });
+  }
+</script>
+</body>
+</html>
