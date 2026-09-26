@@ -1,5 +1,7 @@
 {
   "outputDirectory": "web",
+  "buildCommand": "",
+  "installCommand": "",
   "trailingSlash": false,
   "headers": [
     {
