@@ -8,11 +8,13 @@ Thumbnails, covers, banners, store graphics and more: sized right, checked, and 
 <td><a href="examples/kite"><img src="examples/kite/youtube-thumbnail.png" width="280" alt="YouTube thumbnail"></a><br><sub>YouTube thumbnail</sub></td>
 <td><a href="examples/ravikovind"><img src="examples/ravikovind/ravi-kovind-linkedin-cover.png" width="280" alt="LinkedIn cover"></a><br><sub>LinkedIn cover</sub></td>
 <td><a href="examples/kite"><img src="examples/kite/appstore-2-vote.png" width="140" alt="App Store screenshot"></a><br><sub>App Store screenshot</sub></td>
+<td><a href="examples/diwali-poster"><img src="examples/diwali-poster/diwali-poster.png" width="140" alt="Festival greeting poster"></a><br><sub>Festival greeting poster</sub></td>
 </tr>
 <tr>
 <td><a href="examples/kite"><img src="examples/kite/play-feature-graphic.png" width="280" alt="Play feature graphic"></a><br><sub>Play feature graphic</sub></td>
 <td><a href="examples/snap-x"><img src="examples/snap-x/og.png" width="280" alt="OG / link preview card"></a><br><sub>OG / link preview card</sub></td>
 <td><a href="examples/storefront"><img src="examples/storefront/banner-cedar-candle.png" width="280" alt="E-commerce banner"></a><br><sub>E-commerce banner</sub></td>
+<td><a href="examples/food-app-banners"><img src="examples/food-app-banners/banner-1-red.png" width="280" alt="Food-delivery promo banner"></a><br><sub>Food-delivery promo banner</sub></td>
 </tr>
 </table>
 
@@ -65,7 +67,9 @@ The design is a code file, not a canvas someone can nudge. Your real logo is emb
 | Personal brand | LinkedIn cover, X header | [`examples/ravikovind`](examples/ravikovind) |
 | App makers | App Store screenshots, Play feature graphic | [`examples/kite`](examples/kite) |
 | Websites and projects | OG/link previews, README cards, GitHub social preview | [`examples/snap-x`](examples/snap-x), [`examples/open-notifier`](examples/open-notifier), [`examples/heyreach`](examples/heyreach) |
-| E-commerce / marketing | sale and promo banners, Instagram posts and stories, seasonal/festival posters | [`examples/storefront`](examples/storefront), [`examples/food-app-banners`](examples/food-app-banners), [`examples/diwali-poster`](examples/diwali-poster) |
+| E-commerce / marketing | sale and promo banners, Instagram posts and stories | [`examples/storefront`](examples/storefront) |
+| Food & delivery apps | promo banners, offer graphics | [`examples/food-app-banners`](examples/food-app-banners) |
+| Seasonal & festival marketing | greeting posters, campaign graphics | [`examples/diwali-poster`](examples/diwali-poster) |
 
 ## FAQ
 

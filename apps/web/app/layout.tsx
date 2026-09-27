@@ -53,9 +53,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-full flex flex-col antialiased bg-bg text-ink">
         <nav className="fixed inset-x-0 top-0 z-50 flex h-15 items-center justify-between border-b border-border bg-bg/85 px-4 backdrop-blur-md sm:px-8">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded bg-red text-xs font-black text-white">
-              SX
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="snap-x logo" className="h-7 w-7 rounded" />
             <span className="text-lg font-black tracking-[0.15em]">SNAP-X</span>
           </Link>
           <div className="hidden items-center gap-6 md:flex">
@@ -84,9 +83,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="border-t border-border">
           <div className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-6 px-4 py-10 sm:px-8">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-6 w-6 items-center justify-center rounded bg-red text-[10px] font-black text-white">
-                SX
-              </span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="snap-x logo" className="h-6 w-6 rounded" />
               <span className="text-sm font-black tracking-[0.15em]">SNAP-X</span>
             </div>
             <div className="flex flex-wrap gap-6 font-mono text-sm text-muted">
