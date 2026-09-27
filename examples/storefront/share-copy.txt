@@ -7,6 +7,7 @@ banner-enamel-mug.png (1200×630)    → sale banner
 instagram-post.png (1080×1350)      → Instagram feed post
 instagram-story.png (1080×1920)     → Instagram/Facebook story
 
-One shared template (designs/_storefront.mjs), three products, five sizes.
+One template, one VARIANTS row per product (designs/banners.mjs) for the 3
+banners, plus 2 standalone Instagram sizes — five images, three files.
 
 Regenerate everything:  npm run examples

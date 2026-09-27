@@ -49,7 +49,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "render_designs",
       description:
-        "Render one or more self-contained Satori .mjs design files into platform-ready branded graphics (pure Node.js, no browser) — thumbnails, covers, banners, store screenshots, OG cards, at exact platform sizes. Each file must export FORMAT ({width, height, name?}) and a default export (a Satori tree object, or a zero-argument function returning one). Optionally exports FONTS ([{family, weights?}]) — defaults to Inter 400/700/900 if omitted. Read the resource snap-x://design-guide (or use the design_cards prompt) for the design rules before writing files.",
+        "Render one or more self-contained Satori .mjs design files into platform-ready branded graphics (pure Node.js, no browser) — thumbnails, covers, banners, store screenshots, OG cards, at exact platform sizes. Each file must export FORMAT ({width, height, name?}) and a default export (a Satori tree object, or a function returning one, called with no arguments unless the file exports VARIANTS). Optionally exports FONTS ([{family, weights?}]) — defaults to Inter 400/700/900 if omitted. A file that exports VARIANTS (an array of rows, each needing a unique string id) is called once per row and produces one output per row, named <name-stem>-<id>.<ext> — this tool reports every output path. Read the resource snap-x://design-guide (or use the design_cards prompt) for the design rules before writing files.",
       inputSchema: {
         type: "object",
         properties: {
@@ -73,7 +73,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "check_designs",
       description:
-        "Validate one or more Satori .mjs design files before rendering a branded graphic: structural rules (display:flex only, no z-index/position:fixed/grid) plus an actual Satori render attempt to catch runtime-only errors and characters the font can't draw.",
+        "Validate one or more Satori .mjs design files before rendering a branded graphic: structural rules (display:flex only, no z-index/position:fixed/grid) plus an actual Satori render attempt to catch runtime-only errors and characters the font can't draw. A file with a VARIANTS export is checked once per row, with failures labeled by the row's id.",
       inputSchema: {
         type: "object",
         properties: {
@@ -211,9 +211,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const fontsSpec = await collectFontsSpec(files);
       const fonts = await resolveFonts(fontsSpec);
 
+      // A design's own VARIANTS makes renderDesign return an array of paths instead of one; flatten so
+      // a caller sees every real output file regardless of how many any single design expanded into.
       const outPaths = [];
       for (const f of files) {
-        outPaths.push(await renderDesign(f, outDir, fonts, { scale }));
+        const result = await renderDesign(f, outDir, fonts, { scale });
+        outPaths.push(...(Array.isArray(result) ? result : [result]));
       }
 
       return {

@@ -136,6 +136,23 @@ const asset = async (rel, mime) =>
 
 PNG, JPEG and SVG work. AVIF and WebP don't (convert to PNG), and an SVG containing `<text>` must be rasterised first. Give both `width` and `height`, at the file's real aspect ratio.
 
+**Variants — one template, many images:** export `VARIANTS` (an array, or an async function returning one) and the default export is called once per row instead of once with no arguments:
+
+```js
+export const FORMAT = { width: 1280, height: 720, name: "episode.png" };
+export const VARIANTS = [
+  { id: "ep-01", title: "Setting up", number: 1 },
+  { id: "ep-02", title: "First render", number: 2 },
+];
+
+export default function (variant) {           // receives one row when VARIANTS exists
+  return { /* tree using variant.title, variant.number */ };
+}
+// → episode-ep-01.png, episode-ep-02.png
+```
+
+Each row needs a unique string `id`; output is named `<name-stem>-<id>.<ext>` unless a row's own `format: { name }` overrides it. `check` and `guides` run every row (labeling failures with the id); `render --only <id,id>` renders a subset. Without `VARIANTS`, a design behaves exactly as before — this is opt-in.
+
 ## MCP server
 
 ```json

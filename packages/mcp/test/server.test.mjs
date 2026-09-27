@@ -24,6 +24,9 @@ before(async () => {
   await fs.writeFile(path.join(dir, "grid.mjs"), design("grid", `{ type: "div", props: { style: { display: "grid" }, children: [] } }`));
   await fs.writeFile(path.join(dir, "li.mjs"), design("li", okTree("banner")).replace("width: 200, height: 80 }", "width: 1584, height: 396 }").replace("{ width: 200, height: 80,", "{ width: 1584, height: 396,"));
   await fs.writeFile(path.join(dir, "glyph.mjs"), design("glyph", okTree("Sent ◷")));
+  await fs.writeFile(path.join(dir, "series.mjs"), `export const FORMAT = { width: 200, height: 80, name: "series.png" };
+export const VARIANTS = [{ id: "a" }, { id: "b" }];
+export default function () { return { type: "div", props: { style: { display: "flex", fontFamily: "Inter", fontSize: 24, width: 200, height: 80 }, children: ["hi"] } }; }`);
   try {
     const res = await fetch("https://fonts.googleapis.com/css2?family=Inter:wght@400", { signal: AbortSignal.timeout(5000) });
     fontsReachable = res.ok;
@@ -131,6 +134,17 @@ needsFonts("render_designs with scale:2 writes a sharp 2x PNG named <name>@2x.pn
   const png = await fs.readFile(path.join(outDir, "ok@2x.png"));
   assert.equal(png.readUInt32BE(16), 400); // 200 * 2
   assert.equal(png.readUInt32BE(20), 160); // 80 * 2
+});
+
+needsFonts("render_designs flattens a VARIANTS design into one path per row", async () => {
+  const outDir = path.join(dir, "out-series");
+  const r = await call("render_designs", { files: [path.join(dir, "series.mjs")], outDir });
+  assert.ok(!r.isError, text(r));
+  assert.match(text(r), /Rendered 2 file\(s\)/);
+  assert.match(text(r), /series-a\.png/);
+  assert.match(text(r), /series-b\.png/);
+  await fs.access(path.join(outDir, "series-a.png"));
+  await fs.access(path.join(outDir, "series-b.png"));
 });
 
 test("render_designs rejects a non-integer or sub-1 scale", async () => {

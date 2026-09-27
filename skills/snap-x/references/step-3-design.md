@@ -7,7 +7,7 @@ One `.mjs` per format in `designs/`. Each file is a self-contained Satori tree �
 - Every container needs `display: "flex"` (no block/grid/inline). `children` is always an array; text is a string in it: `children: ["Hello"]`.
 - `position: "absolute"` works; `position: "fixed"`, `z-index`, CSS grid and animations don't (layer with DOM order).
 - The root node needs an explicit `width`/`height` matching `FORMAT`. Every `undefined` style value crashes the render — omit the key instead.
-- `transform: scale(n)` works (with `transformOrigin`), so an `@2x` export can be the same tree scaled.
+- For a sharp `@2x`/`@3x` export, use `snap-x render --scale <n>` (see Step 4) — no design-file change needed. `transform: scale(n)` (with `transformOrigin`) still works if a size genuinely needs a *different* layout, not just a sharper export of the same one.
 
 ## File shape
 
@@ -42,6 +42,27 @@ export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 export const FONTS = F;
 export default () => ({ /* uses COLORS */ });
 ```
+
+## A series → one design with VARIANTS, not one file per image
+
+When a pack needs the same layout repeated with only the data changing (an episode series, a batch of product banners, localized screenshots), export `VARIANTS` instead of writing `episode-1.mjs`, `episode-2.mjs`, … :
+
+```js
+export const FORMAT = { width: 1280, height: 720, name: "episode.png" };
+export const VARIANTS = [
+  { id: "ep-01", title: "Setting up", number: 1 },
+  { id: "ep-02", title: "First render", number: 2 },
+];
+
+export default function (variant) {           // called once per row when VARIANTS exists
+  return { /* tree using variant.title, variant.number */ };
+}
+```
+
+- Every row needs a unique string `id`. Output is named `<name-stem>-<id>.<ext>` (e.g. `episode-ep-01.png`) — unless a row sets its own `format: { name: "…" }` (useful for a localized screenshot that needs a different name or size than the rest of the series).
+- `snap-x check` and `snap-x guides` run every row and label failures with the row's id.
+- `snap-x render designs/episode.mjs --only ep-01` renders a subset while iterating.
+- A design without `VARIANTS` behaves exactly as before — only reach for this when a real series exists; don't add `VARIANTS = [{ id: "x" }]` for a single one-off image.
 
 ## Fonts
 

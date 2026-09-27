@@ -13,9 +13,31 @@ import fs from "fs/promises";
 import { loadDesignModule } from "./load.mjs";
 import { encodeRgbPng } from "./png.mjs";
 
-/** A design module's tree: static object or (async) zero-arg factory. */
-export async function resolveTree(mod) {
-  return typeof mod.default === "function" ? await mod.default() : mod.default;
+/** A design module's tree: static object or (async) zero-arg factory. Pass `variant` for a VARIANTS row. */
+export async function resolveTree(mod, variant) {
+  return typeof mod.default === "function" ? await mod.default(variant) : mod.default;
+}
+
+/**
+ * A design module's optional VARIANTS: undefined when the module doesn't export one (the design behaves
+ * exactly as before — one zero-argument call, one output). Otherwise a validated array of rows, each with
+ * a unique string `id` and optionally a `format` object that overrides FORMAT fields for that row.
+ */
+export async function resolveVariants(mod) {
+  if (mod.VARIANTS === undefined) return undefined;
+  const rows = typeof mod.VARIANTS === "function" ? await mod.VARIANTS() : mod.VARIANTS;
+  if (!Array.isArray(rows) || rows.length === 0) {
+    throw new Error("VARIANTS must be a non-empty array (or a function returning one)");
+  }
+  const seen = new Set();
+  for (const row of rows) {
+    if (!row || typeof row.id !== "string" || row.id === "") {
+      throw new Error(`Every VARIANTS row needs a unique, non-empty string id (got ${JSON.stringify(row?.id)})`);
+    }
+    if (seen.has(row.id)) throw new Error(`Duplicate VARIANTS id "${row.id}"`);
+    seen.add(row.id);
+  }
+  return rows;
 }
 
 /** Insert a "@2x"-style suffix before a filename's extension. scale 1 returns name unchanged. */
@@ -47,19 +69,52 @@ export async function renderTree(tree, { width, height, alpha = true }, fonts, {
   return alpha === false ? encodeRgbPng(image.width, image.height, image.pixels) : image.asPng();
 }
 
-export async function renderDesign(designPath, outDir, fonts, { scale = 1 } = {}) {
+const splitExt = (name) => {
+  const ext = path.extname(name);
+  return [ext ? name.slice(0, -ext.length) : name, ext];
+};
+
+async function writeOne(outDir, outName, tree, format, fonts, scale) {
+  const png = await renderTree(tree, format, fonts, { scale });
+  const outPath = path.join(outDir, outName);
+  await fs.writeFile(outPath, png);
+  console.log(`  ✅  ${outName}  (${Math.round(png.length / 1024)} KB)${format.alpha === false ? "  no alpha" : ""}`);
+  return outPath;
+}
+
+/**
+ * Renders a design to PNG(s).
+ * - No VARIANTS export: the classic zero-argument call, one file — returns its path (a string), unchanged
+ *   from before this feature existed.
+ * - With VARIANTS: the default export is called once per row (receiving that row), each written as
+ *   `<name-stem>-<id>.<ext>` (a row's optional `format.name` is used exactly as given instead) — returns
+ *   an array of paths, one per row, in VARIANTS order. `only` (an array of ids) renders just those rows;
+ *   it's ignored for a design without VARIANTS.
+ */
+export async function renderDesign(designPath, outDir, fonts, { scale = 1, only } = {}) {
   const mod = await loadDesignModule(designPath);
 
   if (!mod.FORMAT) throw new Error(`${path.basename(designPath)}: missing export FORMAT`);
   if (!mod.default) throw new Error(`${path.basename(designPath)}: missing default export`);
 
-  const { name } = mod.FORMAT;
-  const outName = withScaleSuffix(name ?? path.basename(designPath, ".mjs") + ".png", scale);
-  const png = await renderTree(await resolveTree(mod), mod.FORMAT, fonts, { scale });
+  const baseName = mod.FORMAT.name ?? path.basename(designPath, ".mjs") + ".png";
+  const variants = await resolveVariants(mod);
 
-  const outPath = path.join(outDir, outName);
-  await fs.writeFile(outPath, png);
+  if (!variants) {
+    return writeOne(outDir, withScaleSuffix(baseName, scale), await resolveTree(mod), mod.FORMAT, fonts, scale);
+  }
 
-  console.log(`  ✅  ${outName}  (${Math.round(png.length / 1024)} KB)${mod.FORMAT.alpha === false ? "  no alpha" : ""}`);
-  return outPath;
+  const rows = only ? variants.filter((r) => only.includes(r.id)) : variants;
+  if (only && rows.length === 0) {
+    throw new Error(`--only ${only.join(",")} matched no VARIANTS row in ${path.basename(designPath)} (ids: ${variants.map((r) => r.id).join(", ")})`);
+  }
+
+  const [stem, ext] = splitExt(baseName);
+  const outPaths = [];
+  for (const row of rows) {
+    const rowFormat = { ...mod.FORMAT, ...(row.format ?? {}) };
+    const rowName = withScaleSuffix(row.format?.name ?? `${stem}-${row.id}${ext}`, scale);
+    outPaths.push(await writeOne(outDir, rowName, await resolveTree(mod, row), rowFormat, fonts, scale));
+  }
+  return outPaths;
 }

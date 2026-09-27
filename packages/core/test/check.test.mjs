@@ -42,6 +42,28 @@ export default { type: "div", props: { style: { display: "flex" }, children: [
     { type: "div", props: { style: { display: "grid" }, children: [] } },
   ]}},
 ]}};`,
+    "variants.mjs": `export const FORMAT = { width: 100, height: 100, name: "ep.png" };
+export const VARIANTS = [{ id: "a", title: "Ep A" }, { id: "b", title: "Ep B" }];
+export default function (variant) {
+  return { type: "div", props: { style: { display: "flex" }, children: [variant.title] } };
+}`,
+    "variants-missing-id.mjs": `export const FORMAT = { width: 10, height: 10 };
+export const VARIANTS = [{ title: "no id here" }];
+export default function () { return { type: "div", props: { style: { display: "flex" }, children: [] } }; }`,
+    "variants-duplicate-id.mjs": `export const FORMAT = { width: 10, height: 10 };
+export const VARIANTS = [{ id: "x" }, { id: "x" }];
+export default function () { return { type: "div", props: { style: { display: "flex" }, children: [] } }; }`,
+    "variants-empty.mjs": `export const FORMAT = { width: 10, height: 10 };
+export const VARIANTS = [];
+export default function () { return { type: "div", props: { style: { display: "flex" }, children: [] } }; }`,
+    "variants-partial-fail.mjs": `export const FORMAT = { width: 10, height: 10 };
+export const VARIANTS = [{ id: "good" }, { id: "bad" }];
+export default function (variant) {
+  return { type: "div", props: { style: { display: variant.id === "bad" ? "grid" : "flex" }, children: [] } };
+}`,
+    "variants-async.mjs": `export const FORMAT = { width: 10, height: 10 };
+export const VARIANTS = async () => [{ id: "a" }, { id: "b" }];
+export default function (variant) { return { type: "div", props: { style: { display: "flex" }, children: [variant.id] } }; }`,
   });
 });
 
@@ -146,4 +168,37 @@ test("a store-screenshot size without alpha:false gets a warning (App Store / Pl
 test("alpha:false silences the warning, and formats that allow alpha never get it", async () => {
   assert.deepEqual((await checkDesign(p("store-ok.mjs"))).warnings, []);
   assert.deepEqual((await checkDesign(p("og.mjs"))).warnings, []);
+});
+
+test("VARIANTS: every row is checked, and a zero-arg design is unaffected", async () => {
+  const r = await checkDesign(p("variants.mjs"));
+  assert.deepEqual(r, { errors: [], warnings: [] });
+});
+
+test("VARIANTS: an async function returning the rows is awaited", async () => {
+  assert.deepEqual((await checkDesign(p("variants-async.mjs"))).errors, []);
+});
+
+test("VARIANTS: a missing id is a clear error naming the problem", async () => {
+  const r = await checkDesign(p("variants-missing-id.mjs"));
+  assert.equal(r.errors.length, 1);
+  assert.match(r.errors[0], /needs a unique, non-empty string id/);
+});
+
+test("VARIANTS: a duplicate id is a clear error naming it", async () => {
+  const r = await checkDesign(p("variants-duplicate-id.mjs"));
+  assert.equal(r.errors.length, 1);
+  assert.match(r.errors[0], /Duplicate VARIANTS id "x"/);
+});
+
+test("VARIANTS: an empty array is rejected rather than silently rendering nothing", async () => {
+  const r = await checkDesign(p("variants-empty.mjs"));
+  assert.equal(r.errors.length, 1);
+  assert.match(r.errors[0], /non-empty array/);
+});
+
+test("VARIANTS: a structural error in one row is labeled with its id, and other rows still get checked", async () => {
+  const r = await checkDesign(p("variants-partial-fail.mjs"));
+  assert.equal(r.errors.length, 1);
+  assert.match(r.errors[0], /^\[bad\] root: display:"grid" not supported/);
 });

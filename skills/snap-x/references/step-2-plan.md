@@ -16,6 +16,8 @@ Answer these for the full pack:
 8. **Every element has a purpose** — if a viewer would ask "what is that?", cut it. Prefer one strong idea per card over many small decorations.
 9. **Which formats** — only what the project needs. A CLI tool doesn't need a poster; a person needs a profile banner, not an OG card.
 
+**A real series** (episodes, products, locales, screenshots) is **one design file with `VARIANTS`**, not one `.mjs` per image — see `references/step-3-design.md`. A one-off image never gets a `VARIANTS` of one row.
+
 ## Per-format specs (fill these in snap-plan.md)
 
 ```
@@ -52,6 +54,7 @@ brand:    [small logo, top-left; nothing in the bottom-right (duration badge)]
 per shot: headline (2–5 words) · which app screen it shows · what the screen contains (8–10 real-looking rows)
 series:   same layout, colors and type across all shots; order = the story (the first three show in search)
 mock:     if there are no real screenshots, say the UI is a labelled mock
+file:     **one design with `VARIANTS`** (one row per shot), not one `.mjs` per shot — see `references/step-3-design.md`
 
 ### Play feature graphic (1024×500; alpha: false)
 headline: [short, left]   visual: [product/phone, right]   keep the centre readable — it's cropped in collections

@@ -151,6 +151,102 @@ needsFonts("check --scale 2 still passes for a valid design (exercises the resvg
   assert.match(r.stdout, /All designs valid/);
 });
 
+needsFonts("VARIANTS: render writes one file per row, named <stem>-<id>.<ext>", async () => {
+  await writeFiles(dir, {
+    "designs/episode.mjs": `export const FORMAT = { width: 100, height: 100, name: "episode.png" };
+export const VARIANTS = [{ id: "ep-01", title: "Setting up" }, { id: "ep-02", title: "First render" }];
+export default function (variant) {
+  return { type: "div", props: { style: { display: "flex", width: 100, height: 100, fontSize: 14 }, children: [variant.title] } };
+}`,
+  });
+  const r = run("render", "designs/episode.mjs", "--out", "out-variants");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const files = (await fs.readdir(path.join(dir, "out-variants"))).sort();
+  assert.deepEqual(files, ["episode-ep-01.png", "episode-ep-02.png"]);
+  for (const f of files) {
+    const png = await fs.readFile(path.join(dir, "out-variants", f));
+    assert.deepEqual(png.subarray(0, 8), PNG_SIGNATURE);
+  }
+});
+
+needsFonts("VARIANTS: a row's format override changes that row's output name and size", async () => {
+  await writeFiles(dir, {
+    "designs/shot.mjs": `export const FORMAT = { width: 100, height: 100, name: "shot.png" };
+export const VARIANTS = [
+  { id: "en", title: "Hello" },
+  { id: "fr", title: "Bonjour", format: { name: "shot-francais.png", width: 120 } },
+];
+export default function (variant) {
+  return { type: "div", props: { style: { display: "flex", fontSize: 14 }, children: [variant.title] } };
+}`,
+  });
+  const r = run("render", "designs/shot.mjs", "--out", "out-variant-format");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const files = (await fs.readdir(path.join(dir, "out-variant-format"))).sort();
+  assert.deepEqual(files, ["shot-en.png", "shot-francais.png"]);
+  const fr = await fs.readFile(path.join(dir, "out-variant-format", "shot-francais.png"));
+  assert.equal(fr.readUInt32BE(16), 120); // overridden width
+  assert.equal(fr.readUInt32BE(20), 100); // height falls back to the base FORMAT
+});
+
+needsFonts("VARIANTS: --scale composes with the per-row name (episode-ep-01@2x.png)", async () => {
+  await writeFiles(dir, {
+    "designs/ep.mjs": `export const FORMAT = { width: 100, height: 100, name: "ep.png" };
+export const VARIANTS = [{ id: "01" }];
+export default function () { return { type: "div", props: { style: { display: "flex" }, children: [] } }; }`,
+  });
+  const r = run("render", "designs/ep.mjs", "--out", "out-variant-scale", "--scale", "2");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const png = await fs.readFile(path.join(dir, "out-variant-scale", "ep-01@2x.png"));
+  assert.equal(png.readUInt32BE(16), 200);
+});
+
+needsFonts("VARIANTS: guides runs once per row when the design matches a zoned format", async () => {
+  await writeFiles(dir, {
+    "designs/cover.mjs": `export const FORMAT = { width: 1584, height: 396, name: "cover.png" };
+export const VARIANTS = [{ id: "a" }, { id: "b" }];
+export default function () { return { type: "div", props: { style: { display: "flex", width: 1584, height: 396 }, children: [] } }; }`,
+  });
+  const r = run("guides", "designs/cover.mjs", "--out", "out-variant-guides");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const files = (await fs.readdir(path.join(dir, "out-variant-guides"))).sort();
+  assert.deepEqual(files, ["cover-a.guides.png", "cover-a.mobile.png", "cover-b.guides.png", "cover-b.mobile.png"]);
+});
+
+needsFonts("VARIANTS: --only renders just the requested rows, and is ignored for a zero-arg design", async () => {
+  await writeFiles(dir, {
+    "designs/series.mjs": `export const FORMAT = { width: 10, height: 10, name: "series.png" };
+export const VARIANTS = [{ id: "a" }, { id: "b" }, { id: "c" }];
+export default function () { return { type: "div", props: { style: { display: "flex" }, children: [] } }; }`,
+  });
+  const r = run("render", "designs/series.mjs", "designs/og.mjs", "--out", "out-only", "--only", "a,c");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const files = (await fs.readdir(path.join(dir, "out-only"))).sort();
+  assert.deepEqual(files, ["og.png", "series-a.png", "series-c.png"]); // designs/og.mjs (no VARIANTS) unaffected by --only
+});
+
+needsFonts("VARIANTS: --only with an id that matches nothing is a clear error", async () => {
+  await writeFiles(dir, {
+    "designs/series2.mjs": `export const FORMAT = { width: 10, height: 10 };
+export const VARIANTS = [{ id: "a" }];
+export default function () { return { type: "div", props: { style: { display: "flex" }, children: [] } }; }`,
+  });
+  const r = run("render", "designs/series2.mjs", "--out", "out-only-miss", "--only", "nope");
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /--only nope matched no VARIANTS row/);
+});
+
+test("VARIANTS: check names the failing row and doesn't abort the others", async () => {
+  await writeFiles(dir, {
+    "designs/bad-variant.mjs": `export const FORMAT = { width: 10, height: 10 };
+export const VARIANTS = [{ id: "ok" }, { id: "broken" }];
+export default function (v) { return { type: "div", props: { style: { display: v.id === "broken" ? "grid" : "flex" }, children: [] } }; }`,
+  });
+  const r = run("check", "designs/bad-variant.mjs");
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /\[broken\] root: display:"grid" not supported/);
+});
+
 needsFonts("a --scale 2 render's real pixel size is what matchFormat resolves as scale 2 of the base format", async () => {
   await writeFiles(dir, { "designs/li.mjs": validDesign({ name: "li.png", width: 1584, height: 396 }) });
   const r = run("render", "designs/li.mjs", "--out", "out-li-scale", "--scale", "2");

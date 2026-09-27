@@ -8,6 +8,7 @@ import { loadDesignModule } from "./load.mjs";
 import { collectText } from "./fallback.mjs";
 import { findUncoveredChars } from "./glyphs.mjs";
 import { findFormat } from "./formats.mjs";
+import { resolveVariants } from "./render.mjs";
 
 const UNSUPPORTED_DISPLAY = new Set([
   "block",
@@ -52,58 +53,75 @@ export async function checkDesign(designPath, { fonts, scale = 1 } = {}) {
     return { errors, warnings };
   }
 
-  // Resolve tree
-  let tree;
+  // VARIANTS: run every row through the same checks below, each labeled with its id.
+  // No VARIANTS export → a single pass with row = undefined, identical to before this feature existed.
+  let variants;
   try {
-    tree = typeof mod.default === "function" ? await mod.default() : mod.default;
+    variants = await resolveVariants(mod);
   } catch (err) {
-    errors.push(`Design function threw: ${err.message}`);
+    errors.push(err.message);
     return { errors, warnings };
   }
+  const rows = variants ?? [undefined];
 
-  if (!tree || typeof tree !== "object") {
-    errors.push("Default export must return an object (Satori node tree)");
-    return { errors, warnings };
-  }
+  for (const row of rows) {
+    const label = row ? `[${row.id}] ` : "";
+    const rowFormat = row?.format ? { ...mod.FORMAT, ...row.format } : mod.FORMAT;
+    const before = errors.length;
 
-  // Traverse tree
-  traverseNode(tree, errors, warnings, "root");
-
-  // App Store / Google Play graphics must not have an alpha channel; resvg writes RGBA unless FORMAT.alpha === false.
-  const preset = mod.FORMAT?.width && mod.FORMAT?.height ? findFormat(mod.FORMAT.width, mod.FORMAT.height) : undefined;
-  if (preset?.alpha === false && mod.FORMAT.alpha !== false) {
-    warnings.push(`${mod.FORMAT.width}×${mod.FORMAT.height} is the ${preset.platform} size, which must have no alpha channel — add alpha: false to FORMAT.`);
-  }
-
-  // Characters no loaded font can draw render as blank boxes (Satori doesn't error) — flag them.
-  if (fonts?.length) {
-    const missing = findUncoveredChars(collectText(tree), fonts);
-    if (missing.length > 0) {
-      warnings.push(`no loaded font has: ${missing.map((c) => `"${c}"`).join(" ")} — these render as blank boxes. Draw them as inline SVG/shapes, or pick a font that includes them.`);
-    }
-  }
-
-  // Actual Satori render — catches errors structural checks can't see
-  // (bad image data URIs, invalid font weights, malformed SVG paths, etc.)
-  if (fonts && errors.length === 0 && mod.FORMAT?.width && mod.FORMAT?.height) {
+    // Resolve tree
+    let tree;
     try {
-      const satori = (await import("satori")).default;
-      await satori(tree, {
-        width: mod.FORMAT.width,
-        height: mod.FORMAT.height,
-        fonts,
-        embedFont: true,
-      });
+      tree = typeof mod.default === "function" ? await mod.default(row) : mod.default;
     } catch (err) {
-      errors.push(`Satori render failed: ${err.message}`);
+      errors.push(`${label}Design function threw: ${err.message}`);
+      continue;
     }
 
-    if (scale !== 1 && errors.length === 0) {
+    if (!tree || typeof tree !== "object") {
+      errors.push(`${label}Default export must return an object (Satori node tree)`);
+      continue;
+    }
+
+    // Traverse tree
+    traverseNode(tree, errors, warnings, `${label}root`);
+
+    // App Store / Google Play graphics must not have an alpha channel; resvg writes RGBA unless FORMAT.alpha === false.
+    const preset = rowFormat?.width && rowFormat?.height ? findFormat(rowFormat.width, rowFormat.height) : undefined;
+    if (preset?.alpha === false && rowFormat.alpha !== false) {
+      warnings.push(`${label}${rowFormat.width}×${rowFormat.height} is the ${preset.platform} size, which must have no alpha channel — add alpha: false to FORMAT.`);
+    }
+
+    // Characters no loaded font can draw render as blank boxes (Satori doesn't error) — flag them.
+    if (fonts?.length) {
+      const missing = findUncoveredChars(collectText(tree), fonts);
+      if (missing.length > 0) {
+        warnings.push(`${label}no loaded font has: ${missing.map((c) => `"${c}"`).join(" ")} — these render as blank boxes. Draw them as inline SVG/shapes, or pick a font that includes them.`);
+      }
+    }
+
+    // Actual Satori render — catches errors structural checks can't see
+    // (bad image data URIs, invalid font weights, malformed SVG paths, etc.)
+    if (fonts && errors.length === before && rowFormat?.width && rowFormat?.height) {
       try {
-        const { renderTree } = await import("./render.mjs");
-        await renderTree(tree, mod.FORMAT, fonts, { scale });
+        const satori = (await import("satori")).default;
+        await satori(tree, {
+          width: rowFormat.width,
+          height: rowFormat.height,
+          fonts,
+          embedFont: true,
+        });
       } catch (err) {
-        errors.push(`Render at --scale ${scale} failed: ${err.message}`);
+        errors.push(`${label}Satori render failed: ${err.message}`);
+      }
+
+      if (scale !== 1 && errors.length === before) {
+        try {
+          const { renderTree } = await import("./render.mjs");
+          await renderTree(tree, rowFormat, fonts, { scale });
+        } catch (err) {
+          errors.push(`${label}Render at --scale ${scale} failed: ${err.message}`);
+        }
       }
     }
   }

@@ -2,7 +2,7 @@
 /**
  * snap-x CLI.
  *
- *   snap-x render  <paths...> [--out <dir>] [--scale <n>]   design .mjs → PNG via Satori
+ *   snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>]   design .mjs → PNG via Satori
  *   snap-x check   <paths...> [--scale <n>]                 validate design .mjs files
  *   snap-x guides  <paths...> [--format <id>] [--out <dir>] draw a platform's danger zones over each design
  *   snap-x formats [id|WxH] [--json]                        list platform formats, sizes and placement zones
@@ -20,7 +20,7 @@ import { resolveDesignFiles } from "./resolve.mjs";
 
 const rawArgs = process.argv.slice(2);
 const SUBCMDS = ["render", "check", "guides", "formats"];
-const VALUE_FLAGS = new Set(["--out", "--format", "--scale"]);
+const VALUE_FLAGS = new Set(["--out", "--format", "--scale", "--only"]);
 
 const flags = new Map();
 const positional = [];
@@ -34,6 +34,11 @@ const get = (f) => (typeof flags.get(f) === "string" ? flags.get(f) : null);
 const has = (f) => flags.has(f);
 const sub = SUBCMDS.includes(positional[0]) ? positional[0] : null;
 const patterns = sub ? positional.slice(1) : positional;
+
+function getOnly() {
+  const raw = get("--only");
+  return raw ? raw.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
+}
 
 function getScale() {
   const raw = get("--scale");
@@ -50,7 +55,7 @@ const HELP = `
   snap-x — render self-contained Satori .mjs design files to PNG (no browser)
 
   Usage
-    snap-x render  <paths...> [--out <dir>] [--scale <n>]    render designs to PNG (default --out ./snap-output)
+    snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>]   render designs to PNG (default --out ./snap-output)
     snap-x check   <paths...> [--scale <n>]                  validate designs (structure, real render, blank-box glyphs)
     snap-x guides  <paths...> [--format <id>] [--out <dir>]  overlay a platform's danger zones (+ mobile crop) on each design
     snap-x formats [id|WxH] [--json]                         list platform formats (YouTube, X, LinkedIn, Play Store, App Store …)
@@ -63,6 +68,10 @@ const HELP = `
   --scale <n>  renders sharp at n× resolution (Satori's layout is unchanged; only the raster output grows).
                Output is named "<name>@<n>x.png" unless n is 1. check --scale <n> also verifies resvg
                can encode the design at that size.
+
+  A design can export VARIANTS = [{ id, ... }, ...] (or an async function returning that) to render many
+  images from one file — the default export is called once per row, output named "<name>-<id>.png".
+  render's --only <id,id> renders just those rows; check and guides always run every row.
 
   Options   -h, --help   show this help      -v, --version   print the version
 `;
@@ -150,6 +159,7 @@ async function runGuides(files) {
 async function runRender(files) {
   const outDir = path.resolve(get("--out") ?? "./snap-output");
   const scale = getScale();
+  const only = getOnly();
   await fs.mkdir(outDir, { recursive: true });
 
   const { resolveFonts, resetFontCache, collectFontsSpec } = await import("./fonts.mjs");
@@ -158,11 +168,11 @@ async function runRender(files) {
   const fontsSpec = await collectFontsSpec(files);
   const fonts = await resolveFonts(fontsSpec);
 
-  console.log(`\n  Rendering ${files.length} file(s) → ${outDir}/${scale !== 1 ? `  (--scale ${scale})` : ""}\n`);
+  console.log(`\n  Rendering ${files.length} file(s) → ${outDir}/${scale !== 1 ? `  (--scale ${scale})` : ""}${only ? `  (--only ${only.join(",")})` : ""}\n`);
 
   const { renderDesign } = await import("./render.mjs");
   for (const f of files) {
-    await renderDesign(f, outDir, fonts, { scale });
+    await renderDesign(f, outDir, fonts, { scale, only });
   }
 
   console.log(`\n  Done.\n`);

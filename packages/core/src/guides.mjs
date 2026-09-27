@@ -5,7 +5,7 @@
 import path from "path";
 import fs from "fs/promises";
 import { loadDesignModule } from "./load.mjs";
-import { resolveTree, renderTree } from "./render.mjs";
+import { resolveTree, renderTree, resolveVariants } from "./render.mjs";
 import { FORMATS, findFormat } from "./formats.mjs";
 
 const box = (style, children = []) => ({ type: "div", props: { style: { display: "flex", ...style }, children } });
@@ -56,20 +56,33 @@ export function mobileTree(tree, format, { width, height, scale = 1 }) {
 
 /**
  * Writes `<name>.guides.png` (and `<name>.mobile.png` when the format defines a mobile crop) for one design.
- * Returns the written paths ([] when the format has no known placement zones).
+ * With VARIANTS, this runs once per row (the simpler of the two options the brief allowed — every variant
+ * gets checked rather than requiring a --variant <id> pick). Returns every written path ([] when the
+ * format has no known placement zones — checked per row, since a row's `format` override can change it).
  */
 export async function renderGuides(designPath, outDir, fonts, { formatId } = {}) {
   const mod = await loadDesignModule(designPath);
   if (!mod.FORMAT) throw new Error(`${path.basename(designPath)}: missing export FORMAT`);
-  const { width, height } = mod.FORMAT;
-  const stem = (mod.FORMAT.name ?? path.basename(designPath, ".mjs")).replace(/\.png$/i, "");
+
+  const variants = await resolveVariants(mod);
+  const rows = variants ?? [undefined];
+  const written = [];
+  for (const row of rows) written.push(...(await renderGuidesForRow(mod, designPath, row, outDir, fonts, formatId)));
+  return written;
+}
+
+async function renderGuidesForRow(mod, designPath, row, outDir, fonts, formatId) {
+  const format0 = row?.format ? { ...mod.FORMAT, ...row.format } : mod.FORMAT;
+  const { width, height } = format0;
+  const baseStem = (mod.FORMAT.name ?? path.basename(designPath, ".mjs")).replace(/\.png$/i, "");
+  const stem = row ? (row.format?.name ?? `${baseStem}-${row.id}`).replace(/\.png$/i, "") : baseStem;
   const match = matchFormat(width, height, formatId);
 
   if (!match) { console.log(`  –  ${stem}: no known format for ${width}×${height} (pass --format <id>; see \`snap-x formats\`)`); return []; }
   const { format, scale } = match;
   if (!format.avoid && !format.safe && !format.mobileCrop) { console.log(`  –  ${stem}: nothing to check — ${format.id} has no placement zones (that's fine)`); return []; }
 
-  const tree = await resolveTree(mod);
+  const tree = await resolveTree(mod, row);
   const opts = { width, height, scale, fontFamily: fonts[0]?.name };
   const written = [];
 
