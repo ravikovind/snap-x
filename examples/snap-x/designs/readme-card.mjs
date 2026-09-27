@@ -11,6 +11,7 @@ const LINE = "rgba(255,255,255,0.14)";
 
 const box = (style, children = []) => ({ type: "div", props: { style: { display: "flex", ...style }, children } });
 const txt = (text, style) => box(style, [text]);
+const H = (size) => ({ fontSize: size, fontWeight: 900, lineHeight: 0.98, letterSpacing: "-0.035em", whiteSpace: "nowrap" });
 
 const chip = (label, filled) =>
   box({
@@ -24,7 +25,7 @@ const arrow = () => txt("→", { color: MUTED, fontSize: 16, margin: "0 10px" })
 export default function () {
   return box({
     width: 1280, height: 640, background: "#070707", fontFamily: "Saira", position: "relative",
-    overflow: "hidden", flexDirection: "column", justifyContent: "space-between", padding: "56px 72px 52px",
+    overflow: "hidden", flexDirection: "column", justifyContent: "space-between", padding: "52px 72px 48px",
   }, [
     // glow + hairline
     box({ position: "absolute", top: -220, right: -160, width: 760, height: 760, background: "radial-gradient(circle, rgba(235,29,37,0.30) 0%, rgba(235,29,37,0) 62%)" }),
@@ -41,13 +42,14 @@ export default function () {
 
     // headline
     box({ flexDirection: "column" }, [
-      txt("Claude writes it.", { fontSize: 112, fontWeight: 900, lineHeight: 0.96, letterSpacing: "-0.045em", color: INK }),
-      box({ alignItems: "baseline", gap: 26 }, [
-        txt("snap-x", { fontSize: 112, fontWeight: 900, lineHeight: 0.96, letterSpacing: "-0.045em", color: RED }),
-        txt("renders it.", { fontSize: 112, fontWeight: 900, lineHeight: 0.96, letterSpacing: "-0.045em", color: INK }),
+      txt("Branded graphics", { ...H(86), color: INK }),
+      box({ alignItems: "baseline", gap: 8 }, [
+        txt("for", { ...H(86), color: INK }),
+        txt("every platform,", { ...H(86), color: RED }),
       ]),
-      txt("Point Claude Code at any project. It writes a design.mjs; snap-x turns it into a PNG. Any format, any size, no browser.", {
-        marginTop: 26, fontSize: 22, lineHeight: 1.45, color: MUTED, maxWidth: 780, flexWrap: "wrap",
+      txt("made by your AI agent.", { ...H(86), color: INK }),
+      txt("YouTube thumbnails, LinkedIn covers, store banners, app screenshots, OG cards: sized right, checked, and repeatable.", {
+        marginTop: 20, fontSize: 19, lineHeight: 1.4, color: MUTED, maxWidth: 900, flexWrap: "wrap",
       }),
     ]),
 

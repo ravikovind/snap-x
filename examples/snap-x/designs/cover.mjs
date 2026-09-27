@@ -11,7 +11,7 @@ const LINE = "rgba(255,255,255,0.14)";
 
 const box = (style, children = []) => ({ type: "div", props: { style: { display: "flex", ...style }, children } });
 const txt = (text, style) => box(style, [text]);
-const H = (size) => ({ fontSize: size, fontWeight: 900, lineHeight: 0.96, letterSpacing: "-0.045em", whiteSpace: "nowrap" });
+const H = (size) => ({ fontSize: size, fontWeight: 900, lineHeight: 0.98, letterSpacing: "-0.035em", whiteSpace: "nowrap" });
 
 const chip = (label, filled, big) =>
   box({
@@ -29,31 +29,35 @@ const command = (size = 14) => box({ fontFamily: "JetBrains Mono", fontSize: siz
 ]);
 const root = (w, h, style, children) => box({ width: w, height: h, background: "#070707", fontFamily: "Saira", position: "relative", overflow: "hidden", ...style }, children);
 
-const step = (n, title, sub, hot) => box({ alignItems: "center", gap: 18 }, [
+// the three pillars (repositioning.md §1.3), always in this order
+const pillar = (n, title, sub, hot) => box({ alignItems: "center", gap: 18 }, [
   txt(n, { fontFamily: "JetBrains Mono", fontSize: 14, fontWeight: 700, color: hot ? RED : MUTED, width: 26 }),
   box({ flexDirection: "column", gap: 2 }, [
-    txt(title, { fontSize: 25, fontWeight: 700, color: hot ? RED : INK, letterSpacing: "-0.01em" }),
-    txt(sub, { fontFamily: "JetBrains Mono", fontSize: 13, color: MUTED }),
+    txt(title, { fontSize: 23, fontWeight: 700, color: hot ? RED : INK, letterSpacing: "-0.01em", whiteSpace: "nowrap" }),
+    txt(sub, { fontFamily: "JetBrains Mono", fontSize: 13, color: MUTED, whiteSpace: "nowrap" }),
   ]),
 ]);
 
 export default function () {
-  return root(1500, 500, { alignItems: "center", padding: "0 96px", gap: 90 }, [
+  return root(1500, 500, { alignItems: "center", padding: "0 96px 0 190px", gap: 70 }, [
     glow({ top: -300, right: 200, width: 800, height: 800 }),
     box({ position: "absolute", left: 0, top: 0, right: 0, height: 5, background: RED }),
     box({ flexDirection: "column", gap: 30 }, [
       box({ flexDirection: "column" }, [
-        txt("Claude writes it.", { ...H(100), color: INK }),
-        box({ alignItems: "baseline", gap: 24 }, [txt("snap-x", { ...H(100), color: RED }), txt("renders it.", { ...H(100), color: INK })]),
+        txt("Branded graphics", { ...H(66), color: INK }),
+        box({ alignItems: "baseline", gap: 8 }, [
+          txt("for", { ...H(66), color: INK }),
+          txt("every platform,", { ...H(66), color: RED }),
+        ]),
+        txt("made by your AI agent.", { ...H(66), color: INK }),
       ]),
       command(15),
     ]),
     box({ width: 1, height: 300, background: LINE }),
-    box({ flexDirection: "column", gap: 22 }, [
-      step("01", "your project", "package.json · README · assets"),
-      step("02", "Claude Code", "writes design.mjs  (/snap-x)"),
-      step("03", "snap-x render", "Satori → resvg, no browser"),
-      step("04", "PNG", "any format · any size", true),
+    box({ flexDirection: "column", gap: 26 }, [
+      pillar("01", "Your brand in, every platform out.", "reads your project, finds the real logo & fonts"),
+      pillar("02", "Correct for each platform.", "19 formats, safe-zone guides, checked"),
+      pillar("03", "Exact and repeatable.", "real logo embedded, re-render a whole series", true),
     ]),
   ]);
 }

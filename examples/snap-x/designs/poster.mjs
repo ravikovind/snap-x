@@ -11,7 +11,7 @@ const LINE = "rgba(255,255,255,0.14)";
 
 const box = (style, children = []) => ({ type: "div", props: { style: { display: "flex", ...style }, children } });
 const txt = (text, style) => box(style, [text]);
-const H = (size) => ({ fontSize: size, fontWeight: 900, lineHeight: 0.96, letterSpacing: "-0.045em", whiteSpace: "nowrap" });
+const H = (size) => ({ fontSize: size, fontWeight: 900, lineHeight: 1.0, letterSpacing: "-0.03em", whiteSpace: "nowrap" });
 
 const chip = (label, filled, big) =>
   box({
@@ -29,8 +29,9 @@ const command = (size = 14) => box({ fontFamily: "JetBrains Mono", fontSize: siz
 ]);
 const root = (w, h, style, children) => box({ width: w, height: h, background: "#070707", fontFamily: "Saira", position: "relative", overflow: "hidden", ...style }, children);
 
-const row = (n, label, hot) => box({ alignItems: "center", justifyContent: "space-between", padding: "22px 30px", border: `1px solid ${hot ? RED : LINE}`, background: hot ? RED : "rgba(255,255,255,0.03)", borderRadius: 16 }, [
-  txt(label, { fontFamily: "JetBrains Mono", fontSize: 28, fontWeight: 700, color: hot ? "#fff" : INK }),
+// the three pillars (repositioning.md §1.3), always in this order
+const pillar = (n, label, hot) => box({ alignItems: "center", justifyContent: "space-between", padding: "22px 30px", border: `1px solid ${hot ? RED : LINE}`, background: hot ? RED : "rgba(255,255,255,0.03)", borderRadius: 16 }, [
+  txt(label, { fontFamily: "JetBrains Mono", fontSize: 24, fontWeight: 700, color: hot ? "#fff" : INK, whiteSpace: "nowrap" }),
   txt(n, { fontFamily: "JetBrains Mono", fontSize: 20, fontWeight: 700, color: hot ? "rgba(255,255,255,0.8)" : MUTED }),
 ]);
 
@@ -43,16 +44,21 @@ export default function () {
       txt("OPEN SOURCE · MIT", { fontSize: 18, fontWeight: 700, letterSpacing: "0.2em", color: MUTED }),
     ]),
     box({ flexDirection: "column" }, [
-      txt("Claude", { ...H(164), color: INK }),
-      txt("writes it.", { ...H(164), color: INK }),
-      txt("snap-x", { ...H(164), color: RED, marginTop: 24 }),
-      txt("renders it.", { ...H(164), color: INK }),
-      txt("Point Claude Code at any project. It writes a design.mjs; snap-x turns it into a PNG. Any format, any size, no browser.", {
-        marginTop: 44, fontSize: 32, lineHeight: 1.4, color: MUTED, maxWidth: 820, flexWrap: "wrap",
+      txt("Branded", { ...H(140), color: INK }),
+      txt("graphics for", { ...H(140), color: INK }),
+      txt("every", { ...H(140), color: RED }),
+      txt("platform,", { ...H(140), color: RED }),
+      txt("made by", { ...H(140), color: INK, marginTop: 20 }),
+      txt("your AI", { ...H(140), color: INK }),
+      txt("agent.", { ...H(140), color: INK }),
+      txt("YouTube thumbnails, LinkedIn covers, store banners, app screenshots, OG cards: sized right, checked, and repeatable.", {
+        marginTop: 44, fontSize: 30, lineHeight: 1.4, color: MUTED, maxWidth: 860, flexWrap: "wrap",
       }),
     ]),
     box({ flexDirection: "column", gap: 14 }, [
-      row("01", "your project"), row("02", "Claude Code  →  design.mjs"), row("03", "snap-x render"), row("04", "PNG", true),
+      pillar("01", "Your brand in, every platform out."),
+      pillar("02", "Correct for each platform."),
+      pillar("03", "Exact and repeatable.", true),
       box({ marginTop: 26, justifyContent: "center" }, [command(24)]),
     ]),
   ]);

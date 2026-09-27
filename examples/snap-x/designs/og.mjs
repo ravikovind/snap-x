@@ -11,7 +11,7 @@ const LINE = "rgba(255,255,255,0.14)";
 
 const box = (style, children = []) => ({ type: "div", props: { style: { display: "flex", ...style }, children } });
 const txt = (text, style) => box(style, [text]);
-const H = (size) => ({ fontSize: size, fontWeight: 900, lineHeight: 0.96, letterSpacing: "-0.045em", whiteSpace: "nowrap" });
+const H = (size) => ({ fontSize: size, fontWeight: 900, lineHeight: 0.98, letterSpacing: "-0.035em", whiteSpace: "nowrap" });
 
 const chip = (label, filled, big) =>
   box({
@@ -38,15 +38,16 @@ export default function () {
       txt("OPEN SOURCE · MIT", { fontSize: 13, fontWeight: 700, letterSpacing: "0.2em", color: MUTED }),
     ]),
     box({ flexDirection: "column" }, [
-      txt("Claude writes it.", { ...H(118), color: INK }),
-      box({ alignItems: "baseline", gap: 28 }, [
-        txt("snap-x", { ...H(118), color: RED }),
-        txt("renders it.", { ...H(118), color: INK }),
+      txt("Branded graphics", { ...H(90), color: INK }),
+      box({ alignItems: "baseline", gap: 8 }, [
+        txt("for", { ...H(90), color: INK }),
+        txt("every platform,", { ...H(90), color: RED }),
       ]),
+      txt("made by your AI agent.", { ...H(90), color: INK }),
     ]),
     box({ alignItems: "center", justifyContent: "space-between", padding: "16px 22px", border: `1px solid ${LINE}`, borderRadius: 14, background: "rgba(255,255,255,0.03)" }, [
       command(20),
-      box({ alignItems: "center" }, [txt("any format", { fontSize: 15, fontWeight: 700, color: MUTED, letterSpacing: "0.14em" }), arrow(16, 12), txt("PNG", { fontSize: 15, fontWeight: 900, color: RED, letterSpacing: "0.14em" })]),
+      box({ alignItems: "center" }, [txt("every platform", { fontSize: 15, fontWeight: 700, color: MUTED, letterSpacing: "0.14em" }), arrow(16, 12), txt("PNG", { fontSize: 15, fontWeight: 900, color: RED, letterSpacing: "0.14em" })]),
     ]),
   ]);
 }

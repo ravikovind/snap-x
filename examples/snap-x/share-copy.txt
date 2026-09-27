@@ -1,4 +1,5 @@
 snap-x — example image pack (generated with /snap-x)
+"Branded graphics for every platform, made by your AI agent."
 
 readme-card.png (1280×640)
   → top of README.md:  ![snap-x](examples/snap-x/readme-card.png)
