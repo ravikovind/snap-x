@@ -123,6 +123,25 @@ export const FORMATS = [
     verified: true, source: "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications", types: ["png", "jpeg"],
     notes: "16:10. Also accepted: 2560×1600, 1440×900, 1280×800. No alpha.",
   },
+
+  // ── More platforms (improvements.md §2.2, first 4 candidates — the rest need Ravi's go-ahead) ──
+  // facebook-post (Facebook feed image) was skipped: every official Meta source found only restates the
+  // og/link-share spec above (600×315 min, 1200×630 ideal, ≤ 8 MB) with no size distinct to a native photo
+  // post; adding it would either duplicate `og` or use an unverified third-party number, so it's left out.
+  {
+    id: "facebook-cover", aliases: ["facebook-page-cover"], platform: "Facebook Page cover photo", width: 851, height: 315,
+    verified: true, source: "https://www.facebook.com/help/125379114252045",
+    notes: "Loads fastest as an sRGB JPG at 851×315 under 100 KB (a display-speed recommendation, not a hard limit — no maxBytes set here); minimum 400×150. The profile picture overlaps the bottom-left on mobile, but Facebook doesn't publish exact zone coordinates for this canvas, so no avoid box is set — check the mobile view visually.",
+  },
+  {
+    id: "pinterest-pin", aliases: ["pin"], platform: "Pinterest standard Pin", width: 1000, height: 1500, verified: false,
+    notes: "Pinterest's own Pin-specs page gives safe-zone insets for a Pin (top 270px, left 65px, right 195px, bottom 790px) and file rules (BMP/JPEG/PNG/TIFF/WEBP, ≤ 20 MB on web) but doesn't itself state an exact width×height for a standard image Pin. 1000×1500 (2:3) is the size those insets and its own 9:16 video-Pin guidance (1080×1920) converge on, and what the wider ecosystem treats as standard — used here unverified since the page doesn't say it outright.",
+    safe: rect(65, 270, 740, 440, "safe zone (Pinterest's Pin-spec insets)"),
+  },
+  {
+    id: "twitch-banner", aliases: ["twitch-profile-banner"], platform: "Twitch profile banner", width: 1200, height: 480, verified: false,
+    notes: "Widely reported (including by search results attributing it to Twitch's own Channel Page Setup help article) as 1200×480, ≤ 10 MB, JPG/PNG/GIF — images shorter or taller than 480px get scaled to 480px high. Twitch's help center renders via JavaScript, which this tool couldn't execute to read the page directly, so this is left unverified pending a firsthand read of the source.",
+  },
 ];
 
 const norm = (s) => String(s).trim().toLowerCase();

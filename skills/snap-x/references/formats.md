@@ -28,6 +28,8 @@ App Store screenshots and Google Play graphics (feature graphic, screenshots) **
 
 **Instagram / Facebook / WhatsApp stories and Reels (1080×1920).** Leave ~250 px clear top and bottom for the app UI. Portrait feed posts (1080×1350, 4:5) take the most feed space.
 
+**Facebook Page cover (851×315), Pinterest Pin (1000×1500), Twitch profile banner (1200×480).** Cover: the profile picture overlaps the bottom-left on mobile (no official zone published — keep text right-of-center). Pin: tall 2:3, safe content sits inside Pinterest's own inset (`guides` draws it); the exact WxH isn't stated in Pinterest's docs, so it's unverified — re-check before a launch. Banner: wide and short (5:2) — concentrate the logo/text on the left since browsers can stretch it wider; unverified (Twitch's help page couldn't be fetched to confirm).
+
 **Google Play.** Feature graphic 1024×500 (no alpha): short headline + product, centred — it's often cropped in collections. Phone screenshots 1080×1920 (9:16; each side 320–3840 px; long side ≤ 2× the short side; at least 2, up to 8).
 
 **App Store screenshots** (iPhone 6.9″ 1320×2868 is the required size; 6.5″ 1284×2778 is the alternative; iPad 13″ 2064×2752; 1–10 per device, no alpha). Pattern that works:

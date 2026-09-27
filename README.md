@@ -51,7 +51,7 @@ Works the same way in Claude Desktop, Cursor, Windsurf, or any MCP client: the a
 </tr>
 </table>
 
-19 built-in formats with sizes and rules: link previews, YouTube thumbnails/Shorts/channel art, LinkedIn/X covers and posts, Instagram posts and stories, Google Play graphics and screenshots, App Store screenshots (`snap-x formats`, or `snap-x formats <id>` for notes and zones — sizes checked against official docs are marked verified). `snap-x guides` overlays a format's danger zones — profile photo, duration badge, story UI, cropped edges — on your design and renders the mobile crop, so you can *see* whether text is covered. `snap-x check` catches characters the font can't draw. **Store graphics get no alpha channel automatically:** set `alpha: false` in `FORMAT` and `check`/`render` produce an opaque RGB PNG.
+22 built-in formats with sizes and rules: link previews, YouTube thumbnails/Shorts/channel art, LinkedIn/X covers and posts, Instagram posts and stories, Google Play graphics and screenshots, App Store screenshots, and more (`snap-x formats`, or `snap-x formats <id>` for notes and zones — sizes checked against official docs are marked verified). `snap-x guides` overlays a format's danger zones — profile photo, duration badge, story UI, cropped edges — on your design and renders the mobile crop, so you can *see* whether text is covered. `snap-x check` catches characters the font can't draw. **Store graphics get no alpha channel automatically:** set `alpha: false` in `FORMAT` and `check`/`render` produce an opaque RGB PNG.
 
 ## Exact and repeatable
 
