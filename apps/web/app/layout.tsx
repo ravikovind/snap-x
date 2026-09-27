@@ -3,6 +3,7 @@ import { Saira, Space_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site";
+import { SiteNav } from "@/components/SiteNav";
 
 const saira = Saira({
   variable: "--font-saira",
@@ -38,45 +39,11 @@ export const metadata: Metadata = {
   },
 };
 
-const NAV_LINKS = [
-  { href: "/formats", label: "Formats" },
-  { href: "/use-cases", label: "Use cases" },
-  { href: "/templates", label: "Templates" },
-  { href: "/examples", label: "Examples" },
-  { href: "/showcase", label: "Showcase" },
-  { href: "/docs", label: "Docs" },
-];
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${saira.variable} ${spaceMono.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased bg-bg text-ink">
-        <nav className="fixed inset-x-0 top-0 z-50 flex h-15 items-center justify-between border-b border-border bg-bg/85 px-4 backdrop-blur-md sm:px-8">
-          <Link href="/" className="flex items-center gap-2.5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="snap-x logo" className="h-7 w-7 rounded" />
-            <span className="text-lg font-black tracking-[0.15em]">SNAP-X</span>
-          </Link>
-          <div className="hidden items-center gap-6 md:flex">
-            {NAV_LINKS.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="font-mono text-sm text-muted transition-colors hover:text-ink"
-              >
-                {l.label}
-              </Link>
-            ))}
-          </div>
-          <a
-            href="https://github.com/ravikovind/snap-x"
-            target="_blank"
-            rel="noopener"
-            className="font-mono text-sm text-muted transition-colors hover:text-ink"
-          >
-            GitHub
-          </a>
-        </nav>
+        <SiteNav />
 
         <main className="flex-1 pt-15">{children}</main>
 

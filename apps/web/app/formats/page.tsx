@@ -16,7 +16,7 @@ const zoneText = (z: Zone) =>
 function FormatCard({ f }: { f: Format }) {
   const ratio = f.width / f.height;
   return (
-    <div className="rounded-2xl border border-border bg-surface p-6">
+    <div className="mb-6 break-inside-avoid rounded-2xl border border-border bg-surface p-6">
       <div className="mb-4 flex h-20 items-center justify-center rounded-lg border border-border-2 bg-surface-2">
         <div
           className="rounded bg-gradient-to-br from-surface-2 to-surface"
@@ -75,7 +75,7 @@ export default function FormatsPage() {
         same data <code className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-sm text-[#79c0ff]">snap-x formats</code> prints. Nothing here is hand-typed.
       </p>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 columns-1 gap-6 sm:columns-2 lg:columns-3">
         {FORMATS.map((f) => (
           <FormatCard key={f.id} f={f} />
         ))}
