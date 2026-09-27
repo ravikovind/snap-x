@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Usage: node scripts/examples.mjs <render|check>
-// Runs the snap-x CLI over every examples/<name>/designs folder (output goes to examples/<name>/).
+// Runs the snap-x CLI over every examples/<name>/designs folder (output goes to examples/<name>/),
+// plus templates/ itself (a flat pack — no nested designs/ subfolder; output goes to templates/).
 // An example may add examples/<name>/example.json = { "guides": ["designs/cover.mjs"] } to also run `snap-x guides`
 // on those designs (placement overlays + mobile crops go to examples/<name>/guides/). An entry can instead be
 // { "file": "designs/x.mjs", "format": "instagram-story" } to force a format id when a design's exact width/height
@@ -18,23 +19,32 @@ if (!["render", "check"].includes(mode)) {
   process.exit(1);
 }
 
-const examples = readdirSync(path.join(root, "examples"), { withFileTypes: true })
+const exampleNames = readdirSync(path.join(root, "examples"), { withFileTypes: true })
   .filter((d) => d.isDirectory() && existsSync(path.join(root, "examples", d.name, "designs")))
   .map((d) => d.name);
 
+const packs = exampleNames.map((name) => ({
+  label: `examples/${name}`,
+  designsDir: path.join(root, "examples", name, "designs"),
+  outDir: path.join(root, "examples", name),
+  exampleJson: path.join(root, "examples", name, "example.json"),
+}));
+
+if (existsSync(path.join(root, "templates"))) {
+  packs.push({ label: "templates", designsDir: path.join(root, "templates"), outDir: path.join(root, "templates"), exampleJson: null });
+}
+
 let failed = false;
-for (const name of examples) {
-  const dir = path.join(root, "examples", name);
-  const args = [cli, mode, path.join(dir, "designs"), ...(mode === "render" ? ["--out", dir] : [])];
-  console.log(`\n=== examples/${name} (${mode}) ===`);
+for (const { label, designsDir, outDir, exampleJson } of packs) {
+  const args = [cli, mode, designsDir, ...(mode === "render" ? ["--out", outDir] : [])];
+  console.log(`\n=== ${label} (${mode}) ===`);
   if (spawnSync(process.execPath, args, { stdio: "inherit" }).status !== 0) failed = true;
 
-  const configPath = path.join(dir, "example.json");
-  if (mode === "render" && existsSync(configPath)) {
-    const { guides = [] } = JSON.parse(readFileSync(configPath, "utf8"));
+  if (mode === "render" && exampleJson && existsSync(exampleJson)) {
+    const { guides = [] } = JSON.parse(readFileSync(exampleJson, "utf8"));
     for (const entry of guides) {
       const { file, format } = typeof entry === "string" ? { file: entry } : entry;
-      const g = [cli, "guides", path.join(dir, file), ...(format ? ["--format", format] : []), "--out", path.join(dir, "guides")];
+      const g = [cli, "guides", path.join(outDir, file), ...(format ? ["--format", format] : []), "--out", path.join(outDir, "guides")];
       if (spawnSync(process.execPath, g, { stdio: "inherit" }).status !== 0) failed = true;
     }
   }

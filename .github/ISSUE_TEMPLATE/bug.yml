@@ -1,0 +1,45 @@
+name: Bug report
+description: Something renders wrong, check misses (or wrongly flags) something, or a command fails
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: design
+    attributes:
+      label: Design file (or a minimal snippet that reproduces it)
+      description: The `.mjs`/`.jsx`/`.tsx` design, or a small tree that shows the problem.
+      render: js
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command
+      placeholder: e.g. snap-x render designs/og.mjs --out out
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+      description: The error text, or what's visibly wrong in the output.
+    validations:
+      required: true
+  - type: textarea
+    id: image
+    attributes:
+      label: Output image
+      description: Drag the rendered PNG in, or a screenshot of the wrong part.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: e.g. @snap-x/cli 0.2.0, Node 22, macOS
+    validations:
+      required: true

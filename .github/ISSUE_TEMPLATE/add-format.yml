@@ -1,0 +1,47 @@
+name: Add a platform format
+description: Request or propose a new entry in packages/core/src/formats.mjs
+title: "[format] "
+labels: ["format"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        See [CONTRIBUTING.md](../../CONTRIBUTING.md#adding-or-verifying-a-platform-format) — every number here has to come from the platform's own documentation, not a third-party size-guide post.
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      description: The service and the specific asset (e.g. "Etsy shop banner", not just "Etsy").
+      placeholder: e.g. TikTok video cover
+    validations:
+      required: true
+  - type: input
+    id: size
+    attributes:
+      label: Size (width × height)
+      placeholder: e.g. 1080 × 1920
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Official source URL (required)
+      description: A link to the platform's own help/developer docs stating this size. Not a third-party guide.
+      placeholder: https://...
+    validations:
+      required: true
+  - type: textarea
+    id: limits
+    attributes:
+      label: Limits (optional)
+      description: Max file size, accepted file types — only if the same official source states them.
+      placeholder: e.g. "≤ 20 MB, JPEG/PNG/WEBP"
+  - type: textarea
+    id: zones
+    attributes:
+      label: Covered or cropped areas (optional)
+      description: A profile photo overlap, a duration badge, a UI band, a mobile crop — only if the docs describe them, with approximate coordinates if you have them.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else worth noting

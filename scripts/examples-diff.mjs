@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Usage: node scripts/examples-diff.mjs
-// Visual regression for examples/: renders every examples/<name>/designs to a temp dir and compares
-// each output pixel-by-pixel against the committed PNG at the same path in examples/<name>/, using a
+// Visual regression for examples/ and templates/: renders every examples/<name>/designs (plus the
+// flat templates/ pack) to a temp dir and compares each output pixel-by-pixel against the committed
+// PNG at the same path, using a
 // pure-JS diff (pixelmatch + pngjs — no native image libraries). A small per-pixel threshold plus a
 // small overall-differing-pixels budget absorb anti-aliasing noise between runs; anything past that
 // is a real visual change. Writes a diff image for every failure under .examples-diff/ (gitignored).
@@ -26,9 +27,14 @@ const diffDir = path.join(root, ".examples-diff");
 const PIXEL_THRESHOLD = 0.1; // pixelmatch's own per-pixel colour-difference sensitivity (0-1)
 const MAX_DIFF_RATIO = 0.005; // fraction of an image's pixels allowed to differ before it's a real regression
 
-const examples = readdirSync(path.join(root, "examples"), { withFileTypes: true })
+const exampleNames = readdirSync(path.join(root, "examples"), { withFileTypes: true })
   .filter((d) => d.isDirectory() && existsSync(path.join(root, "examples", d.name, "designs")))
   .map((d) => d.name);
+
+const packs = exampleNames.map((name) => ({ label: `examples/${name}`, dir: path.join(root, "examples", name), designsDir: path.join(root, "examples", name, "designs") }));
+if (existsSync(path.join(root, "templates"))) {
+  packs.push({ label: "templates", dir: path.join(root, "templates"), designsDir: path.join(root, "templates") });
+}
 
 const tmp = mkdtempSync(path.join(os.tmpdir(), "snapx-diff-"));
 rmSync(diffDir, { recursive: true, force: true });
@@ -36,11 +42,10 @@ rmSync(diffDir, { recursive: true, force: true });
 let failed = false;
 let compared = 0;
 
-for (const name of examples) {
-  const dir = path.join(root, "examples", name);
-  const outDir = path.join(tmp, name);
-  console.log(`\n=== examples/${name} ===`);
-  const r = spawnSync(process.execPath, [cli, "render", path.join(dir, "designs"), "--out", outDir], { stdio: "inherit" });
+for (const { label, dir, designsDir } of packs) {
+  const outDir = path.join(tmp, label.replace("/", "-"));
+  console.log(`\n=== ${label} ===`);
+  const r = spawnSync(process.execPath, [cli, "render", designsDir, "--out", outDir], { stdio: "inherit" });
   if (r.status !== 0) { failed = true; continue; }
 
   for (const file of readdirSync(outDir).sort()) {
@@ -68,8 +73,8 @@ for (const name of examples) {
 
     if (ratio > MAX_DIFF_RATIO) {
       failed = true;
-      mkdirSync(path.join(diffDir, name), { recursive: true });
-      const diffPath = path.join(diffDir, name, file);
+      mkdirSync(path.join(diffDir, label), { recursive: true });
+      const diffPath = path.join(diffDir, label, file);
       writeFileSync(diffPath, PNG.sync.write(diffPng));
       console.log(`  ❌  ${file}: ${diffPixels} px differ (${(ratio * 100).toFixed(2)}%) — diff written to ${path.relative(root, diffPath)}`);
     } else {

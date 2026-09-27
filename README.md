@@ -181,7 +181,7 @@ Tools: `render_designs`, `check_designs`, `preview_guides`, `list_formats`. The 
 
 ## Examples
 
-[`examples/`](examples) has complete packs made with the skill: snap-x itself, Open Notifier, HeyReach, a LinkedIn cover, an App Store/Play Store listing pack, a fictional e-commerce brand, a fictional YouTube series, and a JSX/TSX feature demo — each built from a repo, a site, or a written brief. Each has its designs, assets, plan and output. Regenerate all with `npm run examples`; `npm run examples:diff` checks every committed image still matches a fresh render (a pure-JS pixel diff — CI runs it on every push).
+[`examples/`](examples) has complete packs made with the skill: snap-x itself, Open Notifier, HeyReach, a LinkedIn cover, an App Store/Play Store listing pack, a fictional e-commerce brand, a fictional YouTube series, and a JSX/TSX feature demo — each built from a repo, a site, or a written brief. Each has its designs, assets, plan and output. Regenerate all with `npm run examples`; `npm run examples:diff` checks every committed image still matches a fresh render (a pure-JS pixel diff — CI runs it on every push). [`templates/`](templates) has six brand-neutral starter designs (an "edit these values" block at the top of each) if you'd rather start from a template than write one from scratch. Made something with snap-x? Add it to [SHOWCASE.md](SHOWCASE.md).
 
 ## Packages
 
@@ -191,7 +191,7 @@ Tools: `render_designs`, `check_designs`, `preview_guides`, `list_formats`. The 
 | [`@snap-x/core`](packages/core) | renderer, font loader, checker, programmatic API |
 | [`@snap-x/mcp`](packages/mcp) | MCP server |
 
-Architecture notes: [FLOW.md](FLOW.md) · Principles: [PRINCIPLES.md](PRINCIPLES.md) · Changes: [CHANGELOG.md](CHANGELOG.md)
+Architecture notes: [FLOW.md](FLOW.md) · Principles: [PRINCIPLES.md](PRINCIPLES.md) · Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · Changes: [CHANGELOG.md](CHANGELOG.md)
 
 ## License
 

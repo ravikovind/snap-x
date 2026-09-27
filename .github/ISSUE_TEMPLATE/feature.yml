@@ -1,0 +1,43 @@
+name: Feature request
+description: Propose something snap-x doesn't do yet
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Read [PRINCIPLES.md](../../PRINCIPLES.md) first — a proposal that conflicts with one of these probably belongs in a different project (e.g. a config file, a headless-browser render path, or auto-detecting a project's brand without the agent's own inspection step).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem this solves?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would it look like?
+      description: A CLI flag, a new FORMAT field, an API shape — as concrete as you can make it.
+    validations:
+      required: true
+  - type: dropdown
+    id: principle
+    attributes:
+      label: Which principle does this relate to?
+      description: See PRINCIPLES.md. Pick the closest one, or "none obviously" if it's a new area.
+      options:
+        - Render-only
+        - Self-contained design files
+        - Correctness over breadth
+        - Facts only
+        - Real brand assets
+        - Measurable over subjective
+        - Deterministic
+        - Light and portable
+        - None obviously — explain below
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What do people do today without this?
