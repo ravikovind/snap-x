@@ -2,7 +2,9 @@
 // Usage: node scripts/examples.mjs <render|check>
 // Runs the snap-x CLI over every examples/<name>/designs folder (output goes to examples/<name>/).
 // An example may add examples/<name>/example.json = { "guides": ["designs/cover.mjs"] } to also run `snap-x guides`
-// on those designs (placement overlays + mobile crops go to examples/<name>/guides/).
+// on those designs (placement overlays + mobile crops go to examples/<name>/guides/). An entry can instead be
+// { "file": "designs/x.mjs", "format": "instagram-story" } to force a format id when a design's exact width/height
+// matches more than one platform format (auto-match otherwise picks whichever one is listed first).
 import { spawnSync } from "child_process";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
@@ -30,8 +32,9 @@ for (const name of examples) {
   const configPath = path.join(dir, "example.json");
   if (mode === "render" && existsSync(configPath)) {
     const { guides = [] } = JSON.parse(readFileSync(configPath, "utf8"));
-    if (guides.length) {
-      const g = [cli, "guides", ...guides.map((f) => path.join(dir, f)), "--out", path.join(dir, "guides")];
+    for (const entry of guides) {
+      const { file, format } = typeof entry === "string" ? { file: entry } : entry;
+      const g = [cli, "guides", path.join(dir, file), ...(format ? ["--format", format] : []), "--out", path.join(dir, "guides")];
       if (spawnSync(process.execPath, g, { stdio: "inherit" }).status !== 0) failed = true;
     }
   }

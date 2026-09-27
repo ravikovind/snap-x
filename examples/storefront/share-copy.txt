@@ -1,0 +1,12 @@
+storefront — example image pack (generated with /snap-x)
+Fictional brand ("Salt & Pine") — demo only, not a real store.
+
+banner-cedar-candle.png (1200×630)  → sale banner / og:image for a product page
+banner-wool-throw.png (1200×630)    → new-arrival banner
+banner-enamel-mug.png (1200×630)    → sale banner
+instagram-post.png (1080×1350)      → Instagram feed post
+instagram-story.png (1080×1920)     → Instagram/Facebook story
+
+One shared template (designs/_storefront.mjs), three products, five sizes.
+
+Regenerate everything:  npm run examples

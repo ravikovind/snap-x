@@ -1,0 +1,10 @@
+creator-series — example image pack (generated with /snap-x)
+Fictional channel ("Sawdust & Coffee") — demo only, not a real channel.
+
+ep1-cutting-the-legs.png (1280×720)    → YouTube thumbnail, episode 1
+ep2-gluing-the-top.png (1280×720)      → YouTube thumbnail, episode 2
+ep3-first-finish-coat.png (1280×720)   → YouTube thumbnail, episode 3
+
+One shared template (designs/_creator-series.mjs), one episode swapped per file.
+
+Regenerate everything:  npm run examples
