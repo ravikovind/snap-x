@@ -1,7 +1,7 @@
 {
   "name": "@snap-x/cli",
   "version": "0.2.0",
-  "description": "The snap-x command: render self-contained Satori .mjs design files to PNG. No browser, no config.",
+  "description": "The snap-x command: render and check design files into platform-ready PNGs (thumbnails, covers, banners, store graphics, OG cards). Exact sizes, safe-zone guides, no browser.",
   "author": {
     "name": "Ravi Kovind",
     "url": "https://ravikovind.com"
@@ -19,9 +19,14 @@
     "@snap-x/core": "^0.6.0"
   },
   "keywords": [
-    "og-images",
+    "branded-graphics",
+    "social-images",
+    "og-image",
+    "youtube-thumbnail",
+    "linkedin-banner",
+    "app-store-screenshots",
+    "play-store",
     "satori",
-    "social-cards",
     "snap-x",
     "claude-skill",
     "cli"

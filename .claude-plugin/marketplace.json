@@ -1,6 +1,6 @@
 {
   "name": "snap-x",
-  "description": "Claude Code plugins by Ravi Kovind — snap-x turns any project into a branded social image pack.",
+  "description": "Claude Code plugins by Ravi Kovind: snap-x makes branded graphics for every platform.",
   "owner": {
     "name": "Ravi Kovind",
     "url": "https://ravikovind.com"
@@ -9,7 +9,7 @@
     {
       "name": "snap-x",
       "source": "./",
-      "description": "Turn any project into a full image pack — OG cards, thumbnails, covers, posters. One command, pure Node.js, no headless browser."
+      "description": "Branded graphics for every platform, made by your AI agent: YouTube thumbnails, LinkedIn covers, store banners, app screenshots and OG cards, sized and checked."
     }
   ]
 }

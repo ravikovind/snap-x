@@ -1,7 +1,7 @@
 {
   "name": "snap-x-monorepo",
   "version": "0.1.0",
-  "description": "Turn any project into a full image pack — OG cards, thumbnails, covers, posters. One command.",
+  "description": "Branded graphics for every platform, made by your AI agent: YouTube thumbnails, LinkedIn covers, store banners, app screenshots and OG cards, sized and checked.",
   "type": "module",
   "private": true,
   "workspaces": [
@@ -14,11 +14,21 @@
     "examples:check": "node scripts/examples.mjs check"
   },
   "keywords": [
-    "og-images",
+    "branded-graphics",
     "social-images",
-    "satori",
+    "og-image",
+    "youtube-thumbnail",
+    "linkedin-banner",
+    "app-store-screenshots",
+    "play-store",
+    "marketing-banners",
+    "instagram",
+    "claude-code",
     "claude-skill",
-    "mcp"
+    "mcp",
+    "mcp-server",
+    "satori",
+    "image-generation"
   ],
   "author": "Ravi Kovind",
   "license": "MIT",

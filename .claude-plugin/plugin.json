@@ -1,6 +1,6 @@
 {
   "name": "snap-x",
-  "description": "Turn any project into a full image pack — OG cards, thumbnails, covers, posters. One command, pure Node.js, no headless browser.",
+  "description": "Branded graphics for every platform, made by your AI agent: YouTube thumbnails, LinkedIn covers, store banners, app screenshots and OG cards, sized and checked.",
   "version": "0.1.0",
   "author": {
     "name": "Ravi Kovind",
@@ -10,12 +10,20 @@
   "homepage": "https://github.com/ravikovind/snap-x",
   "repository": "https://github.com/ravikovind/snap-x",
   "keywords": [
-    "og-images",
+    "branded-graphics",
     "social-images",
-    "thumbnail",
-    "cover",
-    "satori",
+    "og-image",
+    "youtube-thumbnail",
+    "linkedin-banner",
+    "app-store-screenshots",
+    "play-store",
+    "marketing-banners",
+    "instagram",
+    "claude-code",
     "claude-skill",
+    "mcp",
+    "mcp-server",
+    "satori",
     "image-generation"
   ]
 }

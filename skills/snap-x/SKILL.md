@@ -1,6 +1,6 @@
 ---
 name: snap-x
-description: Turn a project, a website URL or a written brief into branded images — OG/social cards, README cards, thumbnails, X/LinkedIn banners and covers, posters — by writing self-contained Satori design files and rendering them to PNG with snap-x (no browser). Use when the user says "/snap-x", "make OG images", "social images for this project/site", "GitHub social preview", "LinkedIn banner/cover", or "snap this". Finds the brand's real logo, colors and fonts.
+description: Make branded graphics for any platform from a project, a website URL or a written brief — YouTube thumbnails and channel art, LinkedIn/X covers and banners, Instagram posts and stories, e-commerce and promo banners, App Store and Google Play graphics and screenshots, OG/social cards, README cards, posters — by writing self-contained Satori design files and rendering them to exact-size PNGs with snap-x (no browser). Use when the user says "/snap-x", "make OG images", "YouTube thumbnail", "LinkedIn banner/cover", "store screenshots", "sale banner", "social images for this project/site", or "snap this". Finds the brand's real logo, colors and fonts.
 ---
 
 # /snap-x
