@@ -1,7 +1,7 @@
 {
   "name": "@snap-x/cli",
   "version": "0.2.0",
-  "description": "The snap-x command: render and check design files into platform-ready PNGs (thumbnails, covers, banners, store graphics, OG cards). Exact sizes, safe-zone guides, no browser.",
+  "description": "The snap-x command: render and check design files into platform-ready PNGs (thumbnails, covers, banners, store graphics, OG cards and more). Exact sizes, safe-zone guides, no browser.",
   "author": {
     "name": "Ravi Kovind",
     "url": "https://ravikovind.com"

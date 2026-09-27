@@ -48,7 +48,7 @@ export default function () {
         txt("every platform,", { ...H(86), color: RED }),
       ]),
       txt("made by your AI agent.", { ...H(86), color: INK }),
-      txt("YouTube thumbnails, LinkedIn covers, store banners, app screenshots, OG cards: sized right, checked, and repeatable.", {
+      txt("Thumbnails, covers, banners, store graphics and more: sized right, checked, and repeatable.", {
         marginTop: 20, fontSize: 19, lineHeight: 1.4, color: MUTED, maxWidth: 900, flexWrap: "wrap",
       }),
     ]),

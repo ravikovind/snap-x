@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **Copy update:** descriptions (root, plugin, marketplace, website) no longer list specific platforms as if it were the full scope — platform names moved to keywords and to the README/site gallery, presented as examples. Subline shortened to "Thumbnails, covers, banners, store graphics and more: sized right, checked, and repeatable." everywhere it appeared
 - **Repositioned:** "Branded graphics for every platform, made by your AI agent." — the same headline and subline now appear in README, website, and every package/plugin/manifest description
 - README rewritten around the new positioning: a real-output gallery, Claude Code install in the first screenful, "How it works," "Correct for every platform," "Exact and repeatable," a use-cases table and an FAQ — all previously-existing technical content (design-file format, Satori rules, fonts, CLI, logos/images) kept intact under "Write designs by hand"
 - Website rewritten to match: new hero, four new sections (Problem, Use cases, Exact and repeatable, FAQ), and two false claims fixed ("Pure JSX"/the code sample, and "no imports")

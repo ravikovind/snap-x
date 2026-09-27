@@ -51,7 +51,7 @@ export default function () {
       txt("made by", { ...H(140), color: INK, marginTop: 20 }),
       txt("your AI", { ...H(140), color: INK }),
       txt("agent.", { ...H(140), color: INK }),
-      txt("YouTube thumbnails, LinkedIn covers, store banners, app screenshots, OG cards: sized right, checked, and repeatable.", {
+      txt("Thumbnails, covers, banners, store graphics and more: sized right, checked, and repeatable.", {
         marginTop: 44, fontSize: 30, lineHeight: 1.4, color: MUTED, maxWidth: 860, flexWrap: "wrap",
       }),
     ]),

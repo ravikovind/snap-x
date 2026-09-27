@@ -1,6 +1,6 @@
 {
   "name": "snap-x",
-  "description": "Branded graphics for every platform, made by your AI agent: YouTube thumbnails, LinkedIn covers, store banners, app screenshots and OG cards, sized and checked.",
+  "description": "Branded graphics for every platform, made by your AI agent. Exact sizes, real logos, safe zones checked. Claude Code plugin, MCP server and CLI.",
   "version": "0.1.0",
   "author": {
     "name": "Ravi Kovind",

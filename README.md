@@ -1,7 +1,7 @@
 # snap-x
 
 **Branded graphics for every platform, made by your AI agent.**
-YouTube thumbnails, LinkedIn covers, store banners, app screenshots, OG cards: sized right, checked, and repeatable.
+Thumbnails, covers, banners, store graphics and more: sized right, checked, and repeatable.
 
 <table>
 <tr>
