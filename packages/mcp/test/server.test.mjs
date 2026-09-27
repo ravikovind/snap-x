@@ -147,6 +147,69 @@ needsFonts("render_designs flattens a VARIANTS design into one path per row", as
   await fs.access(path.join(outDir, "series-b.png"));
 });
 
+needsFonts("SNAP_X_ROOT: a file inside the root renders; a file outside it (including via ..) is rejected", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "snapx-root-"));
+  const outsideDir = await fs.mkdtemp(path.join(os.tmpdir(), "snapx-outside-"));
+  const rootedCache = await fs.mkdtemp(path.join(os.tmpdir(), "snapx-mcp-cache-"));
+  await fs.writeFile(path.join(rootDir, "inside.mjs"), design("inside", okTree("hi")));
+  await fs.writeFile(path.join(outsideDir, "outside.mjs"), design("outside", okTree("hi")));
+
+  const rooted = new Client({ name: "snapx-mcp-root-test", version: "1.0.0" });
+  await rooted.connect(new StdioClientTransport({
+    command: process.execPath, args: [SERVER],
+    env: { ...process.env, SNAP_X_CACHE_DIR: rootedCache, SNAP_X_ROOT: rootDir },
+  }));
+  try {
+    const ok = await rooted.callTool({ name: "render_designs", arguments: { files: [path.join(rootDir, "inside.mjs")], outDir: path.join(rootDir, "out") } });
+    assert.ok(!ok.isError, ok.content.map((c) => c.text).join("\n"));
+
+    const outsidePath = path.join(outsideDir, "outside.mjs");
+    const bad = await rooted.callTool({ name: "render_designs", arguments: { files: [outsidePath] } });
+    assert.ok(bad.isError);
+    assert.match(bad.content.map((c) => c.text).join("\n"), /outside the allowed root/);
+
+    // the same file, reached by a `..` traversal starting inside the root
+    const traversal = path.join(rootDir, "..", path.basename(outsideDir), "outside.mjs");
+    const badTraversal = await rooted.callTool({ name: "check_designs", arguments: { files: [traversal] } });
+    assert.ok(badTraversal.isError);
+    assert.match(badTraversal.content.map((c) => c.text).join("\n"), /outside the allowed root/);
+
+    // an outDir outside the root is rejected too, even when every input file is inside it
+    const badOutDir = await rooted.callTool({ name: "render_designs", arguments: { files: [path.join(rootDir, "inside.mjs")], outDir: outsideDir } });
+    assert.ok(badOutDir.isError);
+  } finally {
+    await rooted.close();
+    await fs.rm(rootDir, { recursive: true, force: true });
+    await fs.rm(outsideDir, { recursive: true, force: true });
+    await fs.rm(rootedCache, { recursive: true, force: true });
+  }
+});
+
+needsFonts("SNAP_X_ROOT: a symlink inside the root pointing outside it is rejected", async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "snapx-root-"));
+  const outsideDir = await fs.mkdtemp(path.join(os.tmpdir(), "snapx-outside-"));
+  const rootedCache = await fs.mkdtemp(path.join(os.tmpdir(), "snapx-mcp-cache-"));
+  await fs.writeFile(path.join(outsideDir, "outside.mjs"), design("outside", okTree("hi")));
+  const escapeLink = path.join(rootDir, "escape.mjs");
+  await fs.symlink(path.join(outsideDir, "outside.mjs"), escapeLink);
+
+  const rooted = new Client({ name: "snapx-mcp-root-symlink-test", version: "1.0.0" });
+  await rooted.connect(new StdioClientTransport({
+    command: process.execPath, args: [SERVER],
+    env: { ...process.env, SNAP_X_CACHE_DIR: rootedCache, SNAP_X_ROOT: rootDir },
+  }));
+  try {
+    const r = await rooted.callTool({ name: "check_designs", arguments: { files: [escapeLink] } });
+    assert.ok(r.isError);
+    assert.match(r.content.map((c) => c.text).join("\n"), /outside the allowed root/);
+  } finally {
+    await rooted.close();
+    await fs.rm(rootDir, { recursive: true, force: true });
+    await fs.rm(outsideDir, { recursive: true, force: true });
+    await fs.rm(rootedCache, { recursive: true, force: true });
+  }
+});
+
 test("render_designs rejects a non-integer or sub-1 scale", async () => {
   for (const scale of [0, -1, 1.5]) {
     const r = await call("render_designs", { files: [path.join(dir, "ok.mjs")], scale });

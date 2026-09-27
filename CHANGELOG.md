@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **MCP security note + `SNAP_X_ROOT`** (improvements.md §10.6): documented plainly in `packages/mcp/README.md`, the main README's MCP section, and `FLOW.md` that design files are JavaScript and run with the server's own permissions when rendered or checked. New optional `SNAP_X_ROOT` env var restricts `render_designs`/`check_designs`/`preview_guides` (their input files *and* `outDir`) to one directory; symlinks are resolved first, so a symlink inside the root can't point outside it undetected. Unset by default — every existing test and setup is unaffected. Tests: an allowed path renders, a path outside the root is rejected (directly and via `..` traversal), an `outDir` outside the root is rejected even when every input file is inside it, and a symlink escaping the root is caught
 - **`_brand.mjs` reuse** (improvements.md §10.3): Step 1 now reads and reuses an existing `designs/_brand.mjs` on a rerun instead of re-extracting everything, showing the user what it found; Step 3 always writes one (`COLORS`, `FONTS`, logo paths, spacing unit, type scale) and every design imports from it. Converted `examples/snap-x` to the pattern: its 5 design files each duplicated the same colors/helpers verbatim — now they import from a new `designs/_brand.mjs`. Re-rendered and confirmed byte-identical output (a pixel diff on the one PNG whose hash changed, `poster.png`, confirmed 0 differing pixels — harmless re-encoding, not a visual regression)
 
 ## 0.7.0 — core 0.7.0 · cli 0.2.1 · mcp 0.4.1

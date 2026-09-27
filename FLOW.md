@@ -338,6 +338,8 @@ Lets Cursor, Windsurf, Claude Desktop, and other agents render/check design file
 
 `@snap-x/mcp` imports `renderDesign`/`checkDesign`/`resolveFonts`/`renderGuides` directly from `@snap-x/core` (no subprocess/CLI shelling), so the two packages can never drift out of sync on their function contracts the way the old CLI-shelling MCP server did. It also serves a `snap-x://design-guide` resource and a `design_cards` prompt, for agents that don't have the `/snap-x` skill.
 
+**Security.** Design files are JavaScript: their top-level code runs with the server's own permissions when a tool renders or checks them — same as running `node designs/og.mjs` yourself. Only point the server at design files you trust. The optional `SNAP_X_ROOT` env var restricts every tool (including a tool's `outDir`) to paths inside one directory; symlinks are resolved first, so a symlink inside the root can't point outside it undetected. Unset by default — existing setups are unaffected.
+
 ---
 
 ## Repo structure

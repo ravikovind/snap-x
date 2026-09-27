@@ -35,6 +35,45 @@ import { fileURLToPath } from "url";
 const GUIDE_URI = "snap-x://design-guide";
 const readGuide = () => fs.readFile(fileURLToPath(new URL("./design-guide.md", import.meta.url)), "utf8");
 
+// ─── Security: design files are JavaScript ──────────────────────────────────
+//
+// A design file's top-level code runs with this process's own permissions when it's imported to
+// render or check it — same as running `node designs/og.mjs` yourself. Only point this server at
+// design files you trust, the same way you wouldn't run an untrusted npm script. See
+// packages/mcp/README.md and the main README's MCP section for the same note.
+//
+// Optional SNAP_X_ROOT env var restricts every tool to paths inside one directory (symlinks
+// resolved, so a symlink can't point an "inside" path at something outside). Unset by default —
+// existing setups are unaffected.
+const ROOT = process.env.SNAP_X_ROOT ? path.resolve(process.env.SNAP_X_ROOT) : null;
+
+/** Throws a clear error if `filePath` resolves outside ROOT (a no-op when SNAP_X_ROOT isn't set). */
+async function assertWithinRoot(filePath) {
+  if (!ROOT) return;
+  let real;
+  try {
+    real = await fs.realpath(filePath); // resolves symlinks — a symlink inside ROOT can't point outside it undetected
+  } catch {
+    real = path.resolve(filePath); // file doesn't exist (yet) — still check the path it names
+  }
+  const rel = path.relative(ROOT, real);
+  if (rel && (rel === ".." || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel))) {
+    throw new Error(`"${filePath}" resolves outside the allowed root (${ROOT}, set by SNAP_X_ROOT) — refusing to touch it.`);
+  }
+}
+
+/** Validates every path in `files`; returns an error result (not a throw) on the first violation, else null. */
+async function checkRoot(files) {
+  for (const f of files) {
+    try {
+      await assertWithinRoot(f);
+    } catch (err) {
+      return { content: [{ type: "text", text: err.message }], isError: true };
+    }
+  }
+  return null;
+}
+
 // ─── Server setup ─────────────────────────────────────────────────────────────
 
 const server = new Server(
@@ -147,7 +186,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (name === "preview_guides") {
     const files = args.files ?? [];
     if (files.length === 0) return { content: [{ type: "text", text: "No files provided." }], isError: true };
+    const rootError = await checkRoot(files);
+    if (rootError) return rootError;
     const outDir = args.outDir ?? path.join(path.dirname(files[0]), "snap-guides");
+    const outDirError = await checkRoot([outDir]);
+    if (outDirError) return outDirError;
     try {
       await fs.mkdir(outDir, { recursive: true });
       resetFontCache();
@@ -168,6 +211,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (files.length === 0) {
       return { content: [{ type: "text", text: "No files provided." }], isError: true };
     }
+    const rootError = await checkRoot(files);
+    if (rootError) return rootError;
 
     try {
       resetFontCache();
@@ -198,7 +243,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (files.length === 0) {
       return { content: [{ type: "text", text: "No files provided." }], isError: true };
     }
+    const rootError = await checkRoot(files);
+    if (rootError) return rootError;
     const outDir = args.outDir ?? path.join(path.dirname(files[0]), "snap-output");
+    const outDirError = await checkRoot([outDir]);
+    if (outDirError) return outDirError;
     const scale = args.scale ?? 1;
     if (!Number.isInteger(scale) || scale < 1) {
       return { content: [{ type: "text", text: `scale must be a positive integer, got ${JSON.stringify(args.scale)}.` }], isError: true };

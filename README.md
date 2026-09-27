@@ -179,6 +179,8 @@ Each row needs a unique string `id`; output is named `<name-stem>-<id>.<ext>` un
 
 Tools: `render_designs`, `check_designs`, `preview_guides`, `list_formats`. The agent writes the `.mjs` files; the server renders and validates them. For agents without the skill it also serves the design rules: a `snap-x://design-guide` resource and a `design_cards` prompt.
 
+**Security:** design files are JavaScript and run with this server's own permissions when rendered or checked — only point it at design files you trust. Set `SNAP_X_ROOT` to restrict every tool to one directory (symlinks resolved); unset by default, so existing setups are unaffected. See `packages/mcp/README.md`.
+
 ## Examples
 
 [`examples/`](examples) has complete packs made with the skill: snap-x itself, Open Notifier, HeyReach, a LinkedIn cover, an App Store/Play Store listing pack, a fictional e-commerce brand, a fictional YouTube series, and a JSX/TSX feature demo — each built from a repo, a site, or a written brief. Each has its designs, assets, plan and output. Regenerate all with `npm run examples`; `npm run examples:diff` checks every committed image still matches a fresh render (a pure-JS pixel diff — CI runs it on every push). [`templates/`](templates) has six brand-neutral starter designs (an "edit these values" block at the top of each) if you'd rather start from a template than write one from scratch. Made something with snap-x? Add it to [SHOWCASE.md](SHOWCASE.md).
