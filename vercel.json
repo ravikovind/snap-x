@@ -1,7 +1,7 @@
 {
   "outputDirectory": "web",
-  "buildCommand": "",
-  "installCommand": "",
+  "buildCommand": "cd apps/web && npm run build",
+  "installCommand": "cd apps/web && npm install",
   "trailingSlash": false,
   "headers": [
     {

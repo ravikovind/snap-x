@@ -1,0 +1,37 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-bg: #070707;
+  --color-surface: #0e0e0e;
+  --color-surface-2: #141414;
+  --color-ink: #f5f5f5;
+  --color-muted: rgba(255, 255, 255, 0.52);
+  --color-muted-2: rgba(255, 255, 255, 0.28);
+  --color-red: #eb1d25;
+  --color-red-dim: rgba(235, 29, 37, 0.15);
+  --color-green: #2ecc71;
+  --color-green-dim: rgba(46, 204, 113, 0.12);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-2: rgba(255, 255, 255, 0.14);
+
+  --font-display: var(--font-saira);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-display), sans-serif;
+}
+
+code,
+pre,
+.font-mono {
+  font-family: var(--font-mono), monospace;
+}
+
+::selection {
+  background: var(--color-red-dim);
+  color: var(--color-ink);
+}
