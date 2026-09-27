@@ -27,6 +27,7 @@
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
     "@shuding/opentype.js": "1.4.0-beta.0",
+    "esbuild": "^0.28.2",
     "satori": "^0.33.5"
   },
   "keywords": [

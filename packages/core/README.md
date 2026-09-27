@@ -17,7 +17,7 @@ await renderDesign(files[0], "snap-output", fonts);
 await renderDesign(files[0], "snap-output", fonts, { scale: 2 }); // sharp @2x → og@2x.png
 ```
 
-A design file exports `FORMAT`, optionally `FONTS`, and a zero-argument default export (a Satori tree, or a function returning one):
+A design file exports `FORMAT`, optionally `FONTS`, and a zero-argument default export (a Satori tree, or a function returning one). `.mjs`, `.jsx` and `.tsx` all work — JSX/TSX are transformed at load time (esbuild, no React).
 
 ```js
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };

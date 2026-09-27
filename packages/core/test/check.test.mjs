@@ -202,3 +202,13 @@ test("VARIANTS: a structural error in one row is labeled with its id, and other 
   assert.equal(r.errors.length, 1);
   assert.match(r.errors[0], /^\[bad\] root: display:"grid" not supported/);
 });
+
+test(".jsx: a structural violation nested inside a function component is still caught (components are resolved before the tree is checked)", async () => {
+  await writeFiles(dir, {
+    "jsx-component-violation.jsx": `export const FORMAT = { width: 10, height: 10 };
+function Bad() { return <div style={{ display: "grid" }} />; }
+export default () => <div style={{ display: "flex" }}><Bad /></div>;`,
+  });
+  const r = await checkDesign(p("jsx-component-violation.jsx"));
+  assert.ok(r.errors.some((e) => e.includes('display:"grid"')), r.errors.join("\n"));
+});

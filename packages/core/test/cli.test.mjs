@@ -247,6 +247,57 @@ export default function (v) { return { type: "div", props: { style: { display: v
   assert.match(r.stdout, /\[broken\] root: display:"grid" not supported/);
 });
 
+needsFonts(".jsx design files render through the real CLI, glob and directory expansion included", async () => {
+  await writeFiles(dir, {
+    "jsxdesigns/_theme.mjs": `export const BG = "#101010";`,
+    "jsxdesigns/og.jsx": `import { BG } from "./_theme.mjs";
+export const FORMAT = { width: 100, height: 60, name: "og.png" };
+export default function () {
+  return <div style={{ width: 100, height: 60, background: BG, display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ color: "#fff", fontSize: 14, display: "flex" }}>hi</div>
+  </div>;
+}`,
+    "jsxdesigns/_helper.jsx": `throw new Error("helper should never be rendered");`,
+  });
+  const check = run("check", "jsxdesigns");
+  assert.equal(check.status, 0, check.stdout + check.stderr);
+  assert.match(check.stdout, /og\.jsx/);
+  assert.doesNotMatch(check.stdout, /_helper/);
+
+  const r = run("render", "jsxdesigns/*.jsx", "--out", "out-jsx");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const png = await fs.readFile(path.join(dir, "out-jsx", "og.png"));
+  assert.deepEqual(png.subarray(0, 8), PNG_SIGNATURE);
+});
+
+needsFonts(".tsx design files render through the real CLI", async () => {
+  await writeFiles(dir, {
+    "designs/thumb.tsx": `export const FORMAT = { width: 80, height: 40, name: "thumb.png" };
+interface Props { label: string }
+function Label({ label }: Props) { return <div style={{ display: "flex", color: "#fff", fontSize: 12 }}>{label}</div>; }
+export default function () {
+  return <div style={{ width: 80, height: 40, background: "#222", display: "flex" }}><Label label="ok" /></div>;
+}`,
+  });
+  const r = run("render", "designs/thumb.tsx", "--out", "out-tsx");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  await fs.access(path.join(dir, "out-tsx", "thumb.png"));
+});
+
+needsFonts(".jsx works with VARIANTS too", async () => {
+  await writeFiles(dir, {
+    "jsxvariants/series.jsx": `export const FORMAT = { width: 40, height: 30, name: "series.png" };
+export const VARIANTS = [{ id: "a" }, { id: "b" }];
+export default function (variant) {
+  return <div style={{ width: 40, height: 30, display: "flex" }}>{variant.id}</div>;
+}`,
+  });
+  const r = run("render", "jsxvariants/series.jsx", "--out", "out-jsx-variants");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const files = (await fs.readdir(path.join(dir, "out-jsx-variants"))).sort();
+  assert.deepEqual(files, ["series-a.png", "series-b.png"]);
+});
+
 needsFonts("a --scale 2 render's real pixel size is what matchFormat resolves as scale 2 of the base format", async () => {
   await writeFiles(dir, { "designs/li.mjs": validDesign({ name: "li.png", width: 1584, height: 396 }) });
   const r = run("render", "designs/li.mjs", "--out", "out-li-scale", "--scale", "2");

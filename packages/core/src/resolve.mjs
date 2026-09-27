@@ -3,9 +3,10 @@ import fs from "fs/promises";
 import { existsSync, statSync } from "fs";
 
 /**
- * Expands literal files, directories, and single-`*`-wildcard globs into a flat, deduped list of absolute .mjs paths.
- * Files whose name starts with `_` are helpers (shared builders etc.) and are ALWAYS skipped — including when named
- * explicitly, because a shell expands `designs/*.mjs` into explicit paths before the CLI sees a glob.
+ * Expands literal files, directories, and single-`*`-wildcard globs into a flat, deduped list of absolute design
+ * paths (.mjs, .jsx or .tsx). Files whose name starts with `_` are helpers (shared builders etc.) and are ALWAYS
+ * skipped — including when named explicitly, because a shell expands `designs/*.mjs` into explicit paths before
+ * the CLI sees a glob.
  */
 export async function resolveDesignFiles(patterns) {
   const out = [];
@@ -38,7 +39,8 @@ export async function resolveDesignFiles(patterns) {
   return [...new Set(out)];
 }
 
-const isDesign = (name) => name.endsWith(".mjs") && !name.startsWith("_");
+const DESIGN_EXTS = [".mjs", ".jsx", ".tsx"];
+const isDesign = (name) => DESIGN_EXTS.some((ext) => name.endsWith(ext)) && !name.startsWith("_");
 
 function escapeRegExp(s) {
   return s.replace(/[.+?^${}()|[\]\\]/g, "\\$&");

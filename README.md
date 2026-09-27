@@ -105,11 +105,25 @@ Paths can be a file, a directory, or a `*` glob. Files starting with `_` are sha
 
 ### A design file
 
-```js
+`.jsx` and `.tsx` work too — same rules, transformed at load time (esbuild, no React), and usually easier to read:
+
+```jsx
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
 export const FONTS  = [{ family: "Inter", weights: [400, 700, 900] }]; // optional, default Inter
 
 export default function () {                       // zero arguments; may be async
+  return (
+    <div style={{ width: 1200, height: 630, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ color: "#fff", fontSize: 64, fontWeight: 900, display: "flex" }}>Hello</div>
+    </div>
+  );
+}
+```
+
+The equivalent `.mjs` (the plain object tree Satori actually receives — this is what `.jsx`/`.tsx` compile down to, and what the `/snap-x` skill writes by default):
+
+```js
+export default function () {
   return {
     type: "div",
     props: {
@@ -123,6 +137,8 @@ export default function () {                       // zero arguments; may be asy
 Everything the image needs lives in the file: colors, copy, fonts, size. There's no config file and no auto-detection.
 
 **Rules (Satori):** every container needs `display: "flex"`; `children` is always an array; text is a string in `children`; no `z-index`, CSS grid, animations or `position: "fixed"`. `snap-x check` catches these.
+
+**In JSX:** a function component (`<Chip label="x" />`) is called immediately with its props — there's no reconciliation to defer to for a one-shot render — so `check` sees the same fully-resolved tree either way. Fragments (`<>...</>`) splice their children straight in. A `_`-prefixed helper works exactly like it does for `.mjs`, imported with a normal relative path.
 
 **Fonts:** any Google Font via `FONTS`, per file. Fonts are cached on disk (`$SNAP_X_CACHE_DIR`, else `~/.cache/snap-x/fonts`) so repeat renders are fast and work offline. CJK, Korean, Arabic, Hebrew, Thai, Devanagari and Bengali get an automatic Noto fallback. Emoji work (drawn as Twemoji images, cached). Other symbols the font lacks (`✓`, and `→` in some fonts) render as blank boxes — `snap-x check` warns about them; draw them as SVG.
 

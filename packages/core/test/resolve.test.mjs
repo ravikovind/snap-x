@@ -82,3 +82,11 @@ test("underscore files are skipped even when passed explicitly (shells expand gl
   const expandedByShell = [path.join(dir, "_shared.mjs"), path.join(dir, "og.mjs"), path.join(dir, "cover.mjs")];
   assert.deepEqual(base(await resolveDesignFiles(expandedByShell)), ["og.mjs", "cover.mjs"]);
 });
+
+test(".jsx and .tsx are resolved like .mjs (directory, glob, and _-prefix skip), in a fresh subdir", async () => {
+  await writeFiles(dir, { "jsx/comp.jsx": "", "jsx/comp.tsx": "", "jsx/_helper.jsx": "", "jsx/plain.mjs": "" });
+  const jsxDir = path.join(dir, "jsx");
+  assert.deepEqual(base(await resolveDesignFiles([jsxDir])), ["comp.jsx", "comp.tsx", "plain.mjs"]);
+  assert.deepEqual(base(await resolveDesignFiles([path.join(jsxDir, "*.jsx")])), ["comp.jsx"]);
+  assert.deepEqual(await resolveDesignFiles([path.join(jsxDir, "_helper.jsx")]), []);
+});
