@@ -99,6 +99,8 @@ snap-x guides designs/*.mjs       # draw a platform's danger zones (+ mobile cro
 
 Paths can be a file, a directory, or a `*` glob. Files starting with `_` are shared helpers and are never rendered (even when your shell expands the glob). `--out` defaults to `./snap-output`.
 
+**`snap-x watch designs/*.mjs [--guides]`** is a dev tool: it renders once, opens a local preview page (prints the URL) listing every output image, then re-renders and auto-reloads the page whenever a design file changes. `--guides` also runs the placement check on every change.
+
 **`--scale <n>`** (on `render` and `check`) renders sharp at n× resolution — the design's layout is unchanged; only the raster output grows, the same way a browser re-renders an SVG sharply at any zoom. Output is named `<name>@<n>x.png` (e.g. `og@2x.png`).
 
 ### A design file

@@ -12,6 +12,7 @@ npx @snap-x/cli render designs/*.mjs --out snap-output
 npm install -g @snap-x/cli
 snap-x render designs/*.mjs --out snap-output
 snap-x render designs/*.mjs --scale 2   # sharp @2x, no upscaling
+snap-x watch  designs/*.mjs --guides    # re-render on save, local preview page
 ```
 
 The engine (renderer, font loader, programmatic API) is [`@snap-x/core`](https://www.npmjs.com/package/@snap-x/core). Docs and the design-file format: https://github.com/ravikovind/snap-x#readme

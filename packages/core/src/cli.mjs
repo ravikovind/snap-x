@@ -6,6 +6,7 @@
  *   snap-x check   <paths...> [--scale <n>]                 validate design .mjs files
  *   snap-x guides  <paths...> [--format <id>] [--out <dir>] draw a platform's danger zones over each design
  *   snap-x formats [id|WxH] [--json]                        list platform formats, sizes and placement zones
+ *   snap-x watch   <paths...> [--out <dir>] [--guides]      re-render on change, serve a local preview page
  *
  * <paths...> accept a literal file, a directory (expands to every .mjs inside), or a glob with a single
  * trailing `*` (e.g. designs/*.mjs). Files starting with `_` are helpers and are never rendered.
@@ -19,8 +20,8 @@ import { fileURLToPath } from "url";
 import { resolveDesignFiles } from "./resolve.mjs";
 
 const rawArgs = process.argv.slice(2);
-const SUBCMDS = ["render", "check", "guides", "formats"];
-const VALUE_FLAGS = new Set(["--out", "--format", "--scale", "--only"]);
+const SUBCMDS = ["render", "check", "guides", "formats", "watch"];
+const VALUE_FLAGS = new Set(["--out", "--format", "--scale", "--only", "--port"]);
 
 const flags = new Map();
 const positional = [];
@@ -59,6 +60,7 @@ const HELP = `
     snap-x check   <paths...> [--scale <n>]                  validate designs (structure, real render, blank-box glyphs)
     snap-x guides  <paths...> [--format <id>] [--out <dir>]  overlay a platform's danger zones (+ mobile crop) on each design
     snap-x formats [id|WxH] [--json]                         list platform formats (YouTube, X, LinkedIn, Play Store, App Store …)
+    snap-x watch   <paths...> [--out <dir>] [--guides] [--port <n>]   re-render on save; serves a local preview page
 
   <paths...> = a file, a directory, or a glob like designs/*.mjs (files starting with "_" are helpers, never rendered)
 
@@ -72,6 +74,10 @@ const HELP = `
   A design can export VARIANTS = [{ id, ... }, ...] (or an async function returning that) to render many
   images from one file — the default export is called once per row, output named "<name>-<id>.png".
   render's --only <id,id> renders just those rows; check and guides always run every row.
+
+  watch is a dev tool: it renders once, opens a local page (prints the URL) listing every output image,
+  then re-renders whenever a design file changes and auto-reloads the page. --guides also runs the
+  placement check on every change and shows those overlays too. --port picks a fixed port (default: any free one).
 
   Options   -h, --help   show this help      -v, --version   print the version
 `;
@@ -104,6 +110,7 @@ if (files.length === 0) {
 if (sub === "render") await runRender(files);
 if (sub === "check")  await runCheck(files);
 if (sub === "guides") await runGuides(files);
+if (sub === "watch")  await runWatch(files);
 
 // ─── formats ─────────────────────────────────────────────────────────────────
 
@@ -212,4 +219,38 @@ async function runCheck(files) {
 
   console.log(allOk ? "\n  All designs valid.\n" : "\n  Fix errors above before rendering.\n");
   if (!allOk) process.exit(1);
+}
+
+// ─── watch ───────────────────────────────────────────────────────────────────
+
+async function runWatch(files) {
+  const outDir = path.resolve(get("--out") ?? "./snap-output");
+  const guidesDir = path.join(outDir, "guides");
+  const useGuides = has("--guides");
+  const portArg = get("--port");
+  const port = portArg ? Number(portArg) : 0;
+  if (portArg && (!Number.isInteger(port) || port < 1)) {
+    console.error(`  --port must be a positive integer, got "${portArg}"\n`);
+    process.exit(1);
+  }
+
+  const { resolveFonts, resetFontCache, collectFontsSpec } = await import("./fonts.mjs");
+  resetFontCache();
+  const fonts = await resolveFonts(await collectFontsSpec(files));
+
+  const { startWatch } = await import("./watch.mjs");
+  const { port: boundPort, stop } = await startWatch(files, fonts, {
+    outDir, guidesDir, guides: useGuides, port,
+    log: (line) => console.log(line),
+  });
+
+  console.log(`\n  Watching ${files.length} file(s). Preview: http://localhost:${boundPort}\n  Press Ctrl+C to stop.\n`);
+
+  process.on("SIGINT", async () => {
+    console.log("\n  Stopping…\n");
+    await stop();
+    process.exit(0);
+  });
+
+  await new Promise(() => {}); // keep the process alive; the server itself already does this too
 }

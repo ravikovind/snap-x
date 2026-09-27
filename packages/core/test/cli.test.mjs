@@ -264,7 +264,7 @@ needsFonts("a --scale 2 render's real pixel size is what matchFormat resolves as
 test("--help prints usage and exits 0; --version prints the core version", () => {
   const h = run("--help");
   assert.equal(h.status, 0);
-  for (const cmd of ["render", "check", "guides", "formats", "alpha"]) assert.match(h.stdout, new RegExp(cmd));
+  for (const cmd of ["render", "check", "guides", "formats", "watch", "alpha"]) assert.match(h.stdout, new RegExp(cmd));
   const v = run("--version");
   assert.equal(v.status, 0);
   assert.match(v.stdout, /^snap-x \(core \d+\.\d+\.\d+/);
