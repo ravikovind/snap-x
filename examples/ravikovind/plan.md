@@ -4,13 +4,15 @@
 
 **Revision 2** — fonts changed to Nunito Sans + Saira; palette changed to the Open Notifier look (pure black, one accent) with the accent moved from green to yellow; unclear decorative elements removed (see §5.4).
 
+**Revision 3** — refreshed with Ravi's current facts from ravikovind.com (was ravikovind.github.io): title changed from "Founding Engineer" to "Co-founder, VoltVave Innovations" (his real company, active since Mar 2025); TingTing's order count updated 80K+ → 100K+ per the current site. The open-source stat was replaced: the previous "★6.8K" GitHub star claim didn't check out — `gh api repos/ravikovind/flutter_lucide` shows 25 stars — so it's now the package's actual, verified pub.dev metric (21.3K weekly downloads) instead, with the star icon dropped since the stat is no longer about stars.
+
 ---
 
 ## 1. Goal
 
 Produce a clean, premium, developer-flavoured LinkedIn banner that tells a recruiter or founder in under 3 seconds:
 
-1. **Who:** Ravi Kovind, Founding Engineer
+1. **Who:** Ravi Kovind, Co-founder of VoltVave Innovations
 2. **What:** takes products from 0 → 1 across Full-Stack, Mobile, Backend, Infrastructure (and AI/MCP)
 3. **Why trust him:** proof numbers + engineering philosophy
 
@@ -18,22 +20,22 @@ Tone: calm, confident, engineered. Not flashy, no stock "hacker" imagery, no neo
 
 ---
 
-## 2. Source facts (from ravikovind.github.io — use only these)
+## 2. Source facts (from ravikovind.com — use only these)
 
 | Field                  | Value                                                                                      |
 | ---------------------- | ------------------------------------------------------------------------------------------ |
 | Name                   | Ravi Kovind                                                                                |
-| Title                  | Founding Engineer                                                                          |
-| Experience             | 5+ years, 0 → 1 products                                                                   |
-| Scope                  | Full-Stack · Mobile · Backend · Infrastructure                                             |
+| Title                  | Co-founder, VoltVave Innovations (active since Mar 2025)                                   |
+| Experience             | 5+ years (since 2020), 0 → 1 products                                                     |
+| Scope                  | Full-Stack · Mobile · Backend · Infrastructure · AI (MCP)                                  |
 | Philosophy             | "Readable over clever. Predictable over magic."                                            |
-| Proof stats (TingTing) | 30K+ users · 80K+ orders · 35+ live stores                                                 |
-| Open source            | flutter_lucide — ★ 6.8K                                                                    |
-| Education              | NIT Allahabad                                                                              |
+| Proof stats (TingTing) | 30K+ users · 100K+ orders · 35+ live stores · ₹1.5Cr+ GMV (Founding Engineer, 2022–25)      |
+| Open source            | flutter_lucide — 21.3K weekly downloads on pub.dev, verified publisher (github.com/ravikovind/flutter_lucide has 25 stars — not the metric to lead with) |
+| Education              | NIT Allahabad (MNNIT)                                                                       |
 | Location               | Bengaluru, India                                                                           |
-| Core stack             | Flutter, Dart, Node.js, TypeScript, Python, Next.js, MongoDB, PostgreSQL, AWS, GCP, Docker |
-| AI work                | MCP client engine (MCPVave), Open Notifier (MCP push)                                      |
-| Handle / site          | ravikovind.github.io · @ravi_kovind                                                        |
+| Core stack             | Flutter, Dart, Node.js, TypeScript, Python (FastAPI), PostgreSQL, AWS, Kafka, Redis         |
+| AI work                | MCP client engine (MCPVave, Claude/GPT/Gemini across 6 platforms), Open Notifier (MCP push) |
+| Handle / site          | ravikovind.com · @ravi_kovind                                                               |
 | Brand mark             | "RK" monogram (text)                                                                       |
 
 Do **not** include phone number or email on the banner.
@@ -103,12 +105,12 @@ Rule: **yellow is the only accent.** Green appears once (the gradient ring). No 
 ```
  0                320  380                                   1110        1384      1584
  +-----------------+---+--------------------------------------+-----------+----------+
- |                 |   |  ● FOUNDING ENGINEER                  |           |  ◯ orbit |
+ |                 |   |  ● CO-FOUNDER · VOLTVAVE              |           |  ◯ orbit |
  |                 |   |  Ravi Kovind                          |  (empty,  |  rings   |
  |                 |   |  Taking products from 0 → 1 · 5+ yrs |  calm)    |  + RK    |
  |   ( ring around |   |  Full-Stack · Mobile · Backend · ...  |           |          |
  |   profile pic ) |   |  // readable over clever ...          |           |          |
- |                 |   |  30K+ USERS   80K+ ORDERS   ★6.8K OSS |           |          |
+ |                 |   |  30K+ USERS  100K+ ORDERS  21.3K DL/WK|           |          |
  +-----------------+---+--------------------------------------+-----------+----------+
 ```
 
@@ -116,7 +118,7 @@ Rule: **yellow is the only accent.** Green appears once (the gradient ring). No 
 
 | Line       | y (baseline) | Content                                                     | Style                                                          |
 | ---------- | ------------ | ----------------------------------------------------------- | -------------------------------------------------------------- |
-| Eyebrow    | 92           | `● FOUNDING ENGINEER` — dot is accent yellow                | Nunito Sans 700, 13 px, uppercase, +2 px tracking, secondary   |
+| Eyebrow    | 92           | `● CO-FOUNDER · VOLTVAVE` — dot is accent yellow             | Nunito Sans 700, 13 px, uppercase, +2 px tracking, secondary   |
 | Name       | 158          | `Ravi Kovind`                                               | Nunito Sans 800, 64 px, primary                                |
 | Title      | 196          | `Taking products from 0 → 1 · 5+ years`                     | Nunito Sans 600, 24 px, secondary; the `0 → 1` in accent yellow |
 | Scope      | 230          | `Full-Stack · Mobile · Backend · Infrastructure · AI (MCP)` | Nunito Sans 400, 17 px, secondary                              |
@@ -126,8 +128,8 @@ Rule: **yellow is the only accent.** Green appears once (the gradient ring). No 
 **Stats row** (number on top, label below):
 
 - `30K+` USERS SERVED
-- `80K+` ORDERS SHIPPED
-- `★ 6.8K` OPEN-SOURCE STARS (the star is drawn as a shape, not a font glyph)
+- `100K+` ORDERS SHIPPED
+- `21.3K` WEEKLY DOWNLOADS (flutter_lucide, pub.dev — plain number, no icon)
 
 Separate groups with a thin vertical hairline (1 px, white @ 14%, 28 px tall, 24 px either side).
 

@@ -1,6 +1,18 @@
-# Build notes — Ravi Kovind LinkedIn cover (revision 2)
+# Build notes — Ravi Kovind LinkedIn cover (revision 3)
 
 Built from [`plan.md`](plan.md) with snap-x. The plan is the source of truth for copy, layout, colour and type; this file records how it was executed and what differed.
+
+## What changed in revision 3
+- **Source re-checked against ravikovind.com** (the plan previously cited ravikovind.github.io). Title changed
+  **Founding Engineer → Co-founder, VoltVave Innovations** (his real company, active since Mar 2025).
+  TingTing's order stat updated **80K+ → 100K+** to match the site's current numbers.
+- **Open-source stat corrected, not just updated:** the previous "★6.8K" GitHub-star claim was checked with
+  `gh api repos/ravikovind/flutter_lucide` and does not hold up — the real repo has 25 stars. Replaced with
+  the package's actual, verified pub.dev metric: 21.3K weekly downloads (cross-checked via the pub.dev page,
+  which also shows a "verified publisher: voltvave.com" badge). The star-shaped SVG icon was removed from
+  `_cover.mjs` along with it, since the stat is no longer about stars — this keeps the design honest rather
+  than reusing a drawn icon that no longer matches what it's illustrating.
+- Layout, palette, fonts and every other line of copy are unchanged from revision 2.
 
 ## What changed in revision 2
 - **Fonts:** Nunito Sans (all text) + Saira (the "mono role": the `//` philosophy line and the `RK` monogram). Was Inter + JetBrains Mono.
@@ -16,7 +28,7 @@ Built from [`plan.md`](plan.md) with snap-x. The plan is the source of truth for
 ## Deviations from the plan
 1. **snap-x (Satori → PNG)** rather than HTML + Playwright — this is a snap-x example.
 2. **No `.jpg`** — snap-x outputs PNG only; LinkedIn accepts PNG.
-3. **`★` and `●` are drawn shapes** (inline SVG star, CSS circle), not font glyphs, so they can never render as blank boxes.
+3. **`●` is a drawn shape** (CSS circle), not a font glyph, so it can never render as a blank box. (Revision 2/3 dropped the earlier drawn `★` icon along with the stat it illustrated — see revision 3 notes above.)
 4. **Saira is not a true monospace** — used for the mono role by choice (per the plan).
 5. **Stats are stacked** (number over label) to keep the block within `x ≤ 1080`.
 
@@ -26,7 +38,7 @@ Built from [`plan.md`](plan.md) with snap-x. The plan is the source of truth for
 - [x] Name is the most prominent element; legible at 50% zoom
 - [x] Yellow is the only accent; green appears once (the gradient ring)
 - [x] Every element has an obvious purpose — nothing left that needs explaining
-- [x] Copy matches plan §2 ("Ravi Kovind", "0 → 1", "6.8K")
+- [x] Copy matches plan §2 ("Ravi Kovind", "Co-founder · VoltVave", "0 → 1", "100K+", "21.3K")
 - [x] Contrast on `#000`: primary `#F5F5F5` 19.3:1 · secondary white@60% (`#999`) 7.4:1 · accent `#FAC800` 13.3:1
 - [x] Mobile crop keeps name, title and stats fully visible — `guides/…mobile.png`
 - [x] Nunito Sans and Saira load (no fallback); no blank-box glyphs

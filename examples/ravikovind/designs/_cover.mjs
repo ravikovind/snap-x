@@ -52,11 +52,6 @@ const number = (text) => txt(text, { fontSize: 26, fontWeight: 800, color: INK, 
 const stat = (value, caption) => box({ flexDirection: "column", gap: 5 }, [number(value), label(caption)]);
 const rule = () => box({ width: 1, height: 28, background: "rgba(255,255,255,0.14)" });
 
-// drawn, not a font glyph, so it can never fall back to a blank box
-const star = () => el("svg", { width: 22, height: 22, viewBox: "0 0 24 24", style: { display: "flex" }, children: [
-  el("path", { d: "M12 2.5l2.9 6.2 6.8.8-5 4.7 1.3 6.7-6-3.4-6 3.4 1.3-6.7-5-4.7 6.8-.8z", fill: INK }),
-] });
-
 export function cover() {
   return box({ width: W, height: H, background: BG, position: "relative", overflow: "hidden", fontFamily: "Nunito Sans" }, [
     at(CX - 520, 150 - 520, { width: 1040, height: 1040, background: "radial-gradient(circle, rgba(250,200,0,0.18) 0%, rgba(250,200,0,0) 65%)" }),
@@ -65,7 +60,7 @@ export function cover() {
     // text block (starts at x = 420, stays inside x ≤ 1080)
     at(420, 81, { alignItems: "center", gap: 10, height: 16 }, [
       box({ width: 6, height: 6, borderRadius: 999, background: YELLOW }),
-      txt("FOUNDING ENGINEER", { fontSize: 13, fontWeight: 700, color: SECOND, letterSpacing: "2px", lineHeight: 1 }),
+      txt("CO-FOUNDER · VOLTVAVE", { fontSize: 13, fontWeight: 700, color: SECOND, letterSpacing: "2px", lineHeight: 1 }),
     ]),
     at(420, 105, { fontSize: 64, fontWeight: 800, color: INK, letterSpacing: "-1.5px", lineHeight: 1, whiteSpace: "nowrap" }, ["Ravi Kovind"]),
     at(420, 176, { alignItems: "center", gap: 9, fontSize: 24, fontWeight: 600, color: SECOND, lineHeight: 1, whiteSpace: "nowrap" }, [
@@ -76,8 +71,7 @@ export function cover() {
       txt("//", { color: YELLOW }), txt("readable over clever. predictable over magic.", { color: SECOND }),
     ]),
     at(420, 296, { alignItems: "center", gap: 24 }, [
-      stat("30K+", "Users served"), rule(), stat("80K+", "Orders shipped"), rule(),
-      box({ flexDirection: "column", gap: 5 }, [box({ alignItems: "center", gap: 6 }, [star(), number("6.8K")]), label("Open-source stars")]),
+      stat("30K+", "Users served"), rule(), stat("100K+", "Orders shipped"), rule(), stat("21.3K", "Weekly downloads"),
     ]),
 
     // monogram in the orbit core
