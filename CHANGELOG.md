@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- **Repositioned:** "Branded graphics for every platform, made by your AI agent." — the same headline and subline now appear in README, website, and every package/plugin/manifest description
+- README rewritten around the new positioning: a real-output gallery, Claude Code install in the first screenful, "How it works," "Correct for every platform," "Exact and repeatable," a use-cases table and an FAQ — all previously-existing technical content (design-file format, Satori rules, fonts, CLI, logos/images) kept intact under "Write designs by hand"
+- Website rewritten to match: new hero, four new sections (Problem, Use cases, Exact and repeatable, FAQ), and two false claims fixed ("Pure JSX"/the code sample, and "no imports")
+- `packages/mcp/README.md` tool table fixed: added the missing `preview_guides` row and corrected `list_formats`'s description
+- Skill triggers broadened to cover creators, personal brand, e-commerce and app-store use cases, not just software projects
+- New example packs: `examples/storefront` (fictional e-commerce brand) and `examples/creator-series` (fictional YouTube channel), each showing one template rendering several variants
+- `scripts/examples.mjs`: an `example.json`'s `guides` entries can now force a format id (`{ "file", "format" }`) when a design's exact size matches more than one platform format
+
 ## 0.6.0 — core 0.6.0 · cli 0.2.0 · mcp 0.4.0
 
 - **Emoji support:** emoji (incl. flags and ZWJ sequences) are drawn as Twemoji images, fetched once and cached on disk (works offline afterwards). `check` no longer flags them
