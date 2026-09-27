@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
 import { USE_CASES } from "@/content/use-cases";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = ["", "/formats", "/use-cases", "/templates", "/examples", "/showcase", "/docs"];
   const useCaseRoutes = USE_CASES.map((u) => `/use-cases/${u.slug}`);

@@ -1,7 +1,10 @@
-// @snap-x/core is a plain JS package (no .d.ts files) — this is a loose ambient declaration for the
-// handful of exports apps/web actually uses (the landing page's gallery, /formats, and the OG-image
-// prebuild script). Not a full type surface for the package.
-declare module "@snap-x/core" {
+// @snap-x/core is a plain JS package (no .d.ts files). apps/web only ever needs the pure platform-format
+// data — never the renderer, which pulls in native bindings (@resvg/resvg-js) and a dynamic import() that
+// Turbopack can't bundle. Import from the "./formats" subpath (packages/core/src/formats.mjs — no
+// render/fonts/check imports) instead of the package root; that keeps Next's page bundle free of them.
+// The OG-image prebuild script (scripts/render-og.mjs) is plain JS and imports the full package directly,
+// outside this type surface.
+declare module "@snap-x/core/formats" {
   export interface Zone {
     type: "rect" | "circle";
     label?: string;
@@ -33,18 +36,4 @@ declare module "@snap-x/core" {
 
   export const FORMATS: Format[];
   export function findFormat(query: string | number, height?: number): Format | undefined;
-
-  export function renderDesign(
-    designPath: string,
-    outDir: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    fonts: any[],
-    opts?: { scale?: number; only?: string[]; log?: (line: string) => void },
-  ): Promise<string | string[]>;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export function resolveFonts(spec: any): Promise<any[]>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export function collectFontsSpec(files: string[]): Promise<any>;
-  export function resetFontCache(): void;
 }

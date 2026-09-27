@@ -4,6 +4,7 @@ import { readMarkdownSection } from "@/lib/markdown";
 export const metadata: Metadata = {
   title: "Docs",
   description: "The design-file format, Satori rules, VARIANTS, fonts, logos and images, and the MCP server — read straight from the repo's own README.md, never duplicated.",
+  openGraph: { images: ["/og/docs.png"] },
 };
 
 export default function DocsPage() {

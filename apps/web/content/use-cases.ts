@@ -70,7 +70,7 @@ export const USE_CASES: UseCase[] = [
     slug: "websites-and-projects",
     tag: "Websites and projects",
     title: "OG/link previews, README cards, GitHub social preview",
-    pain: "Every new video, sale or release means redesigning from scratch.",
+    pain: "Paste your repo link in Slack or X and it shows no preview at all.",
     formatIds: ["og", "github-social-preview"],
     image: "/gallery/snapx-og.png",
     imageAlt: "snap-x's own OG card, made with snap-x",

@@ -18,6 +18,7 @@
     "./render": "./src/render.mjs",
     "./check": "./src/check.mjs",
     "./fonts": "./src/fonts.mjs",
+    "./formats": "./src/formats.mjs",
     "./cli": "./src/cli.mjs"
   },
   "scripts": {

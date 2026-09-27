@@ -131,9 +131,9 @@ export default function Home() {
             { src: "/gallery/snapx-og.png", alt: "OG card example" },
             { src: "/gallery/storefront-banner.png", alt: "E-commerce banner example" },
           ].map((img) => (
-            <div key={img.src} className="overflow-hidden rounded-xl border border-border bg-surface">
+            <div key={img.src} className="flex h-[180px] items-center justify-center overflow-hidden rounded-xl border border-border bg-[#0d0d0d] p-3 sm:h-[220px]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.src} alt={img.alt} className="h-full w-full object-cover" />
+              <img src={img.src} alt={img.alt} className="max-h-full max-w-full rounded object-contain" />
             </div>
           ))}
         </div>

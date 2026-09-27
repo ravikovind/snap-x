@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { findFormat } from "@snap-x/core";
+import { findFormat } from "@snap-x/core/formats";
 import { USE_CASES, getUseCase } from "@/content/use-cases";
 
 export function generateStaticParams() {

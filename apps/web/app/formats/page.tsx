@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FORMATS, type Format, type Zone } from "@snap-x/core";
+import { FORMATS, type Format, type Zone } from "@snap-x/core/formats";
 
 export const metadata: Metadata = {
   title: "Platform formats",
