@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>snap-x — Branded images from code</title>
-  <meta name="description" content="Turn any project into a full image pack — OG cards, thumbnails, covers, posters. One command. No browser. Pure Node.js." />
-  <meta property="og:title" content="snap-x — Branded images from code" />
-  <meta property="og:description" content="Claude writes it. snap-x renders it. Generate OG cards, thumbnails, covers and posters from self-contained design files." />
+  <title>snap-x — Branded graphics for every platform, made by your AI agent</title>
+  <meta name="description" content="YouTube thumbnails, LinkedIn covers, store banners, app screenshots and OG cards, made by your AI agent. Sized right, checked, repeatable." />
+  <meta property="og:title" content="snap-x — Branded graphics for every platform, made by your AI agent" />
+  <meta property="og:description" content="YouTube thumbnails, LinkedIn covers, store banners, app screenshots and OG cards, made by your AI agent. Sized right, checked, repeatable." />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="images/snapx-og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="images/snapx-og.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -25,6 +28,8 @@
       --ink: #f5f5f5;
       --muted: rgba(255,255,255,0.5);
       --muted2: rgba(255,255,255,0.28);
+      --green: #2ecc71;
+      --green-dim: rgba(46, 204, 113, 0.12);
       --font-display: 'Saira', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
@@ -496,6 +501,147 @@
       border-radius: 4px;
     }
 
+    /* ── PROBLEM ──────────────────────────────────────────── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .problem-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .problem-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .problem-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .problem-quote {
+      font-size: 15px;
+      color: var(--ink);
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .problem-fix {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      padding-left: 40px;
+    }
+    .problem-fix strong { color: var(--green); font-weight: 700; }
+
+    /* ── USE CASES ────────────────────────────────────────── */
+    .usecase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .usecase-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .usecase-card:hover { border-color: rgba(235,29,37,0.35); background: var(--surface2); }
+
+    .usecase-media {
+      background: #0d0d0d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      height: 150px;
+    }
+    .usecase-media img { max-width: 100%; max-height: 100%; border-radius: 6px; object-fit: contain; }
+
+    .usecase-media--split { gap: 10px; }
+    .usecase-media--split img { max-height: 118px; }
+
+    .usecase-body { padding: 20px 22px 24px; }
+
+    .usecase-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+
+    .usecase-body h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+
+    .usecase-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .usecase-chips span {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 3px 10px;
+    }
+
+    /* ── FAQ ───────────────────────────────────────────────── */
+    .faq-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+
+    .faq-item { background: var(--bg); }
+    .faq-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 22px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+
+    .faq-plus {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      color: var(--red);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .faq-item[open] .faq-plus { transform: rotate(45deg); }
+
+    .faq-answer {
+      padding: 0 28px 24px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      max-width: 720px;
+    }
+
+    .faq-bullets { padding-left: 20px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .faq-bullets li { list-style: disc; }
+    .faq-bullets strong { color: var(--ink); }
+
     /* ── CODE SECTION ─────────────────────────────────────── */
     .code-section {
       display: grid;
@@ -766,14 +912,14 @@
 
   <div class="hero-badge">
     <span class="badge-dot"></span>
-    v0.6.0 — now with MCP server support
+    v0.6.0 — emoji, platform formats &amp; guides
   </div>
 
-  <h1>Claude writes&nbsp;it.<br /><em>snap-x</em> renders&nbsp;it.</h1>
+  <h1>Branded graphics for<br /><em>every platform</em>, made by your AI agent.</h1>
 
   <p class="hero-sub">
-    Turn any project into a full image pack — OG cards, thumbnails, covers, posters.
-    One command. No browser. Pure Node.js.
+    YouTube thumbnails, LinkedIn covers, store banners, app screenshots, OG cards:
+    sized right, checked, and repeatable.
   </p>
 
   <div class="hero-ctas">
@@ -822,8 +968,12 @@
           <span>&nbsp;&nbsp;✓ poster.png</span>
           <span class="t-dim" style="margin-left:8px">1080 × 1920</span>
         </div>
+        <div class="t-line t-success">
+          <span>&nbsp;&nbsp;✓ readme-card.png</span>
+          <span class="t-dim" style="margin-left:8px">1280 × 640</span>
+        </div>
         <div class="t-line">
-          <span class="t-out" style="color:#3fb950">&nbsp;&nbsp;4 images rendered in 1.2s</span>
+          <span class="t-out" style="color:#3fb950">&nbsp;&nbsp;5 images rendered in under 2s</span>
         </div>
         <div class="t-line" style="margin-top:4px">
           <span class="t-prompt">$</span>
@@ -838,14 +988,14 @@
 <div class="divider"></div>
 <section id="features">
   <p class="section-label">Features</p>
-  <h2>Everything you need<br/>to ship <em>great images</em></h2>
-  <p class="section-sub">A zero-config render pipeline for branded social and marketing images.</p>
+  <h2>Everything you need<br/>to ship <em>on-brand graphics</em></h2>
+  <p class="section-sub">No config, no auto-detection — every design file declares exactly what it needs.</p>
 
   <div class="features-grid">
     <div class="feature-card fade-up stagger-1">
       <div class="feature-icon">🚀</div>
       <h3>No browser. No config.</h3>
-      <p>Pure Node.js pipeline powered by Satori + resvg-js. Renders 4 images in under 2 seconds, anywhere npm runs.</p>
+      <p>Pure Node.js pipeline powered by Satori + resvg-js. Renders in seconds, anywhere Node runs.</p>
     </div>
     <div class="feature-card fade-up stagger-2">
       <div class="feature-icon">🎨</div>
@@ -875,43 +1025,155 @@
   </div>
 </section>
 
+<!-- ── PROBLEM ────────────────────────────────────────────── -->
+<div class="divider"></div>
+<section id="problem">
+  <p class="section-label">The problem</p>
+  <h2>Graphics that are close,<br/><em>but not quite right</em></h2>
+  <p class="section-sub">Platform-shaped mistakes are easy to make and easy to miss until it's live.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card fade-up stagger-1">
+      <div class="problem-row">
+        <div class="problem-icon" style="background:var(--red-dim);border:1px solid rgba(235,29,37,0.25)">📱</div>
+        <div class="problem-quote">"Your text hides under the profile photo on mobile."</div>
+      </div>
+      <div class="problem-fix"><strong>Fixed:</strong> <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">snap-x guides</code> overlays the profile-photo zone and renders the mobile-cropped version before you post.</div>
+    </div>
+    <div class="problem-card fade-up stagger-2">
+      <div class="problem-row">
+        <div class="problem-icon" style="background:var(--red-dim);border:1px solid rgba(235,29,37,0.25)">🎬</div>
+        <div class="problem-quote">"The duration badge sits on your thumbnail's punchline."</div>
+      </div>
+      <div class="problem-fix"><strong>Fixed:</strong> the YouTube thumbnail format ships with the duration-badge zone built in — the guides overlay catches the overlap before you upload.</div>
+    </div>
+    <div class="problem-card fade-up stagger-3">
+      <div class="problem-row">
+        <div class="problem-icon" style="background:var(--red-dim);border:1px solid rgba(235,29,37,0.25)">🚫</div>
+        <div class="problem-quote">"The store rejected your graphic for an alpha channel."</div>
+      </div>
+      <div class="problem-fix"><strong>Fixed:</strong> set <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">alpha: false</code> and App Store / Play graphics render as opaque RGB — <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">check</code> reminds you when a store format needs it.</div>
+    </div>
+    <div class="problem-card fade-up stagger-4">
+      <div class="problem-row">
+        <div class="problem-icon" style="background:var(--red-dim);border:1px solid rgba(235,29,37,0.25)">🔁</div>
+        <div class="problem-quote">"Every new video, sale or release means redesigning from scratch."</div>
+      </div>
+      <div class="problem-fix"><strong>Fixed:</strong> the design is one template — change the episode number, product or price and re-render the whole series.</div>
+    </div>
+  </div>
+</section>
+
 <!-- ── HOW IT WORKS ───────────────────────────────────────── -->
 <div class="divider"></div>
 <section id="how">
   <p class="section-label">Workflow</p>
-  <h2>From project to image<br/><em>in three steps</em></h2>
-  <p class="section-sub">Write a design file, check it, render it. Or let Claude do all three.</p>
+  <h2>Point, plan,<br/><em>render and verify</em></h2>
+  <p class="section-sub">The agent does all three. Or write and run the same steps yourself with the CLI.</p>
 
   <div class="how-wrap">
     <div class="how-step fade-up stagger-1">
       <div class="step-num">Step 01</div>
-      <h3>Write a design file</h3>
-      <p>Export a default JSX function from an <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">.mjs</code> file. Declare canvas size, fonts, and layout. Everything in one file — no imports, no config.</p>
-      <span class="code-pill">og.mjs</span>
+      <h3>Point</h3>
+      <p>Give your agent a repo, a website URL or a written brief.</p>
+      <span class="code-pill">/snap-x</span>
       <div class="step-arrow">→</div>
     </div>
     <div class="how-step fade-up stagger-2">
       <div class="step-num">Step 02</div>
-      <h3>Check for errors</h3>
-      <p>Run <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">snap-x check</code> to validate your design before rendering. Catch missing fonts, invalid props, and layout issues instantly.</p>
-      <span class="code-pill">snap-x check *.mjs</span>
+      <h3>Plan</h3>
+      <p>It pulls your real logo, colors, fonts and copy, picks the formats you need, and writes a plan.</p>
+      <span class="code-pill">snap-plan.md</span>
       <div class="step-arrow">→</div>
     </div>
     <div class="how-step fade-up stagger-3">
       <div class="step-num">Step 03</div>
-      <h3>Render to PNG</h3>
-      <p>Run <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">snap-x render</code> to produce pixel-perfect PNGs. Add <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">--guides</code> to preview placement zones for any platform.</p>
-      <span class="code-pill">snap-x render *.mjs</span>
+      <h3>Render and verify</h3>
+      <p>It writes one design file per format, checks them, renders exact-size PNGs, overlays each platform's danger zones, and looks at every image before handing them over.</p>
+      <span class="code-pill">snap-x check &amp;&amp; render</span>
     </div>
+  </div>
+</section>
+
+<!-- ── USE CASES ──────────────────────────────────────────── -->
+<div class="divider"></div>
+<section id="use-cases">
+  <p class="section-label">Use cases</p>
+  <h2>Whatever you make,<br/><em>there's a format for it</em></h2>
+  <p class="section-sub">Real output from <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">examples/</code> — every image below was rendered by snap-x.</p>
+
+  <div class="usecase-grid">
+    <a class="usecase-card fade-up stagger-1" href="https://github.com/ravikovind/snap-x/tree/main/examples/creator-series" target="_blank" rel="noopener">
+      <div class="usecase-media"><img src="images/youtube-thumbnail.png" alt="YouTube thumbnail example" loading="lazy" /></div>
+      <div class="usecase-body">
+        <div class="usecase-tag">YouTube creators</div>
+        <h3>Thumbnails, channel art, Shorts</h3>
+        <div class="usecase-chips"><span>episode series</span><span>duration-badge safe</span></div>
+      </div>
+    </a>
+    <a class="usecase-card fade-up stagger-2" href="https://github.com/ravikovind/snap-x/tree/main/examples/ravikovind" target="_blank" rel="noopener">
+      <div class="usecase-media"><img src="images/linkedin-cover.png" alt="LinkedIn cover example" loading="lazy" /></div>
+      <div class="usecase-body">
+        <div class="usecase-tag">Personal brand</div>
+        <h3>LinkedIn cover, X header</h3>
+        <div class="usecase-chips"><span>mobile-crop checked</span><span>profile-photo safe</span></div>
+      </div>
+    </a>
+    <a class="usecase-card fade-up stagger-3" href="https://github.com/ravikovind/snap-x/tree/main/examples/kite" target="_blank" rel="noopener">
+      <div class="usecase-media usecase-media--split">
+        <img src="images/appstore-vote.png" alt="App Store screenshot example" loading="lazy" />
+        <img src="images/play-feature-graphic.png" alt="Google Play feature graphic example" loading="lazy" />
+      </div>
+      <div class="usecase-body">
+        <div class="usecase-tag">App makers</div>
+        <h3>App Store screenshots, Play feature graphic</h3>
+        <div class="usecase-chips"><span>no alpha channel</span><span>store-ready</span></div>
+      </div>
+    </a>
+    <a class="usecase-card fade-up stagger-4" href="https://github.com/ravikovind/snap-x/tree/main/examples/snap-x" target="_blank" rel="noopener">
+      <div class="usecase-media"><img src="images/snapx-og.png" alt="OG card example" loading="lazy" /></div>
+      <div class="usecase-body">
+        <div class="usecase-tag">Websites and projects</div>
+        <h3>OG/link previews, README cards, GitHub social preview</h3>
+        <div class="usecase-chips"><span>og:image</span><span>README hero</span></div>
+      </div>
+    </a>
+    <a class="usecase-card fade-up stagger-5" href="https://github.com/ravikovind/snap-x/tree/main/examples/storefront" target="_blank" rel="noopener">
+      <div class="usecase-media"><img src="images/storefront-banner.png" alt="E-commerce sale banner example" loading="lazy" /></div>
+      <div class="usecase-body">
+        <div class="usecase-tag">E-commerce / marketing</div>
+        <h3>Sale and promo banners, Instagram posts and stories</h3>
+        <div class="usecase-chips"><span>one template</span><span>per-product variants</span></div>
+      </div>
+    </a>
   </div>
 </section>
 
 <!-- ── FORMATS ────────────────────────────────────────────── -->
 <div class="divider"></div>
 <section id="formats">
-  <p class="section-label">Formats</p>
+  <p class="section-label">Correct for every platform</p>
   <h2>Every platform,<br/><em>perfect dimensions</em></h2>
-  <p class="section-sub">Built-in presets for every major platform. Use <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">snap-x formats</code> to list them all.</p>
+  <p class="section-sub">19 built-in formats with sizes and rules. Use <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">snap-x formats</code> to list them all, and <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">snap-x guides</code> to check placement before you ship.</p>
+
+  <div class="usecase-grid" style="margin-bottom:3rem">
+    <div class="usecase-card fade-up stagger-1" style="cursor:default">
+      <div class="usecase-media"><img src="images/guides-overlay.png" alt="Danger-zone overlay for a LinkedIn cover" loading="lazy" /></div>
+      <div class="usecase-body">
+        <div class="usecase-tag">snap-x guides</div>
+        <h3>Danger zones drawn on your design</h3>
+      </div>
+    </div>
+    <div class="usecase-card fade-up stagger-2" style="cursor:default">
+      <div class="usecase-media"><img src="images/guides-mobile.png" alt="Mobile crop of the same LinkedIn cover" loading="lazy" /></div>
+      <div class="usecase-body">
+        <div class="usecase-tag">mobile crop</div>
+        <h3>The same cover, cropped for phones</h3>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:14px;color:var(--muted);margin:-2rem 0 2rem">Store graphics get no alpha channel automatically: set <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">alpha: false</code> in <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">FORMAT</code> for App Store and Google Play, and <code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">check</code>/<code style="font-family:var(--font-mono);font-size:12px;color:#79c0ff">render</code> produce an opaque RGB PNG.</p>
 
   <div class="formats-grid">
     <div class="format-card fade-up stagger-1">
@@ -989,12 +1251,28 @@
   </div>
 </section>
 
+<!-- ── EXACT AND REPEATABLE ───────────────────────────────── -->
+<div class="divider"></div>
+<section id="exact">
+  <p class="section-label">Exact &amp; repeatable</p>
+  <h2>One template.<br/><em>Infinite, exact renders.</em></h2>
+  <p class="section-sub">The design is a code file — not a canvas someone can accidentally nudge.</p>
+  <ul class="faq-bullets" style="max-width:640px">
+    <li><strong>Your real logo</strong> is embedded, not redrawn.</li>
+    <li><strong>Text is exactly</strong> what you wrote — no drift, no reinterpretation.</li>
+    <li><strong>The size is exact</strong> — no cropping to fit a platform.</li>
+    <li>Change one word — "Episode 12" → "Episode 13" — and only that word moves.</li>
+    <li><strong>Re-render a whole series</strong> or catalogue from one template.</li>
+    <li>Renders locally, no browser.</li>
+  </ul>
+</section>
+
 <!-- ── CODE ───────────────────────────────────────────────── -->
 <div class="divider"></div>
 <section id="code">
   <p class="section-label">Design Files</p>
   <h2>Code your design<br/><em>once. Render anywhere.</em></h2>
-  <p class="section-sub">Self-contained <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">.mjs</code> files. No external config. No runtime dependencies. Pure JSX.</p>
+  <p class="section-sub">Self-contained <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">.mjs</code> files. No config, no auto-detection — plain object trees, no JSX or build step.</p>
 
   <div class="code-section">
     <div class="fade-up stagger-1">
@@ -1003,47 +1281,38 @@
           <span class="code-filename">og.mjs</span>
           <span class="code-lang">design file</span>
         </div>
-<pre><span class="cmt">/** @type {import('@snap-x/core').Design} */</span>
-<span class="kw">export default</span> {
-  width: <span class="num">1200</span>,
-  height: <span class="num">630</span>,
-  fonts: [
-    { <span class="prop">family</span>: <span class="str">"Saira"</span>, <span class="prop">weight</span>: <span class="num">900</span> },
-    { <span class="prop">family</span>: <span class="str">"Saira"</span>, <span class="prop">weight</span>: <span class="num">400</span> },
-  ],
-  <span class="fn">render</span>() {
-    <span class="kw">return</span> (
-      &lt;<span class="kw">div</span> style=&#123;&#123;
-        <span class="prop">background</span>: <span class="str">"#070707"</span>,
-        <span class="prop">width</span>: <span class="str">"100%"</span>,
-        <span class="prop">height</span>: <span class="str">"100%"</span>,
-        <span class="prop">display</span>: <span class="str">"flex"</span>,
-        <span class="prop">flexDirection</span>: <span class="str">"column"</span>,
-        <span class="prop">padding</span>: <span class="num">64</span>,
-      &#125;&#125;&gt;
-        &lt;<span class="kw">h1</span> style=&#123;&#123;
-          <span class="prop">fontFamily</span>: <span class="str">"Saira"</span>,
-          <span class="prop">fontWeight</span>: <span class="num">900</span>,
-          <span class="prop">fontSize</span>: <span class="num">80</span>,
-          <span class="prop">color</span>: <span class="str">"#f5f5f5"</span>,
-        &#125;&#125;&gt;
-          snap-x
-        &lt;/<span class="kw">h1</span>&gt;
-      &lt;/<span class="kw">div</span>&gt;
-    );
-  },
-};</pre>
+<pre><span class="kw">export const</span> FORMAT = { <span class="prop">width</span>: <span class="num">1200</span>, <span class="prop">height</span>: <span class="num">630</span>, <span class="prop">name</span>: <span class="str">"og.png"</span> };
+<span class="kw">export const</span> FONTS  = [{ <span class="prop">family</span>: <span class="str">"Saira"</span>, <span class="prop">weights</span>: [<span class="num">400</span>, <span class="num">700</span>, <span class="num">900</span>] }];
+
+<span class="kw">export default function</span> () {                       <span class="cmt">// zero arguments; may be async</span>
+  <span class="kw">return</span> {
+    <span class="prop">type</span>: <span class="str">"div"</span>,
+    <span class="prop">props</span>: {
+      <span class="prop">style</span>: {
+        <span class="prop">width</span>: <span class="num">1200</span>, <span class="prop">height</span>: <span class="num">630</span>, <span class="prop">background</span>: <span class="str">"#070707"</span>,
+        <span class="prop">display</span>: <span class="str">"flex"</span>, <span class="prop">flexDirection</span>: <span class="str">"column"</span>, <span class="prop">padding</span>: <span class="num">64</span>,
+      },
+      <span class="prop">children</span>: [{
+        <span class="prop">type</span>: <span class="str">"div"</span>,
+        <span class="prop">props</span>: {
+          <span class="prop">style</span>: { <span class="prop">fontFamily</span>: <span class="str">"Saira"</span>, <span class="prop">fontWeight</span>: <span class="num">900</span>, <span class="prop">fontSize</span>: <span class="num">80</span>, <span class="prop">color</span>: <span class="str">"#f5f5f5"</span>, <span class="prop">display</span>: <span class="str">"flex"</span> },
+          <span class="prop">children</span>: [<span class="str">"snap-x"</span>],
+        },
+      }],
+    },
+  };
+}</pre>
       </div>
     </div>
 
     <div class="fade-up stagger-2" style="display:flex;flex-direction:column;gap:16px;justify-content:center;">
       <h3 style="font-size:1.4rem;font-weight:700;letter-spacing:-0.01em">A design is just a module</h3>
-      <p style="color:var(--muted);font-size:15px;line-height:1.7;font-weight:400">Export a <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">render()</code> function and declare your canvas size and fonts. snap-x handles the rest — font loading, emoji, fallback scripts.</p>
+      <p style="color:var(--muted);font-size:15px;line-height:1.7;font-weight:400">Export <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">FORMAT</code>, optional <code style="font-family:var(--font-mono);font-size:13px;color:#79c0ff">FONTS</code>, and a zero-argument default export. snap-x handles the rest — font loading, emoji, fallback scripts.</p>
 
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
-          <span style="font-size:14px;color:var(--muted)">No imports or external packages</span>
+          <span style="font-size:14px;color:var(--muted)">No config file, no auto-detection</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
@@ -1103,6 +1372,39 @@
     <a href="https://github.com/ravikovind/snap-x#claude-code-skill" class="btn-primary" target="_blank" rel="noopener">
       Set up the skill →
     </a>
+  </div>
+</section>
+
+<!-- ── FAQ ────────────────────────────────────────────────── -->
+<div class="divider"></div>
+<section id="faq">
+  <p class="section-label">FAQ</p>
+  <h2>Questions people<br/><em>actually ask</em></h2>
+
+  <div class="faq-list">
+    <details class="faq-item fade-up stagger-1">
+      <summary>Why not just use an AI image generator?<span class="faq-plus">+</span></summary>
+      <div class="faq-answer">
+        <p>Use one. Tools like Nano Banana and ChatGPT are great at pixels: photos, illustration, texture, mood. snap-x does the work around the art:</p>
+        <ul class="faq-bullets">
+          <li><strong>Exact sizes.</strong> Image models generate in preset aspect ratios, so exact platform sizes (a 1584×396 LinkedIn cover, a 1024×500 Play feature graphic) usually mean cropping. snap-x renders the exact size.</li>
+          <li><strong>Your real logo.</strong> It's embedded from the file, not redrawn.</li>
+          <li><strong>Precise edits.</strong> Change "Episode 12" to "Episode 13" and nothing else moves.</li>
+          <li><strong>Series and batches.</strong> One template gives identical layouts across a thumbnail series, a catalogue of banners or localized screenshots.</li>
+          <li><strong>Platform rules.</strong> Safe zones, mobile crops and store no-alpha rules are built in and checked.</li>
+          <li><strong>Yours, locally.</strong> The design is a code file you can diff and version; renders run on your machine.</li>
+        </ul>
+        <p style="margin-top:10px">They combine well: generate a background or product shot, then let snap-x place it with your logo and copy at every size.</p>
+      </div>
+    </details>
+    <details class="faq-item fade-up stagger-2">
+      <summary>Do I need Claude Code?<span class="faq-plus">+</span></summary>
+      <div class="faq-answer">No. The MCP server works with any MCP agent (Claude Desktop, Cursor, Windsurf), and you can write designs by hand with the CLI.</div>
+    </details>
+    <details class="faq-item fade-up stagger-3">
+      <summary>Can it make photos or illustrations?<span class="faq-plus">+</span></summary>
+      <div class="faq-answer">No. snap-x lays out text, shapes, logos and images you supply; it doesn't generate art. Bring your own images, or generate them elsewhere and let snap-x place them with your logo, copy and platform rules.</div>
+    </details>
   </div>
 </section>
 
