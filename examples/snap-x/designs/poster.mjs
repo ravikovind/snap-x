@@ -1,58 +1,32 @@
+import { FONTS, COLORS, box, txt, H, brand, glow, command, root } from "./_brand.mjs";
+
 export const FORMAT = { width: 1080, height: 1920, name: "poster.png" };
-export const FONTS = [
-  { family: "Saira", weights: [400, 700, 900] },
-  { family: "JetBrains Mono", weights: [400, 700] },
-];
-
-const RED = "#eb1d25";
-const INK = "#f5f5f5";
-const MUTED = "rgba(255,255,255,0.52)";
-const LINE = "rgba(255,255,255,0.14)";
-
-const box = (style, children = []) => ({ type: "div", props: { style: { display: "flex", ...style }, children } });
-const txt = (text, style) => box(style, [text]);
-const H = (size) => ({ fontSize: size, fontWeight: 900, lineHeight: 1.0, letterSpacing: "-0.03em", whiteSpace: "nowrap" });
-
-const chip = (label, filled, big) =>
-  box({
-    padding: big ? "10px 24px" : "7px 16px", borderRadius: 999, fontFamily: "JetBrains Mono", fontSize: big ? 20 : 14, fontWeight: 700,
-    color: filled ? "#fff" : INK, background: filled ? RED : "transparent", border: `1px solid ${filled ? RED : LINE}`,
-  }, [label]);
-const arrow = (size = 16, m = 10) => txt("→", { color: MUTED, fontSize: size, margin: `0 ${m}px` });
-const brand = (size = 17) => box({ alignItems: "center", gap: 12 }, [
-  box({ width: size * 0.8, height: size * 0.8, background: RED }),
-  txt("SNAP-X", { fontSize: size, fontWeight: 700, letterSpacing: "0.24em", color: INK }),
-]);
-const glow = (extra) => box({ position: "absolute", width: 760, height: 760, background: "radial-gradient(circle, rgba(235,29,37,0.30) 0%, rgba(235,29,37,0) 62%)", ...extra });
-const command = (size = 14) => box({ fontFamily: "JetBrains Mono", fontSize: size, color: MUTED, gap: 10 }, [
-  txt("$", { color: RED, fontWeight: 700 }), txt("npx @snap-x/cli render designs/*.mjs", { color: INK }),
-]);
-const root = (w, h, style, children) => box({ width: w, height: h, background: "#070707", fontFamily: "Saira", position: "relative", overflow: "hidden", ...style }, children);
+export { FONTS };
 
 // the three pillars (repositioning.md §1.3), always in this order
-const pillar = (n, label, hot) => box({ alignItems: "center", justifyContent: "space-between", padding: "22px 30px", border: `1px solid ${hot ? RED : LINE}`, background: hot ? RED : "rgba(255,255,255,0.03)", borderRadius: 16 }, [
-  txt(label, { fontFamily: "JetBrains Mono", fontSize: 24, fontWeight: 700, color: hot ? "#fff" : INK, whiteSpace: "nowrap" }),
-  txt(n, { fontFamily: "JetBrains Mono", fontSize: 20, fontWeight: 700, color: hot ? "rgba(255,255,255,0.8)" : MUTED }),
+const pillar = (n, label, hot) => box({ alignItems: "center", justifyContent: "space-between", padding: "22px 30px", border: `1px solid ${hot ? COLORS.red : COLORS.line}`, background: hot ? COLORS.red : "rgba(255,255,255,0.03)", borderRadius: 16 }, [
+  txt(label, { fontFamily: "JetBrains Mono", fontSize: 24, fontWeight: 700, color: hot ? "#fff" : COLORS.ink, whiteSpace: "nowrap" }),
+  txt(n, { fontFamily: "JetBrains Mono", fontSize: 20, fontWeight: 700, color: hot ? "rgba(255,255,255,0.8)" : COLORS.muted }),
 ]);
 
 export default function () {
   return root(1080, 1920, { flexDirection: "column", justifyContent: "space-between", padding: "84px 88px 84px" }, [
     glow({ top: -260, right: -300, width: 1100, height: 1100 }),
-    box({ position: "absolute", left: 0, top: 0, right: 0, height: 8, background: RED }),
+    box({ position: "absolute", left: 0, top: 0, right: 0, height: 8, background: COLORS.red }),
     box({ alignItems: "center", justifyContent: "space-between" }, [
       brand(26),
-      txt("OPEN SOURCE · MIT", { fontSize: 18, fontWeight: 700, letterSpacing: "0.2em", color: MUTED }),
+      txt("OPEN SOURCE · MIT", { fontSize: 18, fontWeight: 700, letterSpacing: "0.2em", color: COLORS.muted }),
     ]),
     box({ flexDirection: "column" }, [
-      txt("Branded", { ...H(140), color: INK }),
-      txt("graphics for", { ...H(140), color: INK }),
-      txt("every", { ...H(140), color: RED }),
-      txt("platform,", { ...H(140), color: RED }),
-      txt("made by", { ...H(140), color: INK, marginTop: 20 }),
-      txt("your AI", { ...H(140), color: INK }),
-      txt("agent.", { ...H(140), color: INK }),
+      txt("Branded", { ...H(140), color: COLORS.ink }),
+      txt("graphics for", { ...H(140), color: COLORS.ink }),
+      txt("every", { ...H(140), color: COLORS.red }),
+      txt("platform,", { ...H(140), color: COLORS.red }),
+      txt("made by", { ...H(140), color: COLORS.ink, marginTop: 20 }),
+      txt("your AI", { ...H(140), color: COLORS.ink }),
+      txt("agent.", { ...H(140), color: COLORS.ink }),
       txt("Thumbnails, covers, banners, store graphics and more: sized right, checked, and repeatable.", {
-        marginTop: 44, fontSize: 30, lineHeight: 1.4, color: MUTED, maxWidth: 860, flexWrap: "wrap",
+        marginTop: 44, fontSize: 30, lineHeight: 1.4, color: COLORS.muted, maxWidth: 860, flexWrap: "wrap",
       }),
     ]),
     box({ flexDirection: "column", gap: 14 }, [

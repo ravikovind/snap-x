@@ -1,5 +1,7 @@
 # Step 1: Inspect the source
 
+**Rerunning on the same pack?** If `designs/_brand.mjs` already exists, read it and show the user what it contains (colors, fonts, logo paths, spacing unit, type scale) — reuse it instead of re-extracting everything from scratch. Only re-answer a question below if the source now visibly disagrees with what's in `_brand.mjs` (a repalette, a new logo).
+
 The source is a **repo**, a **website URL**, or a **written brief**. Answer all 9 questions before writing anything.
 
 **Facts rule:** only use facts you actually found — a real number, quote, customer or claim from the source, or from the user's brief. Never invent stats or testimonials. Anything illustrative (a sample notification, a mock inbox) is allowed only if it's obviously generic and you say so in `share-copy.txt`. **When sources disagree** (README says 1,854 icons, the API description says 1,776), prefer the primary source — the README or package manifest — and note the choice in the plan.

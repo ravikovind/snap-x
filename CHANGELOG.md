@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **`_brand.mjs` reuse** (improvements.md §10.3): Step 1 now reads and reuses an existing `designs/_brand.mjs` on a rerun instead of re-extracting everything, showing the user what it found; Step 3 always writes one (`COLORS`, `FONTS`, logo paths, spacing unit, type scale) and every design imports from it. Converted `examples/snap-x` to the pattern: its 5 design files each duplicated the same colors/helpers verbatim — now they import from a new `designs/_brand.mjs`. Re-rendered and confirmed byte-identical output (a pixel diff on the one PNG whose hash changed, `poster.png`, confirmed 0 differing pixels — harmless re-encoding, not a visual regression)
+
 ## 0.7.0 — core 0.7.0 · cli 0.2.1 · mcp 0.4.1
 
 - **Docs refreshed for every shipped feature** (improvements.md §9): `FLOW.md` was significantly stale (predated this whole round) — fixed two outright false statements (the MCP section claimed "snap-x has no fixed format list" and was missing `preview_guides` entirely) and added VARIANTS, `.jsx`/`.tsx`, `--scale`, `--only` and `watch` throughout the pipeline diagram, CLI reference and repo-structure tree. Website: the "Design files as code" feature card now mentions `.jsx`/`.tsx` and `VARIANTS` instead of only `.mjs` (a fuller site rework is Phase 11's job, not duplicated here)

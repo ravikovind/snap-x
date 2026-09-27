@@ -1,6 +1,8 @@
 # Step 3: Write the design files
 
-One `.mjs` per format in `designs/`. Each file is a self-contained Satori tree — hardcode the colors, fonts and copy you settled in Steps 1–2. Nothing is passed in and there is no config.
+One `.mjs` per format in `designs/`. Each file is a self-contained Satori tree — hardcode the copy you settled in Step 2. Nothing is passed in and there is no config.
+
+**Always write `designs/_brand.mjs`** and import it from every design in the pack — see "The brand file" below. It's a normal `_`-prefixed helper the user owns (PRINCIPLES.md §2), not a config file: it's just the pack's own colors/fonts/logo/spacing written once instead of copy-pasted into every file.
 
 ## Rules (Satori)
 
@@ -9,18 +11,33 @@ One `.mjs` per format in `designs/`. Each file is a self-contained Satori tree �
 - The root node needs an explicit `width`/`height` matching `FORMAT`. Every `undefined` style value crashes the render — omit the key instead.
 - For a sharp `@2x`/`@3x` export, use `snap-x render --scale <n>` (see Step 4) — no design-file change needed. `transform: scale(n)` (with `transformOrigin`) still works if a size genuinely needs a *different* layout, not just a sharper export of the same one.
 
+## The brand file
+
+`designs/_brand.mjs` — written once in Step 3, imported by every design file in the pack. Files starting with `_` are never rendered (skipped even when the shell expands `designs/*.mjs`).
+
+```js
+// designs/_brand.mjs — helper, not rendered
+export const FONTS = [{ family: "Saira", weights: [400, 700, 900] }]; // omit per-file → Inter 400/700/900
+export const COLORS = { bg: "#000000", text: "#f5f5f5", accent: "#eb1d25" };
+export const LOGO = "../assets/logo.png"; // relative to the design file that imports it — see step-1-inspect.md
+export const SPACING = 8;    // base unit at ~1200px wide — design-principles.md § Spacing system
+export const TYPE_SCALE = { headline: 72, support: 32, detail: 20 }; // ≈ 3:1.5:1 — design-principles.md § Hierarchy
+export const RADIUS = 12;
+```
+
 ## File shape
 
 ```js
+import { COLORS, FONTS as F } from "./_brand.mjs";
+
 export const FORMAT = { width: 1200, height: 630, name: "og.png" };
-export const FONTS  = [{ family: "Saira", weights: [400, 700, 900] }]; // omit → Inter 400/700/900
+export const FONTS = F;
 
 export default function () {                    // zero arguments; may be async
-  const bg = "#000", text = "#f5f5f5", accent = "#eb1d25"; // hardcoded brand values
   return {
     type: "div",
     props: {
-      style: { width: 1200, height: 630, background: bg, display: "flex", fontFamily: "Saira", position: "relative", overflow: "hidden" },
+      style: { width: 1200, height: 630, background: COLORS.bg, display: "flex", fontFamily: "Saira", position: "relative", overflow: "hidden" },
       children: [ /* … */ ],
     },
   };
@@ -29,19 +46,7 @@ export default function () {                    // zero arguments; may be async
 
 A static tree (`export default { type: "div", … }`) also works.
 
-**Shared code → a `_helper.mjs`.** Files starting with `_` are never rendered (skipped even when the shell expands `designs/*.mjs`), but designs can import them. Use one for a shared theme, an icon set, or a composition rendered several ways (1×, @2×, QA). Each entry file still exports its own `FORMAT` and `FONTS`:
-
-```js
-// designs/_theme.mjs — helper, not rendered
-export const FONTS = [{ family: "Inter", weights: [400, 700] }, { family: "JetBrains Mono", weights: [400] }];
-export const COLORS = { bg: "#18181b", accent: "#f56565", text: "#f5f5f4" };
-
-// designs/og.mjs — entry
-import { FONTS as F, COLORS } from "./_theme.mjs";
-export const FORMAT = { width: 1200, height: 630, name: "og.png" };
-export const FONTS = F;
-export default () => ({ /* uses COLORS */ });
-```
+**Beyond the brand file:** a `_helper.mjs` can also hold an icon set, or a composition rendered several ways (1×, @2×, QA) — same rule, same import pattern. Each entry file still exports its own `FORMAT` and `FONTS`.
 
 ## A series → one design with VARIANTS, not one file per image
 

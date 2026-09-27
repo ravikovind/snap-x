@@ -47,4 +47,4 @@ const phone = (w, screen) => ({ type: "div", props: { style: { display: "flex", 
 
 ## A set of sizes from one design
 
-For several platforms (or a screenshot series), put the shared theme and a builder `(width, height) => tree` in `_theme.mjs` / `_card.mjs` and write one small entry file per size, each with its own `FORMAT`, `FONTS` and — for stores — `alpha: false`. Re-check placement per size; one layout rarely fits both a 1584×396 banner and a 1080×1920 story.
+For several platforms (or a screenshot series), put a builder `(width, height) => tree` in a second helper (e.g. `_card.mjs`) that imports colors/fonts from `_brand.mjs` (see step-3-design.md), and write one small entry file per size, each with its own `FORMAT`, `FONTS` and — for stores — `alpha: false`. A screenshot series is usually better as one design with `VARIANTS` (step-3-design.md) instead of one file per size. Re-check placement per size; one layout rarely fits both a 1584×396 banner and a 1080×1920 story.
