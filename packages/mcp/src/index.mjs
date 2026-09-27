@@ -38,7 +38,7 @@ const readGuide = () => fs.readFile(fileURLToPath(new URL("./design-guide.md", i
 // ─── Server setup ─────────────────────────────────────────────────────────────
 
 const server = new Server(
-  { name: "snap-x", version: "0.4.0" },
+  { name: "snap-x", version: "0.4.1" },
   { capabilities: { tools: {}, resources: {}, prompts: {} } }
 );
 

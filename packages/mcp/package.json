@@ -1,6 +1,6 @@
 {
   "name": "@snap-x/mcp",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "MCP server for snap-x: lets any agent (Claude Desktop, Cursor, Windsurf, \u2026) render, check and preview platform-ready branded graphics, with built-in platform formats, safe-zone guides and a design guide.",
   "author": {
     "name": "Ravi Kovind",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@snap-x/core": "^0.6.0"
+    "@snap-x/core": "^0.7.0"
   },
   "keywords": [
     "snap-x",
