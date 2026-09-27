@@ -3,6 +3,8 @@
 **Branded graphics for every platform, made by your AI agent.**
 Thumbnails, covers, banners, store graphics and more: sized right, checked, and repeatable.
 
+**[snap-x-flame.vercel.app](https://snap-x-flame.vercel.app/)** — formats, use cases, templates, examples, and docs.
+
 <table>
 <tr>
 <td><a href="examples/kite"><img src="examples/kite/youtube-thumbnail.png" width="280" alt="YouTube thumbnail"></a><br><sub>YouTube thumbnail</sub></td>

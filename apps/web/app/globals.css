@@ -35,3 +35,16 @@ pre,
   background: var(--color-red-dim);
   color: var(--color-ink);
 }
+
+/* Markdown-rendered tables (SHOWCASE.md, README sections) don't reflow on narrow viewports by
+   themselves — table-layout:auto shrinks every column, including the preview image, down to an
+   unreadable sliver. Give the table its own horizontal scroll instead of letting that happen, and
+   keep the preview image at a fixed, legible width so it's never the thing that gets crushed. */
+.prose table {
+  display: block;
+  overflow-x: auto;
+}
+.prose table img {
+  width: 220px;
+  max-width: none;
+}
