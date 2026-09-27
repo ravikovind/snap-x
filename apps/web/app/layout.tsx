@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Saira, JetBrains_Mono } from "next/font/google";
+import { Saira, Space_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site";
@@ -10,8 +10,8 @@ const saira = Saira({
   weight: ["400", "500", "700", "900"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
   subsets: ["latin"],
   weight: ["400", "700"],
 });
@@ -49,7 +49,7 @@ const NAV_LINKS = [
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${saira.variable} ${jetbrainsMono.variable} h-full`}>
+    <html lang="en" className={`${saira.variable} ${spaceMono.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased bg-bg text-ink">
         <nav className="fixed inset-x-0 top-0 z-50 flex h-15 items-center justify-between border-b border-border bg-bg/85 px-4 backdrop-blur-md sm:px-8">
           <Link href="/" className="flex items-center gap-2.5">

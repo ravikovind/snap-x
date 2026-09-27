@@ -65,7 +65,7 @@ The design is a code file, not a canvas someone can nudge. Your real logo is emb
 | Personal brand | LinkedIn cover, X header | [`examples/ravikovind`](examples/ravikovind) |
 | App makers | App Store screenshots, Play feature graphic | [`examples/kite`](examples/kite) |
 | Websites and projects | OG/link previews, README cards, GitHub social preview | [`examples/snap-x`](examples/snap-x), [`examples/open-notifier`](examples/open-notifier), [`examples/heyreach`](examples/heyreach) |
-| E-commerce / marketing | sale and promo banners, Instagram posts and stories | [`examples/storefront`](examples/storefront) |
+| E-commerce / marketing | sale and promo banners, Instagram posts and stories, seasonal/festival posters | [`examples/storefront`](examples/storefront), [`examples/food-app-banners`](examples/food-app-banners), [`examples/diwali-poster`](examples/diwali-poster) |
 
 ## FAQ
 
@@ -185,7 +185,7 @@ Tools: `render_designs`, `check_designs`, `preview_guides`, `list_formats`. The 
 
 ## Examples
 
-[`examples/`](examples) has complete packs made with the skill: snap-x itself, Open Notifier, HeyReach, a LinkedIn cover, an App Store/Play Store listing pack, a fictional e-commerce brand, a fictional YouTube series, and a JSX/TSX feature demo — each built from a repo, a site, or a written brief. Each has its designs, assets, plan and output. Regenerate all with `npm run examples`; `npm run examples:diff` checks every committed image still matches a fresh render (a pure-JS pixel diff — CI runs it on every push). [`templates/`](templates) has six brand-neutral starter designs (an "edit these values" block at the top of each) if you'd rather start from a template than write one from scratch. Made something with snap-x? Add it to [SHOWCASE.md](SHOWCASE.md).
+[`examples/`](examples) has complete packs made with the skill: snap-x itself, Open Notifier, HeyReach, a LinkedIn cover, an App Store/Play Store listing pack, a fictional e-commerce brand, a fictional YouTube series, a JSX/TSX feature demo, a festival greeting poster, and a food-delivery promo banner set — each built from a repo, a site, or a written brief. Each has its designs, assets, plan and output. Regenerate all with `npm run examples`; `npm run examples:diff` checks every committed image still matches a fresh render (a pure-JS pixel diff — CI runs it on every push). [`templates/`](templates) has six brand-neutral starter designs (an "edit these values" block at the top of each) if you'd rather start from a template than write one from scratch. Made something with snap-x? Add it to [SHOWCASE.md](SHOWCASE.md).
 
 ## Packages
 

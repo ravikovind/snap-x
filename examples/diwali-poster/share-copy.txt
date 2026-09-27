@@ -1,0 +1,7 @@
+Diwali poster - image pack (generated with /snap-x)
+
+diwali-poster.png (1080x1350) -> festival greeting poster / Instagram feed post
+
+Regenerate: node packages/core/src/cli.mjs render designs/*.mjs --out .
+Note: "VoltVave Innovations" and "voltvave.com" are fictional placeholders invented for this test pack,
+not a real company or resolvable domain. No real logo — plain text wordmark only.

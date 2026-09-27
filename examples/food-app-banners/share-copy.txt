@@ -1,0 +1,11 @@
+Food app banners - image pack (generated with /snap-x)
+
+banner-1-red.png        (1200x480) -> red/orange theme
+banner-2-teal.png       (1200x480) -> teal theme
+banner-3-purple.png     (1200x480) -> purple theme
+banner-4-gold-green.png (1200x480) -> gold/green theme
+
+One shared template (designs/_base.mjs), 4 color-theme entry files -> 4 outputs.
+Regenerate: node packages/core/src/cli.mjs render designs/*.mjs --out .
+Note: generic, unbranded offer banner (no logo/domain shown). pasta-photo.jpg's license is unverified —
+see assets/SOURCES.md before using this pack publicly.

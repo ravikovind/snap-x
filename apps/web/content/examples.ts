@@ -10,4 +10,6 @@ export const EXAMPLES = [
   { name: "storefront", title: "A fictional e-commerce brand", body: "One template, three products — sale banners, an Instagram post and a story.", image: "/examples/storefront.png" },
   { name: "creator-series", title: "A fictional YouTube channel", body: "One template, VARIANTS per episode — an episode-thumbnail series.", image: "/examples/creator-series.png" },
   { name: "jsx-demo", title: "JSX/TSX feature demo", body: "The same design-file contract, written in JSX and TSX instead of plain .mjs.", image: "/examples/jsx-demo.png" },
+  { name: "diwali-poster", title: "A festival greeting poster", body: "A Diwali greeting poster for a fictional company — a different visual style from the rest of these packs.", image: "/examples/diwali-poster.png" },
+  { name: "food-app-banners", title: "A food-delivery promo banner set", body: "One shared template, four color themes — a generic \"50% off\" offer banner.", image: "/examples/food-app-banners.png" },
 ];
