@@ -2,15 +2,16 @@
 /**
  * snap-x MCP Server
  *
- * Exposes snap-x's render-only Satori pipeline as MCP tools.
- * Compatible with Cursor, Windsurf, Claude Desktop, and any MCP client.
+ * Branded graphics for every platform, made by your AI agent — exposed as
+ * MCP tools. Compatible with Cursor, Windsurf, Claude Desktop, and any MCP
+ * client.
  *
  * There's no config or auto-detection here: the calling agent writes
  * self-contained .mjs design files (FORMAT, optional FONTS, a zero-arg
  * default export) and hands their paths to these tools to render.
  *
  * Tools:
- *   - render_designs   render one or more .mjs design files to PNG
+ *   - render_designs   render one or more .mjs design files into platform-ready PNGs
  *   - check_designs    validate one or more .mjs design files
  *   - preview_guides   draw a platform's danger zones over designs (profile-photo overlap, crops, safe area)
  *   - list_formats     platform formats: sizes, no-alpha rules, placement zones (YouTube, X, LinkedIn, Play, App Store …)
@@ -48,7 +49,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "render_designs",
       description:
-        "Render one or more self-contained Satori .mjs design files to PNG (pure Node.js, no browser). Each file must export FORMAT ({width, height, name?}) and a default export (a Satori tree object, or a zero-argument function returning one). Optionally exports FONTS ([{family, weights?}]) — defaults to Inter 400/700/900 if omitted. Read the resource snap-x://design-guide (or use the design_cards prompt) for the design rules before writing files.",
+        "Render one or more self-contained Satori .mjs design files into platform-ready branded graphics (pure Node.js, no browser) — thumbnails, covers, banners, store screenshots, OG cards, at exact platform sizes. Each file must export FORMAT ({width, height, name?}) and a default export (a Satori tree object, or a zero-argument function returning one). Optionally exports FONTS ([{family, weights?}]) — defaults to Inter 400/700/900 if omitted. Read the resource snap-x://design-guide (or use the design_cards prompt) for the design rules before writing files.",
       inputSchema: {
         type: "object",
         properties: {
@@ -68,7 +69,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "check_designs",
       description:
-        "Validate one or more Satori .mjs design files before rendering: structural rules (display:flex only, no z-index/position:fixed/grid) plus an actual Satori render attempt to catch runtime-only errors.",
+        "Validate one or more Satori .mjs design files before rendering a branded graphic: structural rules (display:flex only, no z-index/position:fixed/grid) plus an actual Satori render attempt to catch runtime-only errors and characters the font can't draw.",
       inputSchema: {
         type: "object",
         properties: {
@@ -84,7 +85,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "preview_guides",
       description:
-        "Draw a platform format's danger zones over each design and write <name>.guides.png (red = avoid, dashed cyan = safe area) plus <name>.mobile.png when the platform crops on phones. Use it for banners and covers (LinkedIn, X, YouTube channel art), story-size posters and thumbnails to check that text isn't under a profile photo, duration badge or cropped edge. The format is matched from each design's FORMAT size, or pass `format`.",
+        "Verify a branded graphic is correct for its platform: draw the platform format's danger zones over each design and write <name>.guides.png (red = avoid, dashed cyan = safe area) plus <name>.mobile.png when the platform crops on phones. Use it for banners and covers (LinkedIn, X, YouTube channel art), story-size posters and thumbnails to check that text isn't under a profile photo, duration badge or cropped edge. The format is matched from each design's FORMAT size, or pass `format`.",
       inputSchema: {
         type: "object",
         properties: {
@@ -98,7 +99,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "list_formats",
       description:
-        "Platform image formats snap-x knows: id, size, whether the platform forbids an alpha channel (App Store / Google Play — set FORMAT.alpha = false), notes, and placement zones. Covers link previews, YouTube thumbnails and channel art, X/LinkedIn/Instagram covers and posts, Google Play graphics and screenshots, and App Store screenshots. Pass `format` for one format's full details. Any FORMAT {width, height} is still valid.",
+        "The platform formats snap-x makes branded graphics for: id, exact size, whether the platform forbids an alpha channel (App Store / Google Play — set FORMAT.alpha = false), notes, and placement zones. Covers link previews, YouTube thumbnails and channel art, X/LinkedIn/Instagram covers and posts, Google Play graphics and screenshots, and App Store screenshots. Pass `format` for one format's full details, including its placement zones. Any FORMAT {width, height} is still valid for a size this list doesn't cover.",
       inputSchema: {
         type: "object",
         properties: { format: { type: "string", description: "A format id, alias or WxH (e.g. app-store-iphone-6.9, thumbnail, 1584x396)." } },
@@ -244,7 +245,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 server.setRequestHandler(ListPromptsRequestSchema, async () => ({
   prompts: [{
     name: "design_cards",
-    description: "Design and render branded images (OG/README cards, banners, posters) for a project, website or brief, following the snap-x design guide.",
+    description: "Design and render branded graphics for every platform — YouTube thumbnails, LinkedIn/X covers, store screenshots, e-commerce banners, OG/README cards — for a project, website or brief, following the snap-x design guide.",
     arguments: [
       { name: "source", description: "The repo path, website URL, or a written brief to make images for.", required: true },
       { name: "formats", description: "Which images to make, e.g. \"OG 1200x630 and README card 1280x640\". Default: whatever the project needs.", required: false },
