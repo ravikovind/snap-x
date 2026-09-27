@@ -103,6 +103,8 @@ Paths can be a file, a directory, or a `*` glob. Files starting with `_` are sha
 
 **`--scale <n>`** (on `render` and `check`) renders sharp at n× resolution — the design's layout is unchanged; only the raster output grows, the same way a browser re-renders an SVG sharply at any zoom. Output is named `<name>@<n>x.png` (e.g. `og@2x.png`).
 
+**`render` renders concurrently by default** — a small `worker_threads` pool sized to your CPU count (measured ~2× faster on a 6-file pack with large images). Console output always lists files in their original order regardless of which finishes first, and a failing file is reported without stopping the others. `--jobs 1` renders one file at a time on the main thread, exactly as before this existed; `--jobs <n>` picks any other pool size.
+
 ### A design file
 
 `.jsx` and `.tsx` work too — same rules, transformed at load time (esbuild, no React), and usually easier to read:

@@ -1,5 +1,6 @@
 // Programmatic API — the CLI (cli.mjs) is a thin wrapper over these same functions.
 export { renderDesign, resolveVariants } from './render.mjs';
+export { renderPool, defaultJobs } from './pool.mjs';
 export { loadEmoji, emojiCode } from './emoji.mjs';
 export { checkDesign } from './check.mjs';
 export { resolveFonts, loadGoogleFont, resetFontCache, collectFontsSpec } from './fonts.mjs';

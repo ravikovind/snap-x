@@ -136,6 +136,61 @@ test("--scale rejects non-integers and values below 1", () => {
   }
 });
 
+test("--jobs rejects non-integers and values below 1", () => {
+  for (const bad of ["0", "-1", "1.5", "abc"]) {
+    const r = run("render", "designs/og.mjs", "--jobs", bad);
+    assert.equal(r.status, 1, bad);
+    assert.match(r.stderr, /--jobs must be a positive integer/);
+  }
+});
+
+needsFonts("render with default --jobs (parallel) produces byte-identical output to --jobs 1", async () => {
+  const seq = run("render", "designs/*.mjs", "--out", "out-jobs-seq", "--jobs", "1");
+  assert.equal(seq.status, 0, seq.stdout + seq.stderr);
+  const par = run("render", "designs/*.mjs", "--out", "out-jobs-par"); // default: CPU-count-based
+  assert.equal(par.status, 0, par.stdout + par.stderr);
+  assert.match(par.stdout, /\(\d+ jobs?\)/);
+
+  for (const name of ["og.png", "thumb.png"]) {
+    const [a, b] = await Promise.all([
+      fs.readFile(path.join(dir, "out-jobs-seq", name)),
+      fs.readFile(path.join(dir, "out-jobs-par", name)),
+    ]);
+    assert.deepEqual(a, b, `${name} differs between --jobs 1 and the default pool`);
+  }
+});
+
+needsFonts("render logs stay in file order under the parallel pool, even with a VARIANTS design mixed in", async () => {
+  await writeFiles(dir, {
+    "designs/a-og.mjs": validDesign({ name: "a-og.png", width: 100, height: 60 }),
+    "designs/b-series.mjs": `export const FORMAT = { width: 40, height: 30, name: "b-series.png" };
+export const VARIANTS = [{ id: "1" }, { id: "2" }];
+export default function () { return { type: "div", props: { style: { display: "flex" }, children: [] } }; }`,
+    "designs/c-thumb.mjs": validDesign({ name: "c-thumb.png", width: 90, height: 50 }),
+  });
+  const r = run("render", "designs/a-og.mjs", "designs/b-series.mjs", "designs/c-thumb.mjs", "--out", "out-jobs-order", "--jobs", "3");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  // onResult is chained in index order regardless of which worker finishes first (pool.mjs) — the
+  // ✅ lines must therefore list a-og before b-series's rows before c-thumb, every run.
+  const lines = r.stdout.split("\n").filter((l) => l.includes("✅"));
+  const order = lines.map((l) => l.trim().split(/\s+/)[1]);
+  assert.deepEqual(order, ["a-og.png", "b-series-1.png", "b-series-2.png", "c-thumb.png"]);
+});
+
+needsFonts("render's parallel pool reports a bad file without aborting the others, and exits 1", async () => {
+  await writeFiles(dir, {
+    "designs/good1.mjs": validDesign({ name: "good1.png" }),
+    "designs/zzz-bad.mjs": `export const FORMAT = { width: 10, height: 10 };
+export default function () { throw new Error("boom"); }`,
+    "designs/good2.mjs": validDesign({ name: "good2.png" }),
+  });
+  const r = run("render", "designs/good1.mjs", "designs/zzz-bad.mjs", "designs/good2.mjs", "--out", "out-jobs-fail", "--jobs", "3");
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /❌\s+zzz-bad\.mjs.*boom/);
+  await fs.access(path.join(dir, "out-jobs-fail", "good1.png"));
+  await fs.access(path.join(dir, "out-jobs-fail", "good2.png"));
+});
+
 needsFonts("render --scale 2 writes a sharp 2x PNG named og@2x.png", async () => {
   const r = run("render", "designs/og.mjs", "--out", "out-scale", "--scale", "2");
   assert.equal(r.status, 0, r.stdout + r.stderr);
@@ -233,7 +288,9 @@ export default function () { return { type: "div", props: { style: { display: "f
   });
   const r = run("render", "designs/series2.mjs", "--out", "out-only-miss", "--only", "nope");
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /--only nope matched no VARIANTS row/);
+  // render's pool (10.7) catches every per-file error and reports it as a clean stdout line instead
+  // of letting it throw uncaught to stderr — this file's error is one of those, same as any other.
+  assert.match(r.stdout, /❌\s+series2\.mjs.*--only nope matched no VARIANTS row/);
 });
 
 test("VARIANTS: check names the failing row and doesn't abort the others", async () => {

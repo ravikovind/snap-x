@@ -74,11 +74,11 @@ const splitExt = (name) => {
   return [ext ? name.slice(0, -ext.length) : name, ext];
 };
 
-async function writeOne(outDir, outName, tree, format, fonts, scale) {
+async function writeOne(outDir, outName, tree, format, fonts, scale, log) {
   const png = await renderTree(tree, format, fonts, { scale });
   const outPath = path.join(outDir, outName);
   await fs.writeFile(outPath, png);
-  console.log(`  ✅  ${outName}  (${Math.round(png.length / 1024)} KB)${format.alpha === false ? "  no alpha" : ""}`);
+  log(`  ✅  ${outName}  (${Math.round(png.length / 1024)} KB)${format.alpha === false ? "  no alpha" : ""}`);
   return outPath;
 }
 
@@ -90,8 +90,10 @@ async function writeOne(outDir, outName, tree, format, fonts, scale) {
  *   `<name-stem>-<id>.<ext>` (a row's optional `format.name` is used exactly as given instead) — returns
  *   an array of paths, one per row, in VARIANTS order. `only` (an array of ids) renders just those rows;
  *   it's ignored for a design without VARIANTS.
+ * - `log` (default `console.log`) receives each file's progress line; pass a no-op to render quietly
+ *   (used by pool.mjs's worker threads, whose own stdout would otherwise print out of order).
  */
-export async function renderDesign(designPath, outDir, fonts, { scale = 1, only } = {}) {
+export async function renderDesign(designPath, outDir, fonts, { scale = 1, only, log = console.log } = {}) {
   const mod = await loadDesignModule(designPath);
 
   if (!mod.FORMAT) throw new Error(`${path.basename(designPath)}: missing export FORMAT`);
@@ -101,7 +103,7 @@ export async function renderDesign(designPath, outDir, fonts, { scale = 1, only 
   const variants = await resolveVariants(mod);
 
   if (!variants) {
-    return writeOne(outDir, withScaleSuffix(baseName, scale), await resolveTree(mod), mod.FORMAT, fonts, scale);
+    return writeOne(outDir, withScaleSuffix(baseName, scale), await resolveTree(mod), mod.FORMAT, fonts, scale, log);
   }
 
   const rows = only ? variants.filter((r) => only.includes(r.id)) : variants;
@@ -114,7 +116,7 @@ export async function renderDesign(designPath, outDir, fonts, { scale = 1, only 
   for (const row of rows) {
     const rowFormat = { ...mod.FORMAT, ...(row.format ?? {}) };
     const rowName = withScaleSuffix(row.format?.name ?? `${stem}-${row.id}${ext}`, scale);
-    outPaths.push(await writeOne(outDir, rowName, await resolveTree(mod, row), rowFormat, fonts, scale));
+    outPaths.push(await writeOne(outDir, rowName, await resolveTree(mod, row), rowFormat, fonts, scale, log));
   }
   return outPaths;
 }

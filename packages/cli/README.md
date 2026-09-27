@@ -12,6 +12,7 @@ npx @snap-x/cli render designs/*.mjs --out snap-output
 npm install -g @snap-x/cli
 snap-x render designs/*.mjs --out snap-output
 snap-x render designs/*.mjs --scale 2   # sharp @2x, no upscaling
+snap-x render designs/*.mjs --jobs 1    # one file at a time (default: your CPU count, concurrent)
 snap-x watch  designs/*.mjs --guides    # re-render on save, local preview page
 ```
 

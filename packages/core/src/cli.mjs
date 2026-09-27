@@ -2,7 +2,7 @@
 /**
  * snap-x CLI.
  *
- *   snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>]   design .mjs → PNG via Satori
+ *   snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>] [--jobs <n>]   design .mjs → PNG via Satori
  *   snap-x check   <paths...> [--scale <n>]                 validate design .mjs files
  *   snap-x guides  <paths...> [--format <id>] [--out <dir>] draw a platform's danger zones over each design
  *   snap-x formats [id|WxH] [--json]                        list platform formats, sizes and placement zones
@@ -21,7 +21,7 @@ import { resolveDesignFiles } from "./resolve.mjs";
 
 const rawArgs = process.argv.slice(2);
 const SUBCMDS = ["render", "check", "guides", "formats", "watch"];
-const VALUE_FLAGS = new Set(["--out", "--format", "--scale", "--only", "--port"]);
+const VALUE_FLAGS = new Set(["--out", "--format", "--scale", "--only", "--port", "--jobs"]);
 
 const flags = new Map();
 const positional = [];
@@ -41,6 +41,17 @@ function getOnly() {
   return raw ? raw.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
 }
 
+function getJobs() {
+  const raw = get("--jobs");
+  if (raw === null) return undefined; // let the pool pick its own CPU-count-based default
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1) {
+    console.error(`  --jobs must be a positive integer, got "${raw}"\n`);
+    process.exit(1);
+  }
+  return n;
+}
+
 function getScale() {
   const raw = get("--scale");
   if (raw === null) return 1;
@@ -56,7 +67,7 @@ const HELP = `
   snap-x — render self-contained Satori .mjs design files to PNG (no browser)
 
   Usage
-    snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>]   render designs to PNG (default --out ./snap-output)
+    snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>] [--jobs <n>]   render designs to PNG (default --out ./snap-output)
     snap-x check   <paths...> [--scale <n>]                  validate designs (structure, real render, blank-box glyphs)
     snap-x guides  <paths...> [--format <id>] [--out <dir>]  overlay a platform's danger zones (+ mobile crop) on each design
     snap-x formats [id|WxH] [--json]                         list platform formats (YouTube, X, LinkedIn, Play Store, App Store …)
@@ -70,6 +81,11 @@ const HELP = `
   --scale <n>  renders sharp at n× resolution (Satori's layout is unchanged; only the raster output grows).
                Output is named "<name>@<n>x.png" unless n is 1. check --scale <n> also verifies resvg
                can encode the design at that size.
+
+  render's --jobs <n> renders that many files concurrently in a small worker_threads pool (default:
+               your CPU count). --jobs 1 renders one file at a time on the main thread, as before this
+               existed. Console output always lists files in their original order either way, and a
+               failing file is reported without stopping the others.
 
   A design can export VARIANTS = [{ id, ... }, ...] (or an async function returning that) to render many
   images from one file — the default export is called once per row, output named "<name>-<id>.png".
@@ -167,6 +183,7 @@ async function runRender(files) {
   const outDir = path.resolve(get("--out") ?? "./snap-output");
   const scale = getScale();
   const only = getOnly();
+  const jobs = getJobs();
   await fs.mkdir(outDir, { recursive: true });
 
   const { resolveFonts, resetFontCache, collectFontsSpec } = await import("./fonts.mjs");
@@ -175,14 +192,30 @@ async function runRender(files) {
   const fontsSpec = await collectFontsSpec(files);
   const fonts = await resolveFonts(fontsSpec);
 
-  console.log(`\n  Rendering ${files.length} file(s) → ${outDir}/${scale !== 1 ? `  (--scale ${scale})` : ""}${only ? `  (--only ${only.join(",")})` : ""}\n`);
+  const { renderPool, defaultJobs } = await import("./pool.mjs");
+  const activeJobs = Math.max(1, Math.min(jobs ?? defaultJobs(), files.length));
+  console.log(`\n  Rendering ${files.length} file(s) → ${outDir}/  (${activeJobs} job${activeJobs === 1 ? "" : "s"})${scale !== 1 ? `  (--scale ${scale})` : ""}${only ? `  (--only ${only.join(",")})` : ""}\n`);
 
-  const { renderDesign } = await import("./render.mjs");
-  for (const f of files) {
-    await renderDesign(f, outDir, fonts, { scale, only });
-  }
+  let failed = false;
+  await renderPool(files, outDir, fonts, {
+    scale, only, jobs,
+    onResult: async (i, r) => {
+      const name = path.basename(files[i]);
+      if (!r.ok) {
+        failed = true;
+        console.log(`  ❌  ${name}: ${r.error}`);
+        return;
+      }
+      for (const p of Array.isArray(r.result) ? r.result : [r.result]) {
+        const buf = await fs.readFile(p);
+        // IHDR colour type at byte 25: 2 = RGB (opaque, FORMAT.alpha: false), 6 = RGBA — see png.test.mjs
+        console.log(`  ✅  ${path.basename(p)}  (${Math.round(buf.length / 1024)} KB)${buf[25] === 2 ? "  no alpha" : ""}`);
+      }
+    },
+  });
 
-  console.log(`\n  Done.\n`);
+  console.log(failed ? `\n  Some files failed to render (see above).\n` : `\n  Done.\n`);
+  if (failed) process.exit(1);
 }
 
 // ─── check ───────────────────────────────────────────────────────────────────

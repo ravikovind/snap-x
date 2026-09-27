@@ -27,12 +27,16 @@ snap-x render               →  design function → Satori (SVG) → resvg (PNG
 Detailed render path:
 
 ```
-snap-x render <paths...> [--out <dir>] [--scale <n>] [--only <id,id>]
+snap-x render <paths...> [--out <dir>] [--scale <n>] [--only <id,id>] [--jobs <n>]
   ├── resolveDesignFiles(paths)     expand literal files / directories / `*` globs to a flat design list
   │                                 (.mjs, .jsx, .tsx — files starting with `_` always skipped)
   ├── collectFontsSpec(files)       read each file's FONTS export, merge into one spec
   ├── resolveFonts(spec)            fetch + cache Google Fonts (dedup by family+weight; falls back to Inter on failure)
-  └── for each design file:
+  ├── renderPool(files, ...)        spreads files across `jobs` worker_threads (default: CPU count;
+  │                                 jobs=1 → the sequential path below, no threads spun up) — see pool.mjs.
+  │                                 onResult fires once per file in *original file order* regardless of
+  │                                 which worker actually finishes first, so console output stays deterministic
+  └── for each design file (inside a worker thread when jobs>1, the main thread when jobs=1):
         loadDesignModule(designPath)  dynamic ESM import (once per file version); .jsx/.tsx are
                                       transformed with esbuild first, against jsx-runtime.mjs (no React)
         resolveVariants(mod)        undefined (no VARIANTS) → one row; else the validated VARIANTS rows
@@ -55,7 +59,7 @@ snap-x render <paths...> [--out <dir>] [--scale <n>] [--only <id,id>]
 
 ```
 snap-x check   <paths...> [--scale <n>]
-snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>]
+snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>] [--jobs <n>]
 snap-x guides  <paths...> [--format <id>] [--out <dir>]    danger-zone overlay + mobile crop (default --out ./snap-guides)
 snap-x formats [id|WxH] [--json]                           platform formats, sizes, no-alpha rules, limits, zones
 snap-x watch   <paths...> [--out <dir>] [--guides] [--port <n>]   dev tool — re-render on save, local preview page
@@ -72,6 +76,7 @@ snap-x --help | --version
 | `--out` | `./snap-output` (render/watch) · `./snap-guides` (guides) | Output directory |
 | `--scale` | `1` | Render/check at n× resolution — sharp, not upscaled; output named `<name>@nx.png` |
 | `--only` | every row | `render` only: a comma-separated list of `VARIANTS` row ids to render (ignored for a design without `VARIANTS`) |
+| `--jobs` | your CPU count | `render` only: how many files to render concurrently (`worker_threads`); `1` = the pre-pool sequential path |
 | `--format` | inferred from `FORMAT` size | Format id for `guides` (see `snap-x formats`) |
 | `--guides` | off | `watch` only: also run the placement check on every change |
 | `--port` | any free port | `watch` only: fix the preview server's port |
@@ -357,6 +362,8 @@ snap-x/
 │   │   │   ├── load.mjs          imports a design once per file version (mtime-keyed); .jsx/.tsx via esbuild
 │   │   │   ├── jsx-runtime.mjs   the no-React JSX factory .jsx/.tsx compile against
 │   │   │   ├── watch.mjs         dev tool: re-render on change + a local preview page (fs.watch + http)
+│   │   │   ├── pool.mjs          render's default: a small worker_threads pool (--jobs 1 → sequential)
+│   │   │   ├── render-worker.mjs one pool thread — renders quietly; pool.mjs prints in file order
 │   │   │   ├── fonts.mjs         Google Fonts loader/cache, FONTS-spec resolution
 │   │   │   ├── fallback.mjs      per-design script fallback fonts (CJK, Arabic, …)
 │   │   │   ├── glyphs.mjs        which characters no loaded font can draw (used by check)

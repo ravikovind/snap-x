@@ -17,6 +17,8 @@ await renderDesign(files[0], "snap-output", fonts);
 await renderDesign(files[0], "snap-output", fonts, { scale: 2 }); // sharp @2x → og@2x.png
 ```
 
+`renderPool(files, outDir, fonts, { jobs, onResult })` renders several files concurrently in a small `worker_threads` pool (default: your CPU count; `jobs: 1` renders sequentially, same as calling `renderDesign` in a loop). `onResult(index, result)` fires once per file, always in `files`' original order regardless of which finishes first.
+
 A design file exports `FORMAT`, optionally `FONTS`, and a zero-argument default export (a Satori tree, or a function returning one). `.mjs`, `.jsx` and `.tsx` all work — JSX/TSX are transformed at load time (esbuild, no React).
 
 ```js
