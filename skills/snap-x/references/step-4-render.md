@@ -40,7 +40,7 @@ It writes `<name>.guides.png` (your design with the platform's danger zones in r
 
 ### `@2x` exports
 
-A second design file that wraps the same tree in a `width×2` / `height×2` root with an inner box `transform: "scale(2)"`, `transformOrigin: "top left"` — vector-sharp, no upscaling.
+`snap-x render designs/*.mjs --scale 2` renders the same design sharp at 2× (resvg re-rasterizes the same vector output at the larger size — no upscaling), writing `<name>@2x.png`. `snap-x check --scale 2` also verifies resvg can encode the design at that size. No second design file needed; only reach for a manual `width×2` / `height×2` root with `transform: "scale(2)"` if a size genuinely needs a *different* layout, not just a sharper export.
 
 ## share-copy.txt
 

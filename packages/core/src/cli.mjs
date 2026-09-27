@@ -2,8 +2,8 @@
 /**
  * snap-x CLI.
  *
- *   snap-x render  <paths...> [--out <dir>]                 design .mjs → PNG via Satori
- *   snap-x check   <paths...>                               validate design .mjs files
+ *   snap-x render  <paths...> [--out <dir>] [--scale <n>]   design .mjs → PNG via Satori
+ *   snap-x check   <paths...> [--scale <n>]                 validate design .mjs files
  *   snap-x guides  <paths...> [--format <id>] [--out <dir>] draw a platform's danger zones over each design
  *   snap-x formats [id|WxH] [--json]                        list platform formats, sizes and placement zones
  *
@@ -20,7 +20,7 @@ import { resolveDesignFiles } from "./resolve.mjs";
 
 const rawArgs = process.argv.slice(2);
 const SUBCMDS = ["render", "check", "guides", "formats"];
-const VALUE_FLAGS = new Set(["--out", "--format"]);
+const VALUE_FLAGS = new Set(["--out", "--format", "--scale"]);
 
 const flags = new Map();
 const positional = [];
@@ -35,12 +35,23 @@ const has = (f) => flags.has(f);
 const sub = SUBCMDS.includes(positional[0]) ? positional[0] : null;
 const patterns = sub ? positional.slice(1) : positional;
 
+function getScale() {
+  const raw = get("--scale");
+  if (raw === null) return 1;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1) {
+    console.error(`  --scale must be a positive integer, got "${raw}"\n`);
+    process.exit(1);
+  }
+  return n;
+}
+
 const HELP = `
   snap-x — render self-contained Satori .mjs design files to PNG (no browser)
 
   Usage
-    snap-x render  <paths...> [--out <dir>]                  render designs to PNG (default --out ./snap-output)
-    snap-x check   <paths...>                                validate designs (structure, real render, blank-box glyphs)
+    snap-x render  <paths...> [--out <dir>] [--scale <n>]    render designs to PNG (default --out ./snap-output)
+    snap-x check   <paths...> [--scale <n>]                  validate designs (structure, real render, blank-box glyphs)
     snap-x guides  <paths...> [--format <id>] [--out <dir>]  overlay a platform's danger zones (+ mobile crop) on each design
     snap-x formats [id|WxH] [--json]                         list platform formats (YouTube, X, LinkedIn, Play Store, App Store …)
 
@@ -48,6 +59,10 @@ const HELP = `
 
   A design file exports FORMAT = { width, height, name, alpha? }, optionally FONTS, and a zero-argument default export.
   Set alpha: false for App Store / Google Play graphics (they must have no alpha channel).
+
+  --scale <n>  renders sharp at n× resolution (Satori's layout is unchanged; only the raster output grows).
+               Output is named "<name>@<n>x.png" unless n is 1. check --scale <n> also verifies resvg
+               can encode the design at that size.
 
   Options   -h, --help   show this help      -v, --version   print the version
 `;
@@ -134,6 +149,7 @@ async function runGuides(files) {
 
 async function runRender(files) {
   const outDir = path.resolve(get("--out") ?? "./snap-output");
+  const scale = getScale();
   await fs.mkdir(outDir, { recursive: true });
 
   const { resolveFonts, resetFontCache, collectFontsSpec } = await import("./fonts.mjs");
@@ -142,11 +158,11 @@ async function runRender(files) {
   const fontsSpec = await collectFontsSpec(files);
   const fonts = await resolveFonts(fontsSpec);
 
-  console.log(`\n  Rendering ${files.length} file(s) → ${outDir}/\n`);
+  console.log(`\n  Rendering ${files.length} file(s) → ${outDir}/${scale !== 1 ? `  (--scale ${scale})` : ""}\n`);
 
   const { renderDesign } = await import("./render.mjs");
   for (const f of files) {
-    await renderDesign(f, outDir, fonts);
+    await renderDesign(f, outDir, fonts, { scale });
   }
 
   console.log(`\n  Done.\n`);
@@ -155,6 +171,7 @@ async function runRender(files) {
 // ─── check ───────────────────────────────────────────────────────────────────
 
 async function runCheck(files) {
+  const scale = getScale();
   const { resolveFonts, resetFontCache, collectFontsSpec } = await import("./fonts.mjs");
   resetFontCache();
 
@@ -170,7 +187,7 @@ async function runCheck(files) {
   let allOk = true;
 
   for (const f of files) {
-    const result = await checkDesign(f, { fonts });
+    const result = await checkDesign(f, { fonts, scale });
     if (result.errors.length === 0) {
       console.log(`  ✅  ${path.basename(f)}`);
     } else {

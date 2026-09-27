@@ -24,8 +24,11 @@ const UNSUPPORTED_PROPS = ["zIndex", "z-index"];
  * @param {object[]} [opts.fonts]  Resolved Satori fonts — when provided, the tree is actually
  *   rendered through Satori to catch runtime-only errors (bad image data, unsupported values)
  *   that pure structural checks miss. Omitted → structural checks only (no network needed).
+ * @param {number} [opts.scale]  When > 1, also renders the full Satori + resvg pipeline at that
+ *   raster size (see render.mjs), catching resvg-side failures a large --scale can hit that the
+ *   Satori-only check above can't see.
  */
-export async function checkDesign(designPath, { fonts } = {}) {
+export async function checkDesign(designPath, { fonts, scale = 1 } = {}) {
   const errors = [];
   const warnings = [];
 
@@ -93,6 +96,15 @@ export async function checkDesign(designPath, { fonts } = {}) {
       });
     } catch (err) {
       errors.push(`Satori render failed: ${err.message}`);
+    }
+
+    if (scale !== 1 && errors.length === 0) {
+      try {
+        const { renderTree } = await import("./render.mjs");
+        await renderTree(tree, mod.FORMAT, fonts, { scale });
+      } catch (err) {
+        errors.push(`Render at --scale ${scale} failed: ${err.message}`);
+      }
     }
   }
 

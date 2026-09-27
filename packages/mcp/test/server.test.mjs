@@ -123,6 +123,24 @@ needsFonts("render_designs writes a real PNG named by FORMAT.name into outDir", 
   assert.equal(png.readUInt32BE(20), 80);
 });
 
+needsFonts("render_designs with scale:2 writes a sharp 2x PNG named <name>@2x.png", async () => {
+  const outDir = path.join(dir, "out-scale");
+  const r = await call("render_designs", { files: [path.join(dir, "ok.mjs")], outDir, scale: 2 });
+  assert.ok(!r.isError, text(r));
+  assert.match(text(r), /ok@2x\.png/);
+  const png = await fs.readFile(path.join(outDir, "ok@2x.png"));
+  assert.equal(png.readUInt32BE(16), 400); // 200 * 2
+  assert.equal(png.readUInt32BE(20), 160); // 80 * 2
+});
+
+test("render_designs rejects a non-integer or sub-1 scale", async () => {
+  for (const scale of [0, -1, 1.5]) {
+    const r = await call("render_designs", { files: [path.join(dir, "ok.mjs")], scale });
+    assert.ok(r.isError, `scale ${scale} should be rejected`);
+    assert.match(text(r), /scale must be a positive integer/);
+  }
+});
+
 needsFonts("preview_guides writes a guides overlay and a mobile crop for a LinkedIn-size design", async () => {
   const outDir = path.join(dir, "guides");
   const r = await call("preview_guides", { files: [path.join(dir, "li.mjs")], outDir });

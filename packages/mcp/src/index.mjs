@@ -62,6 +62,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
             type: "string",
             description: "Output directory for the rendered PNGs. Defaults to ./snap-output next to the first file.",
           },
+          scale: {
+            type: "integer",
+            description: "Render at n× resolution for a sharp @2x/@3x export (Satori's layout is unchanged; only the raster output grows). Output files are named \"<name>@<n>x.png\". Defaults to 1.",
+          },
         },
         required: ["files"],
       },
@@ -195,6 +199,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return { content: [{ type: "text", text: "No files provided." }], isError: true };
     }
     const outDir = args.outDir ?? path.join(path.dirname(files[0]), "snap-output");
+    const scale = args.scale ?? 1;
+    if (!Number.isInteger(scale) || scale < 1) {
+      return { content: [{ type: "text", text: `scale must be a positive integer, got ${JSON.stringify(args.scale)}.` }], isError: true };
+    }
 
     try {
       await fs.mkdir(outDir, { recursive: true });
@@ -205,7 +213,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       const outPaths = [];
       for (const f of files) {
-        outPaths.push(await renderDesign(f, outDir, fonts));
+        outPaths.push(await renderDesign(f, outDir, fonts, { scale }));
       }
 
       return {

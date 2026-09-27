@@ -14,6 +14,7 @@ import { renderDesign, checkDesign, resolveFonts, collectFontsSpec } from "@snap
 const files = ["designs/og.mjs"];
 const fonts = await resolveFonts(await collectFontsSpec(files));
 await renderDesign(files[0], "snap-output", fonts);
+await renderDesign(files[0], "snap-output", fonts, { scale: 2 }); // sharp @2x → og@2x.png
 ```
 
 A design file exports `FORMAT`, optionally `FONTS`, and a zero-argument default export (a Satori tree, or a function returning one):

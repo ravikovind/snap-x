@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import { makeTmpDir, writeFiles, validDesign, isolateCache } from "./helpers.mjs";
+import { withScaleSuffix } from "../src/render.mjs";
 
 const CLI = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../src/cli.mjs");
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
@@ -118,6 +119,50 @@ needsFonts("rendered image has the FORMAT dimensions", async () => {
   const png = await fs.readFile(path.join(dir, "out-dim", "og.png"));
   assert.equal(png.readUInt32BE(16), 300);
   assert.equal(png.readUInt32BE(20), 150);
+});
+
+test("withScaleSuffix: 1 is unchanged, >1 inserts @NxEXT, and it handles no-extension names", () => {
+  assert.equal(withScaleSuffix("og.png", 1), "og.png");
+  assert.equal(withScaleSuffix("og.png", 2), "og@2x.png");
+  assert.equal(withScaleSuffix("og.png", 3), "og@3x.png");
+  assert.equal(withScaleSuffix("noext", 2), "noext@2x");
+});
+
+test("--scale rejects non-integers and values below 1", () => {
+  for (const bad of ["0", "-1", "1.5", "abc"]) {
+    const r = run("render", "designs/og.mjs", "--scale", bad);
+    assert.equal(r.status, 1, bad);
+    assert.match(r.stderr, /--scale must be a positive integer/);
+  }
+});
+
+needsFonts("render --scale 2 writes a sharp 2x PNG named og@2x.png", async () => {
+  const r = run("render", "designs/og.mjs", "--out", "out-scale", "--scale", "2");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const png = await fs.readFile(path.join(dir, "out-scale", "og@2x.png"));
+  assert.deepEqual(png.subarray(0, 8), PNG_SIGNATURE);
+  assert.equal(png.readUInt32BE(16), 600); // 300 * 2
+  assert.equal(png.readUInt32BE(20), 300); // 150 * 2
+});
+
+needsFonts("check --scale 2 still passes for a valid design (exercises the resvg path too)", async () => {
+  const r = run("check", "designs/og.mjs", "--scale", "2");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /All designs valid/);
+});
+
+needsFonts("a --scale 2 render's real pixel size is what matchFormat resolves as scale 2 of the base format", async () => {
+  await writeFiles(dir, { "designs/li.mjs": validDesign({ name: "li.png", width: 1584, height: 396 }) });
+  const r = run("render", "designs/li.mjs", "--out", "out-li-scale", "--scale", "2");
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const png = await fs.readFile(path.join(dir, "out-li-scale", "li@2x.png"));
+  const [w, h] = [png.readUInt32BE(16), png.readUInt32BE(20)];
+  assert.deepEqual([w, h], [3168, 792]); // 1584×396 × 2 — the real file matchFormat would see if fed its size
+
+  const { matchFormat } = await import("../src/guides.mjs");
+  const match = matchFormat(w, h); // guides.test.mjs already covers this unit-level; this ties it to a real rendered file
+  assert.equal(match.format.id, "linkedin-cover");
+  assert.equal(match.scale, 2);
 });
 
 test("--help prints usage and exits 0; --version prints the core version", () => {

@@ -11,6 +11,7 @@ npx @snap-x/cli render designs/*.mjs --out snap-output
 # or install once and use the short command
 npm install -g @snap-x/cli
 snap-x render designs/*.mjs --out snap-output
+snap-x render designs/*.mjs --scale 2   # sharp @2x, no upscaling
 ```
 
 The engine (renderer, font loader, programmatic API) is [`@snap-x/core`](https://www.npmjs.com/package/@snap-x/core). Docs and the design-file format: https://github.com/ravikovind/snap-x#readme

@@ -14,7 +14,7 @@ MCP server for [snap-x](https://github.com/ravikovind/snap-x): lets any agent (C
 
 | Tool | Description |
 |---|---|
-| `render_designs` | Render one or more `.mjs` design files to PNG. |
+| `render_designs` | Render one or more `.mjs` design files to PNG. Optional `scale: n` for a sharp `<name>@nx.png` export. |
 | `check_designs` | Validate one or more `.mjs` design files: structural rules plus an actual render attempt. |
 | `preview_guides` | Draw a platform format's danger zones (profile photo, duration badge, story UI, cropped edges) over a design and write the overlay PNG, plus a mobile-crop PNG when the platform crops on phones. |
 | `list_formats` | The full platform-format table — sizes, whether the platform forbids an alpha channel, upload size/type limits where documented, notes and placement zones for link previews, YouTube, X/LinkedIn/Instagram, Google Play and the App Store. Pass `format` for one format's full details. |
