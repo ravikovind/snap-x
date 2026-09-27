@@ -19,5 +19,5 @@ Open a PR that adds a row to the table below, with:
 | ![Kite](examples/kite/youtube-thumbnail.png) | A YouTube thumbnail, App Store screenshots and a Play feature graphic for a fictional app, from a written brief | [`examples/kite`](examples/kite) |
 | ![Salt & Pine](examples/storefront/banner-cedar-candle.png) | Sale banners, an Instagram post and a story for a fictional e-commerce brand — one template, several products | [`examples/storefront`](examples/storefront) |
 | ![Sawdust & Coffee](examples/creator-series/ep1-cutting-the-legs.png) | A YouTube episode-thumbnail series for a fictional channel — one template, `VARIANTS` per episode | [`examples/creator-series`](examples/creator-series) |
-| ![VoltVave Innovations](examples/diwali-poster/diwali-poster.png) | A festival greeting poster for a fictional company | [`examples/diwali-poster`](examples/diwali-poster) |
+| ![VoltVave Innovations](examples/diwali-poster/diwali-poster.png) | A festival greeting poster for VoltVave Innovations (voltvave.com) | [`examples/diwali-poster`](examples/diwali-poster) |
 | ![Food app banners](examples/food-app-banners/banner-1-red.png) | A promo banner set for a generic food-delivery app — one template, four color themes | [`examples/food-app-banners`](examples/food-app-banners) |
