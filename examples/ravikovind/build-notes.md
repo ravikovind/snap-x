@@ -1,6 +1,21 @@
-# Build notes — Ravi Kovind LinkedIn cover (revision 3)
+# Build notes — Ravi Kovind LinkedIn cover (revision 4)
 
 Built from [`plan.md`](plan.md) with snap-x. The plan is the source of truth for copy, layout, colour and type; this file records how it was executed and what differed.
+
+## What changed in revision 4
+- **Title reverted to "Founding Engineer" only**, per Ravi's explicit direction — no company named, dropping
+  revision 3's "Co-founder · VoltVave" framing entirely from the banner (the source-facts table in the plan
+  still records his current listed title on ravikovind.com for the record, but the banner deliberately omits it).
+- **Palette switched to VoltVave's real brand colours.** Rather than reuse the `#eb1d25` red that the
+  diwali-poster pack's own comments had mislabeled "VoltVave red", I downloaded VoltVave's actual logo
+  (voltvave.com/images/voltvave.png) and sampled its pixels directly: the true brand red is `#D83427`, on
+  black. That's what's used here now, replacing the previous yellow accent. The green gradient-ring accent
+  is gone too — it only ever existed to nod at an even older palette.
+- **Typography unified onto Saira.** The design previously split fonts by role (Nunito Sans for headings/body,
+  Saira only for the philosophy line and the RK monogram); revision 4 uses Saira throughout and drops Nunito
+  Sans entirely, per Ravi's request.
+- Stats content (100K+ orders, 30K+ users, 21.3K weekly downloads) is unchanged from revision 3 — this
+  revision touched only title, colour and font, not the proof numbers.
 
 ## What changed in revision 3
 - **Source re-checked against ravikovind.com** (the plan previously cited ravikovind.github.io). Title changed
@@ -29,17 +44,17 @@ Built from [`plan.md`](plan.md) with snap-x. The plan is the source of truth for
 1. **snap-x (Satori → PNG)** rather than HTML + Playwright — this is a snap-x example.
 2. **No `.jpg`** — snap-x outputs PNG only; LinkedIn accepts PNG.
 3. **`●` is a drawn shape** (CSS circle), not a font glyph, so it can never render as a blank box. (Revision 2/3 dropped the earlier drawn `★` icon along with the stat it illustrated — see revision 3 notes above.)
-4. **Saira is not a true monospace** — used for the mono role by choice (per the plan).
+4. **Saira is not a true monospace** — used throughout by choice (per the plan), not because it's monospaced.
 5. **Stats are stacked** (number over label) to keep the block within `x ≤ 1080`.
 
-## QA checklist (plan §7) — measured
+## QA checklist (plan §7) — measured (revision 4)
 - [x] Dimensions exactly 1584×396 and 3168×792
-- [x] No text in the danger zones (`guides/…guides.png`: avatar circle Ø230 at 160,396; x<200; x>1384; top/bottom edges). Text stays inside the safe area — the stats row measures y 299 → 337 (limit 346)
+- [x] No text in the danger zones (`guides/…guides.png`: avatar circle Ø230 at 160,396; x<200; x>1384; top/bottom edges). Text stays inside the safe area
 - [x] Name is the most prominent element; legible at 50% zoom
-- [x] Yellow is the only accent; green appears once (the gradient ring)
+- [x] Red (`#D83427`) is the only accent — no yellow, no green
 - [x] Every element has an obvious purpose — nothing left that needs explaining
-- [x] Copy matches plan §2 ("Ravi Kovind", "Co-founder · VoltVave", "0 → 1", "100K+", "21.3K")
-- [x] Contrast on `#000`: primary `#F5F5F5` 19.3:1 · secondary white@60% (`#999`) 7.4:1 · accent `#FAC800` 13.3:1
+- [x] Copy matches plan §2 ("Ravi Kovind", "Founding Engineer" — no company named, "0 → 1", "100K+", "21.3K")
+- [x] Contrast on `#000`: primary `#F5F5F5` 19.3:1 · secondary white@60% (`#999`) 7.4:1 · accent `#D83427` ≈4.4:1 (fine for the large-text accent uses it's applied to — `0 → 1`, `//`, the eyebrow dot — not used for body copy)
 - [x] Mobile crop keeps name, title and stats fully visible — `guides/…mobile.png`
-- [x] Nunito Sans and Saira load (no fallback); no blank-box glyphs
+- [x] Saira loads for every piece of text (no fallback); no blank-box glyphs
 - [x] No phone/email, photo, tech logos or "Open to Work"
