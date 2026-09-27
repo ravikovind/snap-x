@@ -1,6 +1,8 @@
 # @snap-x/mcp
 
-MCP server for [snap-x](https://github.com/ravikovind/snap-x): lets agents (Claude Desktop, Cursor, Windsurf, …) validate and render self-contained Satori `.mjs` design files to PNG.
+Branded graphics for every platform, made by your AI agent.
+
+MCP server for [snap-x](https://github.com/ravikovind/snap-x): lets any agent (Claude Desktop, Cursor, Windsurf, …) render, check and preview platform-ready branded graphics from self-contained Satori `.mjs` design files.
 
 ```json
 {
@@ -12,9 +14,10 @@ MCP server for [snap-x](https://github.com/ravikovind/snap-x): lets agents (Clau
 
 | Tool | Description |
 |---|---|
-| `render_designs` | Render one or more `.mjs` design files to PNG |
-| `check_designs` | Validate one or more `.mjs` design files |
-| `list_formats` | Common social-image dimensions (reference only) |
+| `render_designs` | Render one or more `.mjs` design files to PNG. |
+| `check_designs` | Validate one or more `.mjs` design files: structural rules plus an actual render attempt. |
+| `preview_guides` | Draw a platform format's danger zones (profile photo, duration badge, story UI, cropped edges) over a design and write the overlay PNG, plus a mobile-crop PNG when the platform crops on phones. |
+| `list_formats` | The full platform-format table — sizes, whether the platform forbids an alpha channel, notes and placement zones for link previews, YouTube, X/LinkedIn/Instagram, Google Play and the App Store. Pass `format` for one format's full details. |
 
 The calling agent writes the design files; this server only renders and validates them.
 

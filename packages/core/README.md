@@ -1,5 +1,7 @@
 # @snap-x/core
 
+Branded graphics for every platform, made by your AI agent.
+
 The engine behind [snap-x](https://github.com/ravikovind/snap-x): renders a self-contained Satori `.mjs` design file to PNG. No browser, no config.
 
 **Want the command?** Use [`@snap-x/cli`](https://www.npmjs.com/package/@snap-x/cli): `npx @snap-x/cli render designs/*.mjs`.

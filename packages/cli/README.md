@@ -1,6 +1,8 @@
 # @snap-x/cli
 
-The `snap-x` command: render self-contained Satori `.mjs` design files to PNG. No browser, no config.
+Branded graphics for every platform, made by your AI agent.
+
+The `snap-x` command: render and check self-contained Satori `.mjs` design files into platform-ready PNGs (thumbnails, covers, banners, store graphics, OG cards). Exact sizes, safe-zone guides, no browser.
 
 ```bash
 npx @snap-x/cli check  designs/*.mjs
