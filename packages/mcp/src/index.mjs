@@ -99,7 +99,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "list_formats",
       description:
-        "The platform formats snap-x makes branded graphics for: id, exact size, whether the platform forbids an alpha channel (App Store / Google Play — set FORMAT.alpha = false), notes, and placement zones. Covers link previews, YouTube thumbnails and channel art, X/LinkedIn/Instagram covers and posts, Google Play graphics and screenshots, and App Store screenshots. Pass `format` for one format's full details, including its placement zones. Any FORMAT {width, height} is still valid for a size this list doesn't cover.",
+        "The platform formats snap-x makes branded graphics for: id, exact size, whether the platform forbids an alpha channel (App Store / Google Play — set FORMAT.alpha = false), upload size/type limits where the platform documents one, notes, and placement zones. Covers link previews, YouTube thumbnails and channel art, X/LinkedIn/Instagram covers and posts, Google Play graphics and screenshots, and App Store screenshots. Pass `format` for one format's full details, including its placement zones and limits. Any FORMAT {width, height} is still valid for a size this list doesn't cover.",
       inputSchema: {
         type: "object",
         properties: { format: { type: "string", description: "A format id, alias or WxH (e.g. app-store-iphone-6.9, thumbnail, 1584x396)." } },
@@ -124,6 +124,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         f.platform + (f.verified ? "" : "   [not verified against official docs — re-check before launch]"),
         f.notes,
         ...(f.source ? [`source: ${f.source}`] : []),
+        ...(f.maxBytes ? [`max size: ${(f.maxBytes / (1024 * 1024)).toFixed(f.maxBytes % (1024 * 1024) === 0 ? 0 : 1)} MB`] : []),
+        ...(f.types ? [`types: ${f.types.join(", ")}`] : []),
         ...(f.avoid ?? []).map((z) => `avoid  ${zoneText(z)}`),
         ...(f.safe ? [`safe   ${zoneText(f.safe)}`] : []),
         ...(f.mobileCrop ? [`mobile crop: x ${f.mobileCrop.x} → ${f.mobileCrop.x + f.mobileCrop.w}`] : []),
@@ -132,7 +134,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
     const w = Math.max(...FORMATS.map((f) => f.id.length));
     const lines = FORMATS.map((f) => {
-      const tags = [f.alpha === false ? "no-alpha" : "", f.avoid || f.safe ? "zones" : "", f.verified ? "" : "unverified"].filter(Boolean).join(" ");
+      const tags = [f.alpha === false ? "no-alpha" : "", f.avoid || f.safe ? "zones" : "", f.maxBytes || f.types ? "limits" : "", f.verified ? "" : "unverified"].filter(Boolean).join(" ");
       return `• ${f.id.padEnd(w)}  ${`${f.width}×${f.height}`.padEnd(10)} ${f.platform}${tags ? `  [${tags}]` : ""}`;
     });
     return { content: [{ type: "text", text: `snap-x platform formats (any FORMAT size also works):\n\n${lines.join("\n")}\n\nCall list_formats with \`format\` for notes and placement zones.` }] };

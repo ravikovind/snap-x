@@ -75,6 +75,20 @@ test("zones are well-formed and inside their format", () => {
   }
 });
 
+test("maxBytes and types, where present, are well-formed and only on verified formats", () => {
+  for (const f of FORMATS) {
+    if (f.maxBytes !== undefined) {
+      assert.ok(Number.isInteger(f.maxBytes) && f.maxBytes > 0, `${f.id} maxBytes must be a positive integer`);
+      assert.ok(f.verified, `${f.id} has maxBytes but isn't verified — only fill it in from an official source`);
+    }
+    if (f.types !== undefined) {
+      assert.ok(Array.isArray(f.types) && f.types.length > 0, `${f.id} types must be a non-empty array`);
+      for (const t of f.types) assert.match(t, /^[a-z]+$/, `${f.id} type "${t}" should be a lowercase extension name`);
+      assert.ok(f.verified, `${f.id} has types but isn't verified — only fill it in from an official source`);
+    }
+  }
+});
+
 test("the YouTube channel-art safe area is the centred 1546×423 box", () => {
   const f = findFormat("youtube-channel-art");
   assert.equal(f.safe.w, 1546); assert.equal(f.safe.h, 423);

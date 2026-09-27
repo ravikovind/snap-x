@@ -99,6 +99,8 @@ async function runFormats() {
     console.log(`  ${f.platform}${f.verified ? "" : "   [not verified against official docs]"}`);
     console.log(`  ${f.notes}`);
     if (f.source) console.log(`  source: ${f.source}`);
+    if (f.maxBytes) console.log(`  max size: ${(f.maxBytes / (1024 * 1024)).toFixed(f.maxBytes % (1024 * 1024) === 0 ? 0 : 1)} MB`);
+    if (f.types) console.log(`  types: ${f.types.join(", ")}`);
     for (const z of f.avoid ?? []) console.log(`  avoid  ${z.type === "circle" ? `circle (${z.cx},${z.cy}) r=${z.r}` : `rect x=${z.x} y=${z.y} ${z.w}×${z.h}`}  ${z.label ?? ""}`);
     if (f.safe) console.log(`  safe   rect x=${f.safe.x} y=${f.safe.y} ${f.safe.w}×${f.safe.h}  ${f.safe.label ?? ""}`);
     if (f.mobileCrop) console.log(`  mobile crop: x ${f.mobileCrop.x} → ${f.mobileCrop.x + f.mobileCrop.w}`);
@@ -107,7 +109,7 @@ async function runFormats() {
   }
   const w = Math.max(...FORMATS.map((f) => f.id.length));
   for (const f of FORMATS) {
-    const flagsText = [f.alpha === false ? "no-alpha" : "", f.avoid || f.safe ? "zones" : "", f.verified ? "" : "unverified"].filter(Boolean).join(" ");
+    const flagsText = [f.alpha === false ? "no-alpha" : "", f.avoid || f.safe ? "zones" : "", f.maxBytes || f.types ? "limits" : "", f.verified ? "" : "unverified"].filter(Boolean).join(" ");
     console.log(`  ${f.id.padEnd(w)}  ${`${f.width}×${f.height}`.padEnd(10)}  ${f.platform}${flagsText ? `  [${flagsText}]` : ""}`);
   }
   console.log("\n  snap-x formats <id>   details, notes and placement zones\n");

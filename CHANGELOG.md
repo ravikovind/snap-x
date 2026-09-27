@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **Formats: structured limits + 3 more verified.** Optional `maxBytes`/`types` fields (shown in `snap-x formats <id>`, `--json`, and MCP `list_formats`), filled in only from a format's own official `source`. Verified 3 more against official docs: `github-social-preview` (GitHub Docs), `linkedin-post` (LinkedIn Help), `instagram-post` (Meta's Graph API reference) — now 14 of 19 formats verified, up from 11. Checked `x-post` against X's docs too: its old Twitter Cards developer page has been removed with no stable replacement, so it stays unverified rather than guessing from third-party guides
 - **Design principles:** new `PRINCIPLES.md` (what fits in snap-x) and `skills/snap-x/references/design-principles.md` (focal point, hierarchy, spacing, alignment, whitespace, colour proportion, squint test, pack consistency, and 6 named archetypes). The skill's Step 2 now requires naming an archetype per format plus the pack's spacing unit and type scale; Step 4 scores every render against the same rubric
 - **Copy update:** descriptions (root, plugin, marketplace, website) no longer list specific platforms as if it were the full scope — platform names moved to keywords and to the README/site gallery, presented as examples. Subline shortened to "Thumbnails, covers, banners, store graphics and more: sized right, checked, and repeatable." everywhere it appeared
 - **Repositioned:** "Branded graphics for every platform, made by your AI agent." — the same headline and subline now appear in README, website, and every package/plugin/manifest description
