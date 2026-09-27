@@ -19,10 +19,24 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
+      - name: Cache fetched fonts (Google Fonts network calls are the main source of CI flakiness)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/snap-x
+          key: snap-x-fonts-${{ runner.os }}
       - run: npm ci
       - run: npm test
       - name: Example designs still check clean
         run: npm run examples:check
+      - name: Example images still match a fresh render (visual regression)
+        run: npm run examples:diff
+      - name: Upload visual diffs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: examples-diff-node${{ matrix.node }}
+          path: .examples-diff/
+          if-no-files-found: ignore
 
   packages:
     name: publish dry-run (no manifest warnings)

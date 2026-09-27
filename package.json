@@ -11,7 +11,8 @@
     "build": "npm run build --workspaces",
     "test": "npm test --workspaces --if-present",
     "examples": "node scripts/examples.mjs render",
-    "examples:check": "node scripts/examples.mjs check"
+    "examples:check": "node scripts/examples.mjs check",
+    "examples:diff": "node scripts/examples-diff.mjs"
   },
   "keywords": [
     "branded-graphics",
@@ -35,5 +36,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ravikovind/snap-x.git"
+  },
+  "devDependencies": {
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0"
   }
 }

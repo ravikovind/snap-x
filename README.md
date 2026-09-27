@@ -181,7 +181,7 @@ Tools: `render_designs`, `check_designs`, `preview_guides`, `list_formats`. The 
 
 ## Examples
 
-[`examples/`](examples) has complete packs made with the skill: snap-x itself, Open Notifier, HeyReach, a LinkedIn cover, an App Store/Play Store listing pack, a fictional e-commerce brand and a fictional YouTube series — each built from a repo, a site, or a written brief. Each has its designs, assets, plan and output. Regenerate all with `npm run examples`.
+[`examples/`](examples) has complete packs made with the skill: snap-x itself, Open Notifier, HeyReach, a LinkedIn cover, an App Store/Play Store listing pack, a fictional e-commerce brand, a fictional YouTube series, and a JSX/TSX feature demo — each built from a repo, a site, or a written brief. Each has its designs, assets, plan and output. Regenerate all with `npm run examples`; `npm run examples:diff` checks every committed image still matches a fresh render (a pure-JS pixel diff — CI runs it on every push).
 
 ## Packages
 

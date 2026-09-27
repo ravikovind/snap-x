@@ -1,4 +1,7 @@
 node_modules/
 snap-output*/
+.examples-diff/
 .DS_Store
 *.log
+repositioning.md
+improvements.md
