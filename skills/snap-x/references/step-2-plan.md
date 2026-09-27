@@ -67,6 +67,14 @@ stack:       [2–4 real pills — tech, platform, license; skip pills if there'
 owner:       [optional — GitHub org or author]
 ```
 
+## Design system for the pack
+
+Read `references/design-principles.md`. In `snap-plan.md`, name for the whole pack:
+- **Spacing unit** — one base unit (e.g. 8px at ~1200px wide, scaled with the canvas) used for every padding, gap and offset.
+- **Type scale** — the headline:support:detail size ratio (≈ 3:1.5:1) you'll use.
+
+And for **each format**, one **archetype** from `design-principles.md` § Archetypes (Big type, Split, Centred badge, Device mock, Quote card, Stat card) — pick on purpose, don't improvise per file. Vary archetypes across a pack when formats differ in purpose; keep one archetype across a series (episodes, products, locales).
+
 ## Formats and placement
 
 Read `references/formats.md`, then pick each format with `npx -y @snap-x/cli formats` (sizes, no-alpha rules, verified/unverified, and the danger zones for banners, covers, thumbnails and stories). Write the chosen ids and any placement rules into the plan, and plan the Step 4 placement check (`snap-x guides`) for every format that has zones.

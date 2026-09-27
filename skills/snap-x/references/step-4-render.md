@@ -24,6 +24,10 @@ Output names come from each file's `FORMAT.name`. Use `--out` to keep results wi
 
 Fix the design file and re-render until clean. Fix what you see, then look again — don't assume a re-render fixed it.
 
+### Render review
+
+Score every image against `references/design-principles.md` § Render review (focal point, hierarchy, spacing/alignment, contrast, squint test, pack consistency) and record the scores in `snap-plan.md`. Fix anything scoring 1.
+
 ### Placement check: `snap-x guides`
 
 For banners and covers (LinkedIn, X, YouTube channel art), YouTube thumbnails and stories, run:

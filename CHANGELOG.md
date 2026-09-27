@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **Design principles:** new `PRINCIPLES.md` (what fits in snap-x) and `skills/snap-x/references/design-principles.md` (focal point, hierarchy, spacing, alignment, whitespace, colour proportion, squint test, pack consistency, and 6 named archetypes). The skill's Step 2 now requires naming an archetype per format plus the pack's spacing unit and type scale; Step 4 scores every render against the same rubric
 - **Copy update:** descriptions (root, plugin, marketplace, website) no longer list specific platforms as if it were the full scope — platform names moved to keywords and to the README/site gallery, presented as examples. Subline shortened to "Thumbnails, covers, banners, store graphics and more: sized right, checked, and repeatable." everywhere it appeared
 - **Repositioned:** "Branded graphics for every platform, made by your AI agent." — the same headline and subline now appear in README, website, and every package/plugin/manifest description
 - README rewritten around the new positioning: a real-output gallery, Claude Code install in the first screenful, "How it works," "Correct for every platform," "Exact and repeatable," a use-cases table and an FAQ — all previously-existing technical content (design-file format, Satori rules, fonts, CLI, logos/images) kept intact under "Write designs by hand"

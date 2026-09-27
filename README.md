@@ -154,7 +154,7 @@ Tools: `render_designs`, `check_designs`, `preview_guides`, `list_formats`. The 
 | [`@snap-x/core`](packages/core) | renderer, font loader, checker, programmatic API |
 | [`@snap-x/mcp`](packages/mcp) | MCP server |
 
-Architecture notes: [FLOW.md](FLOW.md) · Changes: [CHANGELOG.md](CHANGELOG.md)
+Architecture notes: [FLOW.md](FLOW.md) · Principles: [PRINCIPLES.md](PRINCIPLES.md) · Changes: [CHANGELOG.md](CHANGELOG.md)
 
 ## License
 

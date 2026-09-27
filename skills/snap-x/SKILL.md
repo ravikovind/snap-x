@@ -22,7 +22,7 @@ npx -y @snap-x/cli render designs/*.mjs --out <dir>
 |---|---|---|
 | **1. Inspect** the source — copy, colors, fonts, **real logo/brand assets** | `references/step-1-inspect.md` | all 9 rubric answers; any logo you'll use is downloaded and looked at |
 | **2. Plan** — hook, copy per format, palette, fonts, assets, safe zones; pick sizes with `snap-x formats` | `references/step-2-plan.md`, `references/formats.md` | `snap-plan.md` written with per-format specs |
-| **3. Write** `designs/*.mjs` — one self-contained file per format | `references/step-3-design.md` | `snap-x check` passes with zero errors |
+| **3. Write** `designs/*.mjs` — one self-contained file per format | `references/step-3-design.md`, `references/design-principles.md` | `snap-x check` passes with zero errors |
 | **4. Render, verify, deliver** — look at every PNG; `snap-x guides` for banners/thumbnails/stories | `references/step-4-render.md` | every image viewed and clean; `share-copy.txt` written |
 
 ## Non-negotiables
@@ -54,4 +54,4 @@ Default `<out>` is `snap-output/` (use a timestamped folder if it exists). Keep 
 
 ## Agents without this skill (MCP)
 
-`@snap-x/mcp` exposes `render_designs`, `check_designs`, `list_formats` (`npx @snap-x/mcp`). The agent still writes the `.mjs` files following the same rules; the server only renders and validates.
+`@snap-x/mcp` exposes `render_designs`, `check_designs`, `preview_guides`, `list_formats` (`npx @snap-x/mcp`). The agent still writes the `.mjs` files following the same rules; the server only renders and validates.
