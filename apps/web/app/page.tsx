@@ -24,7 +24,7 @@ const FEATURES = [
   {
     icon: "🤖",
     title: "AI-native workflow",
-    body: "The /snap-x Claude Code skill reads your project, finds your real logo and fonts, and writes + renders the full pack automatically.",
+    body: "The snap-x skill for Codex and Claude Code reads your project, finds your real logo and fonts, and writes + renders the full pack automatically.",
   },
   {
     icon: "🔌",
@@ -76,7 +76,7 @@ const FAQS = [
   },
   {
     q: "Do I need Claude Code?",
-    a: <p>No. The MCP server works with any MCP agent (Claude Desktop, Cursor, Windsurf), and you can write designs by hand with the CLI.</p>,
+    a: <p>No. snap-x has skills for Codex and Claude Code, an MCP server for Claude Desktop, Cursor, Windsurf and other MCP agents, and a CLI for writing designs by hand.</p>,
   },
   {
     q: "Can it make photos or illustrations?",
@@ -113,6 +113,9 @@ export default function Home() {
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <a href="#install" className="rounded-lg bg-red px-7 py-3.5 font-bold tracking-wide text-white transition hover:-translate-y-px hover:bg-[#ff2d35]">
             Install for Claude Code
+          </a>
+          <a href="#codex-install" className="rounded-lg border border-border-2 px-7 py-3.5 font-bold tracking-wide transition hover:border-white/30 hover:bg-white/5">
+            Install for Codex
           </a>
           <Link href="/docs" className="rounded-lg border border-border-2 px-7 py-3.5 font-bold tracking-wide transition hover:border-white/30 hover:bg-white/5">
             Use with any MCP agent
@@ -298,6 +301,19 @@ export default function Home() {
             View examples
           </Link>
         </div>
+      </section>
+
+      {/* CODEX INSTALL */}
+      <section id="codex-install" className="mx-auto mb-20 max-w-[1160px] rounded-2xl border border-border bg-surface px-4 py-12 text-center sm:px-8">
+        <p className="mb-3 font-mono text-xs uppercase tracking-[0.15em] text-red">Codex skill</p>
+        <h2 className="text-3xl font-black tracking-tight">Use snap-x with Codex</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-muted">
+          From a local snap-x checkout, copy the skill into your Codex skills folder. Then ask Codex to use <code className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-ink">$snap-x</code> with a project, website URL, or written brief.
+        </p>
+        <div className="mx-auto mt-7 max-w-2xl rounded-lg border border-border-2 bg-bg px-5 py-4 text-left font-mono text-sm text-ink">
+          <span className="text-red">$</span> mkdir -p ~/.codex/skills &amp;&amp; cp -R skills/snap-x ~/.codex/skills/
+        </div>
+        <p className="mt-4 text-sm text-muted-2">Start a new Codex conversation after installing the skill.</p>
       </section>
     </>
   );

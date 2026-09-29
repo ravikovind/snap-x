@@ -1,0 +1,9 @@
+GrihaHomes — image pack (generated with /snap-x)
+
+grihahomes-og.png (1200×630) → homepage `og:image` / `twitter:image` link previews.
+
+The residential photo was supplied by the user. The official logo was downloaded from https://grihahomes.com/logo.png; see `assets/SOURCES.md`.
+
+First action: upload `grihahomes-og.png` as the homepage social preview image.
+
+Regenerate from the repository root: `npm run examples`.
