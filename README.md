@@ -32,6 +32,10 @@ All made with the same tool, from a design file — not screenshots or mockups. 
 
 Point it at a repo, a website URL, or just describe the brand — it finds your real logo, colors, fonts and copy, picks the formats you need, writes one design file per format, checks and renders them, and looks at every image before handing them over. Manual install: copy `skills/snap-x/` to `~/.claude/skills/`.
 
+## Use with Codex
+
+Copy `skills/snap-x/` to `~/.codex/skills/snap-x/`, then ask Codex to use `$snap-x` with a repo, website URL, or written brief. Codex can also discover the skill automatically when you ask it to make branded graphics.
+
 ## Or with any MCP agent
 
 ```json
