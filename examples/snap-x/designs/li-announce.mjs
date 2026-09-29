@@ -21,10 +21,12 @@ const photo = (src, w, h, left, top, rotate) =>
   );
 
 export default async function () {
-  const [yt, appstore, banner] = await Promise.all([
-    binAsset("../assets/li-yt-thumbnail.png"),
-    binAsset("../assets/li-appstore-vote.png"),
-    binAsset("../assets/li-storefront-banner.png"),
+  const [ravikovind, openNotifier, heyreach, foodBanner, diwali] = await Promise.all([
+    binAsset("../assets/li-ravikovind-cover.png"),
+    binAsset("../assets/li-open-notifier-og.png"),
+    binAsset("../assets/li-heyreach-og.png"),
+    binAsset("../assets/li-food-banner.png"),
+    binAsset("../assets/li-diwali-poster.png"),
   ]);
 
   return root(1200, 627, {}, [
@@ -39,8 +41,10 @@ export default async function () {
         { fontSize: 16, fontWeight: 400, color: COLORS.muted, lineHeight: 1.5, width: 420 },
       ),
     ]),
-    photo(banner, 420, 220, 700, 60, -6),
-    photo(yt, 380, 214, 760, 260, 5),
-    photo(appstore, 190, 260, 990, 90, 8),
+    photo(ravikovind, 370, 93, 660, 40, -7),
+    photo(heyreach, 250, 132, 900, 55, 6),
+    photo(openNotifier, 260, 137, 640, 190, -5),
+    photo(foodBanner, 270, 108, 880, 240, 5),
+    photo(diwali, 140, 175, 640, 400, -6),
   ]);
 }

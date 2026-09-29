@@ -37,9 +37,11 @@ Lessons from the first render: sizes are set so headline lines never wrap (`whit
 
 A 1200×627 (`linkedin-post` format) collage for sharing the project itself: the same headline/pitch
 column style as the rest of the pack (reuses `_brand.mjs`'s `box`/`txt`/`H`/`brand`/`glow`/`root`),
-with three real outputs from other example packs — `examples/kite/youtube-thumbnail.png`,
-`examples/kite/appstore-2-vote.png`, `examples/storefront/banner-cedar-candle.png` — copied into this
-pack's own `assets/` (see `assets/SOURCES.md`) and collaged on the right at slight rotation angles,
-as proof this is real, varied output rather than a mockup. `H()` forces `whiteSpace: nowrap`, so the
-headline is manually split across two `txt()` calls rather than left to wrap, matching how every other
-file in this pack handles line breaks.
+with five real outputs from other example packs — `examples/ravikovind/ravi-kovind-linkedin-cover.png`
+(ultra-wide, black/red), `examples/heyreach/og.png` (landscape, purple/dark), `examples/open-notifier/og.png`
+(landscape, black/green), `examples/food-app-banners/banner-2-teal.png` (wide, teal),
+`examples/diwali-poster/diwali-poster.png` (portrait, cream/gold) — copied into this pack's own
+`assets/` (see `assets/SOURCES.md`) and collaged on the right at slight rotation angles, deliberately
+spanning different aspect ratios and palettes as proof this is real, varied output rather than a
+mockup. `H()` forces `whiteSpace: nowrap`, so the headline is manually split across two `txt()` calls
+rather than left to wrap, matching how every other file in this pack handles line breaks.
