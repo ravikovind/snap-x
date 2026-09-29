@@ -13,9 +13,13 @@ cover.png (1500×500)      → X / GitHub org banner
 poster.png (1080×1920)    → Instagram / WhatsApp story
 
 li-announce.png (1200×627, the linkedin-post format)
-  → a launch/announcement post: headline + pitch left, a collage of five real outputs from
-    other example packs (ravikovind, heyreach, open-notifier, food-app-banners, diwali-poster)
-    right, picked for aspect-ratio and palette variety — pair with a text post and, optionally,
+li-announce-portrait.png (1080×1350, 4:5 — the instagram-post format)
+  → a launch/announcement post: headline + pitch, a collage of five real outputs from other
+    example packs (ravikovind, heyreach, open-notifier, food-app-banners, diwali-poster) picked
+    for aspect-ratio and palette variety. Two orientations, same asset set (see
+    designs/_li-announce.mjs) — the portrait one is a real re-layout, not a resize, since LinkedIn
+    itself recommends 4:5 for feed posts (more mobile-feed space, better engagement) over the
+    1200×627 link-preview shape. Pair with a text post and, optionally,
     examples/ravikovind/guides/ravi-kovind-linkedin-cover.guides.png as a second image showing
     the danger-zone check on an actual LinkedIn cover.
 

@@ -33,15 +33,41 @@ Lessons from the first render: sizes are set so headline lines never wrap (`whit
 
 **Placement check (`snap-x guides`)**: `cover.mjs` (1500×500) and `thumbnail.mjs` (1280×720) exact-match real platform formats (`x-header`, `youtube-thumbnail`), so `snap-x guides` draws their real avoid/safe zones. `thumbnail.mjs` is clean — nothing sits near the duration-badge zone. `cover.mjs` originally centered its headline+command column, which put it inside `x-header`'s recommended "text lives here" safe box only partially — the column starts at x=190 (padding), clear of the hard avoid zone (the profile-photo circle, right edge at x≈375) with margin, but left of the safe box's recommended x≥430 start. Since this banner is dual-purpose (X header *and* generic GitHub/site banner, per `share-copy.txt`), and pushing the column fully past x=430 crowded the pillar column off the right edge at this width, the column was nudged right just enough to clear the hard avoid zone rather than fully honoring the softer safe-box recommendation. Worth another pass if this file is ever used *only* as an X header.
 
-## li-announce.mjs (added later — a launch-post asset, not part of the original 5-file dogfood set)
+## li-announce.mjs / li-announce-portrait.mjs (added later — launch-post assets, not part of the original 5-file dogfood set)
 
-A 1200×627 (`linkedin-post` format) collage for sharing the project itself: the same headline/pitch
-column style as the rest of the pack (reuses `_brand.mjs`'s `box`/`txt`/`H`/`brand`/`glow`/`root`),
-with five real outputs from other example packs — `examples/ravikovind/ravi-kovind-linkedin-cover.png`
+Two orientations of the same LinkedIn launch-post collage, sharing one composition builder
+(`designs/_li-announce.mjs`, following the `cover.mjs`/`cover-2x.mjs` pattern already used in
+`examples/ravikovind` — a `_`-prefixed helper exporting one function per variant, plus thin entry
+files that just pick which one to call). Both reuse `_brand.mjs`'s `box`/`txt`/`H`/`brand`/`glow`/`root`
+and the same five real outputs from other example packs — `examples/ravikovind/ravi-kovind-linkedin-cover.png`
 (ultra-wide, black/red), `examples/heyreach/og.png` (landscape, purple/dark), `examples/open-notifier/og.png`
 (landscape, black/green), `examples/food-app-banners/banner-2-teal.png` (wide, teal),
 `examples/diwali-poster/diwali-poster.png` (portrait, cream/gold) — copied into this pack's own
-`assets/` (see `assets/SOURCES.md`) and collaged on the right at slight rotation angles, deliberately
-spanning different aspect ratios and palettes as proof this is real, varied output rather than a
-mockup. `H()` forces `whiteSpace: nowrap`, so the headline is manually split across two `txt()` calls
-rather than left to wrap, matching how every other file in this pack handles line breaks.
+`assets/` (see `assets/SOURCES.md`), deliberately spanning different aspect ratios and palettes as
+proof this is real, varied output rather than a mockup.
+
+**Fonts:** Saira + Space Mono, declared locally in `_li-announce.mjs` rather than imported from
+`_brand.mjs` (which still uses JetBrains Mono for the original 5-file dogfood set) — this matches
+the current website's font choice without touching that pack's own already-published assets. Space
+Mono gets a real use: a small `$ npx @snap-x/cli render designs/*.mjs` command line under the pitch
+text, the same idea as `_brand.mjs`'s own `command()` helper, just in the new mono font.
+
+**Layout, revision 2:** the first pass fanned the five photos out overlapping and rotated at
+different angles — feedback was that it looked messy, not professional. Replaced with a `frame()`
+helper: a fixed, bordered, non-rotated card per photo (the same "letterboxed thumbnail" pattern the
+website's own format/template/example cards already use), sized so the real image sits centered at
+its true aspect ratio inside — never cropped, never stretched. The five cards are grouped into a
+clean 3-row grid: the ultra-wide ravikovind cover gets its own full-width row (a square cell would
+leave it a tiny sliver surrounded by empty frame), then the two ~16:9 cards (heyreach, open-notifier)
+side by side, then the wide food-banner paired with the portrait diwali poster.
+
+- `li-announce.mjs` → 1200×627 (`linkedin-post` format): text left, the 3-row grid right.
+- `li-announce-portrait.mjs` → 1080×1350, 4:5 (`instagram-post` format): LinkedIn's own
+  recommendation for feed posts is a 4:5 portrait — it takes more space in a mobile feed than the
+  1200×627 link-preview shape and reportedly drives more engagement. Text moves to a top block; the
+  same 3-row grid restacks to span the full width below it, since the landscape composition's
+  side-by-side column arrangement doesn't make sense at this aspect ratio.
+
+`H()` forces `whiteSpace: nowrap`, so the headline is manually split across two `txt()` calls in
+both orientations rather than left to wrap, matching how every other file in this pack handles
+line breaks.
