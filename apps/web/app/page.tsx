@@ -111,7 +111,7 @@ export default function Home() {
           Thumbnails, covers, banners, store graphics and more: sized right, checked, and repeatable.
         </p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <a href="#install" className="rounded-lg bg-red px-7 py-3.5 font-bold tracking-wide text-white transition hover:-translate-y-px hover:bg-[#ff2d35]">
+          <a href="#claude-install" className="rounded-lg bg-red px-7 py-3.5 font-bold tracking-wide text-white transition hover:-translate-y-px hover:bg-[#ff2d35]">
             Install for Claude Code
           </a>
           <a href="#codex-install" className="rounded-lg border border-border-2 px-7 py-3.5 font-bold tracking-wide transition hover:border-white/30 hover:bg-white/5">
@@ -300,6 +300,20 @@ export default function Home() {
           <Link href="/examples" className="rounded-lg border border-border-2 px-6 py-3 font-bold">
             View examples
           </Link>
+        </div>
+      </section>
+
+      {/* CLAUDE CODE INSTALL */}
+      <section id="claude-install" className="mx-auto mb-8 max-w-[1160px] rounded-2xl border border-border bg-surface px-4 py-12 text-center sm:px-8">
+        <p className="mb-3 font-mono text-xs uppercase tracking-[0.15em] text-red">Claude Code plugin</p>
+        <h2 className="text-3xl font-black tracking-tight">Install snap-x for Claude Code</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-muted">
+          Add the snap-x marketplace, install the plugin, then run <code className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-ink">/snap-x</code> with a project, website URL, or written brief.
+        </p>
+        <div className="mx-auto mt-7 flex max-w-2xl flex-col gap-3 text-left font-mono text-sm text-ink">
+          <div className="rounded-lg border border-border-2 bg-bg px-5 py-4">/plugin marketplace add ravikovind/snap-x</div>
+          <div className="rounded-lg border border-border-2 bg-bg px-5 py-4">/plugin install snap-x@snap-x</div>
+          <div className="rounded-lg border border-border-2 bg-bg px-5 py-4">/snap-x</div>
         </div>
       </section>
 
