@@ -32,3 +32,14 @@ Lessons from the first render: sizes are set so headline lines never wrap (`whit
 **Brand file (improvements.md §10.3):** all 5 files import colors, fonts and the shared building blocks (`box`/`txt`/`H`/`chip`/`arrow`/`brand`/`glow`/`command`/`root`) from `designs/_brand.mjs` instead of each repeating its own copy — converted from the original 5 standalone files that duplicated this preamble verbatim. Re-rendered every file afterward and confirmed byte-identical output via `md5sum` (poster.png's hash changed, but a pixel diff confirmed 0 differing pixels — a harmless re-encoding artifact, not a visual change).
 
 **Placement check (`snap-x guides`)**: `cover.mjs` (1500×500) and `thumbnail.mjs` (1280×720) exact-match real platform formats (`x-header`, `youtube-thumbnail`), so `snap-x guides` draws their real avoid/safe zones. `thumbnail.mjs` is clean — nothing sits near the duration-badge zone. `cover.mjs` originally centered its headline+command column, which put it inside `x-header`'s recommended "text lives here" safe box only partially — the column starts at x=190 (padding), clear of the hard avoid zone (the profile-photo circle, right edge at x≈375) with margin, but left of the safe box's recommended x≥430 start. Since this banner is dual-purpose (X header *and* generic GitHub/site banner, per `share-copy.txt`), and pushing the column fully past x=430 crowded the pillar column off the right edge at this width, the column was nudged right just enough to clear the hard avoid zone rather than fully honoring the softer safe-box recommendation. Worth another pass if this file is ever used *only* as an X header.
+
+## li-announce.mjs (added later — a launch-post asset, not part of the original 5-file dogfood set)
+
+A 1200×627 (`linkedin-post` format) collage for sharing the project itself: the same headline/pitch
+column style as the rest of the pack (reuses `_brand.mjs`'s `box`/`txt`/`H`/`brand`/`glow`/`root`),
+with three real outputs from other example packs — `examples/kite/youtube-thumbnail.png`,
+`examples/kite/appstore-2-vote.png`, `examples/storefront/banner-cedar-candle.png` — copied into this
+pack's own `assets/` (see `assets/SOURCES.md`) and collaged on the right at slight rotation angles,
+as proof this is real, varied output rather than a mockup. `H()` forces `whiteSpace: nowrap`, so the
+headline is manually split across two `txt()` calls rather than left to wrap, matching how every other
+file in this pack handles line breaks.

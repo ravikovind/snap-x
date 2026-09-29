@@ -12,4 +12,10 @@ thumbnail.png (1280×720)  → blog post / video header
 cover.png (1500×500)      → X / GitHub org banner
 poster.png (1080×1920)    → Instagram / WhatsApp story
 
+li-announce.png (1200×627, the linkedin-post format)
+  → a launch/announcement post: headline + pitch left, a collage of three real outputs from
+    other example packs (kite, storefront) right — pair with a text post and, optionally,
+    examples/ravikovind/guides/ravi-kovind-linkedin-cover.guides.png as a second image showing
+    the danger-zone check on an actual LinkedIn cover.
+
 Regenerate everything:  npm run examples
