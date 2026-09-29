@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Saira, Space_Mono } from "next/font/google";
+import { Lato, Saira } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site";
 import { SiteNav } from "@/components/SiteNav";
 
-const saira = Saira({
-  variable: "--font-saira",
+const lato = Lato({
+  variable: "--font-lato",
   subsets: ["latin"],
   weight: ["400", "500", "700", "900"],
 });
 
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
+const saira = Saira({
+  variable: "--font-saira",
   subsets: ["latin"],
   weight: ["400", "700"],
 });
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${saira.variable} ${spaceMono.variable} h-full`}>
+    <html lang="en" className={`${lato.variable} ${saira.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased bg-bg text-ink">
         <SiteNav />
 

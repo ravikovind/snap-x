@@ -15,8 +15,8 @@
   --color-border: rgba(255, 255, 255, 0.08);
   --color-border-2: rgba(255, 255, 255, 0.14);
 
-  --font-display: var(--font-saira);
-  --font-mono: var(--font-space-mono);
+  --font-display: var(--font-lato);
+  --font-mono: var(--font-saira);
 }
 
 body {

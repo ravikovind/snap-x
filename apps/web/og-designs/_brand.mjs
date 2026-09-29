@@ -1,8 +1,8 @@
 // Shared brand file for this site's own OG images (improvements.md §11.3 — "images on this site
 // are made with snap-x"). Matches app/globals.css's Tailwind theme tokens exactly.
 export const FONTS = [
-  { family: "Saira", weights: [400, 700, 900] },
-  { family: "JetBrains Mono", weights: [400, 700] },
+  { family: "Lato", weights: [400, 700, 900] },
+  { family: "Saira", weights: [400, 700] },
 ];
 
 export const COLORS = {
@@ -20,7 +20,7 @@ const txt = (text, style) => box(style, [text]);
 export function ogFrame({ label, title, accent }) {
   return box(
     {
-      width: 1200, height: 630, background: COLORS.bg, fontFamily: "Saira", position: "relative",
+      width: 1200, height: 630, background: COLORS.bg, fontFamily: "Lato", position: "relative",
       overflow: "hidden", flexDirection: "column", justifyContent: "space-between", padding: "64px 72px",
     },
     [
@@ -33,7 +33,7 @@ export function ogFrame({ label, title, accent }) {
       ]),
 
       box({ flexDirection: "column", gap: 16 }, [
-        txt(label, { fontFamily: "JetBrains Mono", fontSize: 18, fontWeight: 700, color: accent ?? COLORS.red, letterSpacing: "0.1em" }),
+        txt(label, { fontFamily: "Saira", fontSize: 18, fontWeight: 700, color: accent ?? COLORS.red, letterSpacing: "0.1em" }),
         txt(title, { fontSize: 62, fontWeight: 900, color: COLORS.ink, lineHeight: 1.08, letterSpacing: "-0.02em", maxWidth: 1000, flexWrap: "wrap" }),
       ]),
 
