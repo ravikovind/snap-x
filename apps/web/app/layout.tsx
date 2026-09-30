@@ -8,7 +8,7 @@ import { SiteNav } from "@/components/SiteNav";
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
+  weight: ["400", "700", "900"],
 });
 
 const saira = Saira({
