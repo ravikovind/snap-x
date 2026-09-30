@@ -1,8 +1,8 @@
 {
   "framework": null,
-  "outputDirectory": "web",
-  "buildCommand": "",
-  "installCommand": "",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build --workspace=@snap-x/web",
+  "outputDirectory": "apps/web/out",
   "trailingSlash": false,
   "headers": [
     {
