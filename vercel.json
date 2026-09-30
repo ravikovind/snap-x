@@ -1,9 +1,8 @@
 {
   "framework": null,
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- apps/web packages/core",
-  "outputDirectory": "apps/web/out",
-  "buildCommand": "cd apps/web && npm run build",
-  "installCommand": "cd apps/web && npm install",
+  "outputDirectory": "web",
+  "buildCommand": "",
+  "installCommand": "",
   "trailingSlash": false,
   "headers": [
     {
