@@ -5,7 +5,7 @@ import { USE_CASES } from "@/content/use-cases";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/formats", "/use-cases", "/templates", "/examples", "/showcase", "/docs"];
+  const staticRoutes = ["", "/formats", "/use-cases", "/templates", "/examples", "/showcase", "/docs", "/install"];
   const useCaseRoutes = USE_CASES.map((u) => `/use-cases/${u.slug}`);
 
   return [...staticRoutes, ...useCaseRoutes].map((route) => ({

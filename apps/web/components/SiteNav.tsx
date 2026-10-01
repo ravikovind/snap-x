@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/examples", label: "Examples" },
   { href: "/showcase", label: "Showcase" },
   { href: "/docs", label: "Docs" },
+  { href: "/install", label: "Install" },
 ];
 
 export function SiteNav() {

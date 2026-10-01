@@ -11,6 +11,7 @@ export const VARIANTS = [
   { id: "examples", label: "Examples", title: "Complete packs, made with the skill.", format: { name: "examples.png" } },
   { id: "showcase", label: "Showcase", title: "Made with snap-x.", format: { name: "showcase.png" } },
   { id: "docs", label: "Docs", title: "Write designs by hand.", format: { name: "docs.png" } },
+  { id: "install", label: "Install", title: "Claude Code, Cursor, Windsurf, Claude Desktop, Codex, CLI.", format: { name: "install.png" } },
 ];
 
 export default function (variant) {
