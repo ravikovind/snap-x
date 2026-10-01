@@ -9,9 +9,9 @@ import { renderDesign } from "./render.mjs";
 
 const { fonts } = workerData;
 
-parentPort.on("message", async ({ filePath, outDir, scale, only }) => {
+parentPort.on("message", async ({ filePath, outDir, scale, only, outputFormat }) => {
   try {
-    const result = await renderDesign(filePath, outDir, fonts, { scale, only, log: () => {} });
+    const result = await renderDesign(filePath, outDir, fonts, { scale, only, outputFormat, log: () => {} });
     parentPort.postMessage({ ok: true, result });
   } catch (err) {
     parentPort.postMessage({ ok: false, error: err.message });

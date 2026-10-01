@@ -2,7 +2,7 @@
 /**
  * snap-x CLI.
  *
- *   snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>] [--jobs <n>]   design .mjs → PNG via Satori
+ *   snap-x render  <paths...> [--out <dir>] [--format <png|svg>] [--scale <n>] [--only <id,id>] [--jobs <n>]   design .mjs → PNG or SVG via Satori
  *   snap-x check   <paths...> [--scale <n>]                 validate design .mjs files
  *   snap-x guides  <paths...> [--format <id>] [--out <dir>] draw a platform's danger zones over each design
  *   snap-x formats [id|WxH] [--json]                        list platform formats, sizes and placement zones
@@ -41,6 +41,14 @@ function getOnly() {
   return raw ? raw.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
 }
 
+function getOutputFormat() {
+  const raw = get("--format");
+  if (!raw || raw === "png") return "png";
+  if (raw === "svg") return "svg";
+  console.error(`  render --format must be "png" or "svg", got "${raw}"\n`);
+  process.exit(1);
+}
+
 function getJobs() {
   const raw = get("--jobs");
   if (raw === null) return undefined; // let the pool pick its own CPU-count-based default
@@ -64,10 +72,10 @@ function getScale() {
 }
 
 const HELP = `
-  snap-x — render self-contained Satori .mjs design files to PNG (no browser)
+  snap-x — render self-contained Satori .mjs design files to PNG or SVG (no browser)
 
   Usage
-    snap-x render  <paths...> [--out <dir>] [--scale <n>] [--only <id,id>] [--jobs <n>]   render designs to PNG (default --out ./snap-output)
+    snap-x render  <paths...> [--out <dir>] [--format <png|svg>] [--scale <n>] [--only <id,id>] [--jobs <n>]
     snap-x check   <paths...> [--scale <n>]                  validate designs (structure, real render, blank-box glyphs)
     snap-x guides  <paths...> [--format <id>] [--out <dir>]  overlay a platform's danger zones (+ mobile crop) on each design
     snap-x formats [id|WxH] [--json]                         list platform formats (YouTube, X, LinkedIn, Play Store, App Store …)
@@ -78,9 +86,15 @@ const HELP = `
   A design file exports FORMAT = { width, height, name, alpha? }, optionally FONTS, and a zero-argument default export.
   Set alpha: false for App Store / Google Play graphics (they must have no alpha channel).
 
+  render's --format <png|svg>  output format (default: png). svg skips the resvg raster step and writes
+               the Satori SVG string directly — useful for editors, vector workflows, or when you want
+               to post-process the SVG. --scale is ignored for svg (SVG is resolution-independent).
+               Note: on the guides command, --format takes a platform format id (e.g. youtube-thumbnail),
+               not an output format.
+
   --scale <n>  renders sharp at n× resolution (Satori's layout is unchanged; only the raster output grows).
                Output is named "<name>@<n>x.png" unless n is 1. check --scale <n> also verifies resvg
-               can encode the design at that size.
+               can encode the design at that size. Ignored when --format svg is set.
 
   render's --jobs <n> renders that many files concurrently in a small worker_threads pool (default:
                your CPU count). --jobs 1 renders one file at a time on the main thread, as before this
@@ -88,7 +102,7 @@ const HELP = `
                failing file is reported without stopping the others.
 
   A design can export VARIANTS = [{ id, ... }, ...] (or an async function returning that) to render many
-  images from one file — the default export is called once per row, output named "<name>-<id>.png".
+  images from one file — the default export is called once per row, output named "<name>-<id>.png" (or .svg).
   render's --only <id,id> renders just those rows; check and guides always run every row.
 
   watch is a dev tool: it renders once, opens a local page (prints the URL) listing every output image,
@@ -184,6 +198,7 @@ async function runRender(files) {
   const scale = getScale();
   const only = getOnly();
   const jobs = getJobs();
+  const outputFormat = getOutputFormat();
   await fs.mkdir(outDir, { recursive: true });
 
   const { resolveFonts, resetFontCache, collectFontsSpec } = await import("./fonts.mjs");
@@ -194,11 +209,13 @@ async function runRender(files) {
 
   const { renderPool, defaultJobs } = await import("./pool.mjs");
   const activeJobs = Math.max(1, Math.min(jobs ?? defaultJobs(), files.length));
-  console.log(`\n  Rendering ${files.length} file(s) → ${outDir}/  (${activeJobs} job${activeJobs === 1 ? "" : "s"})${scale !== 1 ? `  (--scale ${scale})` : ""}${only ? `  (--only ${only.join(",")})` : ""}\n`);
+  const fmtNote = outputFormat !== "png" ? `  (--format ${outputFormat})` : "";
+  const scaleNote = outputFormat !== "svg" && scale !== 1 ? `  (--scale ${scale})` : "";
+  console.log(`\n  Rendering ${files.length} file(s) → ${outDir}/  (${activeJobs} job${activeJobs === 1 ? "" : "s"})${scaleNote}${fmtNote}${only ? `  (--only ${only.join(",")})` : ""}\n`);
 
   let failed = false;
   await renderPool(files, outDir, fonts, {
-    scale, only, jobs,
+    scale, only, outputFormat, jobs,
     onResult: async (i, r) => {
       const name = path.basename(files[i]);
       if (!r.ok) {
@@ -209,7 +226,8 @@ async function runRender(files) {
       for (const p of Array.isArray(r.result) ? r.result : [r.result]) {
         const buf = await fs.readFile(p);
         // IHDR colour type at byte 25: 2 = RGB (opaque, FORMAT.alpha: false), 6 = RGBA — see png.test.mjs
-        console.log(`  ✅  ${path.basename(p)}  (${Math.round(buf.length / 1024)} KB)${buf[25] === 2 ? "  no alpha" : ""}`);
+        const noAlpha = outputFormat === "png" && buf[25] === 2 ? "  no alpha" : "";
+        console.log(`  ✅  ${path.basename(p)}  (${Math.round(buf.length / 1024)} KB)${noAlpha}`);
       }
     },
   });

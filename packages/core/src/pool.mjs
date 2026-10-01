@@ -29,13 +29,13 @@ export function defaultJobs() {
  * own work interleave out of order. This is what keeps console output (and exit-code decisions)
  * deterministic between runs.
  */
-export async function renderPool(files, outDir, fonts, { scale = 1, only, jobs, onResult = () => {} } = {}) {
+export async function renderPool(files, outDir, fonts, { scale = 1, only, outputFormat = "png", jobs, onResult = () => {} } = {}) {
   const n = Math.max(1, Math.min(jobs ?? defaultJobs(), files.length || 1));
 
   if (n <= 1) {
     for (let i = 0; i < files.length; i++) {
       try {
-        const result = await renderDesign(files[i], outDir, fonts, { scale, only, log: () => {} });
+        const result = await renderDesign(files[i], outDir, fonts, { scale, only, outputFormat, log: () => {} });
         await onResult(i, { ok: true, result });
       } catch (err) {
         await onResult(i, { ok: false, error: err.message });
@@ -67,7 +67,7 @@ export async function renderPool(files, outDir, fonts, { scale = 1, only, jobs, 
         if (nextToStart >= files.length) return;
         const i = nextToStart++;
         worker.__index = i;
-        worker.postMessage({ filePath: files[i], outDir, scale, only });
+        worker.postMessage({ filePath: files[i], outDir, scale, only, outputFormat });
       };
 
       for (const worker of workers) {

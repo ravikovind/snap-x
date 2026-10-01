@@ -103,6 +103,7 @@ npm install -g @snap-x/cli        # or skip installing: npx -y @snap-x/cli …
 
 snap-x check  designs/*.mjs       # validate (structure, a real render, blank-box glyphs, store-alpha)
 snap-x render designs/*.mjs --out snap-output
+snap-x render designs/*.mjs --format svg   # output SVG instead of PNG (skips resvg, resolution-independent)
 snap-x formats                    # YouTube, X, LinkedIn, Play Store, App Store … sizes + placement zones
 snap-x guides designs/*.mjs       # draw a platform's danger zones (+ mobile crop) over your designs
 ```
@@ -111,7 +112,9 @@ Paths can be a file, a directory, or a `*` glob. Files starting with `_` are sha
 
 **`snap-x watch designs/*.mjs [--guides]`** is a dev tool: it renders once, opens a local preview page (prints the URL) listing every output image, then re-renders and auto-reloads the page whenever a design file changes. `--guides` also runs the placement check on every change.
 
-**`--scale <n>`** (on `render` and `check`) renders sharp at n× resolution — the design's layout is unchanged; only the raster output grows, the same way a browser re-renders an SVG sharply at any zoom. Output is named `<name>@<n>x.png` (e.g. `og@2x.png`).
+**`--format <png|svg>`** (on `render`) sets the output format. Default is `png`. `svg` skips the resvg raster step and writes the Satori SVG string directly — useful for vector workflows, editors, or post-processing. `--scale` is ignored for SVG (it's resolution-independent). Note: on the `guides` command, `--format` takes a platform format id (e.g. `youtube-thumbnail`), not an output format.
+
+**`--scale <n>`** (on `render` and `check`) renders sharp at n× resolution — the design's layout is unchanged; only the raster output grows, the same way a browser re-renders an SVG sharply at any zoom. Output is named `<name>@<n>x.png` (e.g. `og@2x.png`). Ignored when `--format svg` is set.
 
 **`render` renders concurrently by default** — a small `worker_threads` pool sized to your CPU count (measured ~2× faster on a 6-file pack with large images). Console output always lists files in their original order regardless of which finishes first, and a failing file is reported without stopping the others. `--jobs 1` renders one file at a time on the main thread, exactly as before this existed; `--jobs <n>` picks any other pool size.
 
