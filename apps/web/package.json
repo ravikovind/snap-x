@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "prebuild": "node scripts/render-og.mjs",
-    "build": "next build --webpack",
-    "start": "next start",
+    "build": "next build",
+    "build:local": "next build --webpack",
     "lint": "eslint"
   },
   "dependencies": {
