@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1 — core 0.7.1 · cli 0.2.2
+
+- **SVG output (`--format svg`):** `snap-x render designs/*.mjs --format svg` now writes the Satori SVG string directly, skipping the resvg raster step entirely. `--format png` is unchanged as the default (no breaking change). `--scale` is ignored for SVG output (SVG is resolution-independent). VARIANTS work as normal — each variant gets its own `.svg` file. `FORMAT.name` extensions are swapped automatically. Closes [#1](https://github.com/ravikovind/snap-x/issues/1)
+
 ## Unreleased
 
 - **Parallel rendering** (improvements.md §10.7): `render` now spreads files across a small `worker_threads` pool by default (CPU-count-based size); `--jobs 1` renders one file at a time on the main thread, exactly as before this existed, and `--jobs <n>` picks any other size. Console output (and exit-code decisions) stay deterministic regardless of which worker actually finishes first: results are queued as they arrive but only handed to the printer once every earlier file's result already has been, so the log always lists files in their original order. A failing file is reported and the rest still render (a small, disclosed improvement over the previous behavior, where any file's error aborted the whole batch with a raw stack trace). Measured on the examples before shipping: the 5-file snap-x pack went from ~1.5s to ~1.2s; the heavier 6-file kite pack (large App Store screenshots) went from ~6.2s to ~3.2s — numbers here, not in marketing copy, as the brief asked. `renderPool`/`defaultJobs` are also exported from the programmatic API
