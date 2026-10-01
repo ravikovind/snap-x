@@ -36,39 +36,9 @@ Point it at a repo, a website URL, or just describe the brand — it finds your 
 
 Copy `skills/snap-x/` to `~/.codex/skills/snap-x/`, then ask Codex to use `$snap-x` with a repo, website URL, or written brief. Codex can also discover the skill automatically when you ask it to make branded graphics.
 
-## Use with Cursor
+## Use with Cursor, Windsurf, Claude Desktop, or any MCP agent
 
-Add to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project):
-
-```json
-{ "mcpServers": { "snap-x": { "command": "npx", "args": ["@snap-x/mcp"] } } }
-```
-
-Then ask: **"Make a branded image pack for this project."** See [`skills/snap-x/agents/cursor.md`](skills/snap-x/agents/cursor.md).
-
-## Use with Windsurf
-
-Add to `~/.codeium/windsurf/mcp_config.json`:
-
-```json
-{ "mcpServers": { "snap-x": { "command": "npx", "args": ["@snap-x/mcp"] } } }
-```
-
-Restart Windsurf and ask Cascade. See [`skills/snap-x/agents/windsurf.md`](skills/snap-x/agents/windsurf.md).
-
-## Use with Claude Desktop
-
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (Mac) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
-
-```json
-{ "mcpServers": { "snap-x": { "command": "npx", "args": ["@snap-x/mcp"] } } }
-```
-
-See [`skills/snap-x/agents/claude-desktop.md`](skills/snap-x/agents/claude-desktop.md).
-
-## Or any other MCP agent
-
-The same JSON block works in any MCP-compatible client. The agent writes `.mjs` design files; the server renders and validates them. See [MCP server](#mcp-server) below.
+See [INSTALL.md](INSTALL.md) for step-by-step setup for every agent and the standalone CLI.
 
 ## How it works
 
@@ -127,9 +97,11 @@ No. snap-x lays out text, shapes, logos and images you supply; it doesn't genera
 ```bash
 npm install -g @snap-x/cli        # or skip installing: npx -y @snap-x/cli …
 
+snap-x version                    # confirm installed version
 snap-x check  designs/*.mjs       # validate (structure, a real render, blank-box glyphs, store-alpha)
 snap-x render designs/*.mjs --out snap-output
-snap-x render designs/*.mjs --format svg   # output SVG instead of PNG (skips resvg, resolution-independent)
+snap-x render designs/*.mjs --format svg   # SVG output — skips resvg, resolution-independent
+snap-x render designs/*.mjs --format png   # PNG output (default)
 snap-x formats                    # YouTube, X, LinkedIn, Play Store, App Store … sizes + placement zones
 snap-x guides designs/*.mjs       # draw a platform's danger zones (+ mobile crop) over your designs
 ```
