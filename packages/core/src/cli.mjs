@@ -7,6 +7,7 @@
  *   snap-x guides  <paths...> [--format <id>] [--out <dir>] draw a platform's danger zones over each design
  *   snap-x formats [id|WxH] [--json]                        list platform formats, sizes and placement zones
  *   snap-x watch   <paths...> [--out <dir>] [--guides]      re-render on change, serve a local preview page
+ *   snap-x version                                          print the version
  *
  * <paths...> accept a literal file, a directory (expands to every .mjs inside), or a glob with a single
  * trailing `*` (e.g. designs/*.mjs). Files starting with `_` are helpers and are never rendered.
@@ -20,7 +21,7 @@ import { fileURLToPath } from "url";
 import { resolveDesignFiles } from "./resolve.mjs";
 
 const rawArgs = process.argv.slice(2);
-const SUBCMDS = ["render", "check", "guides", "formats", "watch"];
+const SUBCMDS = ["render", "check", "guides", "formats", "watch", "version"];
 const VALUE_FLAGS = new Set(["--out", "--format", "--scale", "--only", "--port", "--jobs"]);
 
 const flags = new Map();
@@ -80,6 +81,7 @@ const HELP = `
     snap-x guides  <paths...> [--format <id>] [--out <dir>]  overlay a platform's danger zones (+ mobile crop) on each design
     snap-x formats [id|WxH] [--json]                         list platform formats (YouTube, X, LinkedIn, Play Store, App Store …)
     snap-x watch   <paths...> [--out <dir>] [--guides] [--port <n>]   re-render on save; serves a local preview page
+    snap-x version                                           print the installed version
 
   <paths...> = a file, a directory, or a glob like designs/*.mjs (files starting with "_" are helpers, never rendered)
 
@@ -124,6 +126,11 @@ console.log("\n  snap-x\n");
 if (!sub) {
   console.error("  Usage: snap-x <render|check|guides|formats> [paths...] [--out <dir>]   (snap-x --help for details)\n");
   process.exit(1);
+}
+
+if (sub === "version") {
+  console.log(`snap-x ${version()}`);
+  process.exit(0);
 }
 
 if (sub === "formats") {

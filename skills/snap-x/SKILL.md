@@ -7,11 +7,13 @@ description: Make branded graphics for any platform from a project, a website UR
 
 Write self-contained Satori `.mjs` design files, render them with `snap-x`, and deliver a branded image pack. snap-x only renders — **you** decide what the images say and look like.
 
-**Input:** a repo, a website URL, or a written brief. **Output:** PNGs (any size, any names) plus a plan and share notes.
+**Input:** a repo, a website URL, or a written brief. **Output:** PNGs or SVGs (any size, any names) plus a plan and share notes.
 
 ```bash
+npx -y @snap-x/cli version                                   # confirm installed version
 npx -y @snap-x/cli check  designs/*.mjs
 npx -y @snap-x/cli render designs/*.mjs --out <dir>
+npx -y @snap-x/cli render designs/*.mjs --out <dir> --format svg   # SVG output (skips resvg, resolution-independent)
 ```
 
 `/snap-x --font "Saira"` suggests a default font; every other choice (formats, colors, copy) is yours.
