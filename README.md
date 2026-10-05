@@ -46,6 +46,10 @@ See [INSTALL.md](INSTALL.md) for step-by-step setup for every agent and the stan
 2. **Plan.** It pulls your real logo, colors, fonts and copy, picks the formats you need, and writes a plan.
 3. **Render and verify.** It writes one design file per format, checks them, renders exact-size PNGs, overlays each platform's danger zones, and looks at every image before handing them over.
 
+## Network access
+
+snap-x reads and writes files on your machine; it doesn't phone home, collect analytics, or need an account. The only things it fetches from the network: Google Fonts (font files, cached to disk after the first render) and Twemoji emoji images from jsdelivr/twitter's CDN. When a design needs a real photo you haven't supplied and you ask your agent to find one, it may also fetch an image from the web — only when you ask for it, and only images cleared for commercial use.
+
 ## Correct for every platform
 
 <table>

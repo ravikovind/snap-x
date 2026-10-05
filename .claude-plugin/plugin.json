@@ -9,6 +9,8 @@
   "license": "MIT",
   "homepage": "https://github.com/ravikovind/snap-x",
   "repository": "https://github.com/ravikovind/snap-x",
+  "icon": "./brand/icon-512.png",
+  "privacyPolicyUrl": "https://snap-x-flame.vercel.app/privacy",
   "keywords": [
     "branded-graphics",
     "social-images",
