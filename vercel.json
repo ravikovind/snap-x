@@ -4,6 +4,7 @@
   "buildCommand": "npm run build --workspace=@snap-x/web",
   "outputDirectory": "apps/web/out",
   "trailingSlash": false,
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/(.*)",
