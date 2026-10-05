@@ -78,6 +78,15 @@ Real logos make a card look like the brand's own. Look in this order and stop wh
 - use third-party/customer logos (e.g. a "trusted by" strip) unless the user asked for them
 - hotlink remote images — download them so the design is reproducible offline
 
+## Finding other imagery (product photos, hero shots, illustrations)
+
+The section above is for logos only. A design that calls for a real photo — a product shot, a hero image, a person — needs a different flow:
+
+1. **Ask the user first, and say exactly what's missing.** Name the subject, the rough shape (square / wide / portrait) and the style — e.g. "I need a square product photo of the mug, plain background — drop a file in `assets/`, or say 'search' and I'll find one." Never just say "please provide an image."
+2. **User supplies a file** → use it as-is. Don't check its license or provenance — it's their own asset, same trust level as a logo they hand you.
+3. **User declines, or says "search" / "you find it"** → use whatever search, fetch or image-generation capability you currently have access to (web search, an image-gen tool or skill, a subagent — snap-x doesn't care which). Only fetch images cleared for commercial use (public domain, a stock license that permits commercial use, or something you generated yourself); skip anything marked non-commercial or editorial-only.
+4. **Either way**: save it into `assets/`, record it in `SOURCES.md` — file → origin — and if it's AI-generated or stock, say so explicitly (facts-only rule: the user should always be able to tell a real photo from a generated one). Look at the file before using it (see "Pick the right variant" above for SVGs with `<text>`). Treat it exactly like a logo from there on: embed via `<img>`, never redraw/recolour/stretch it.
+
 ## Output
 
 Do not write anything yet. Carry the answers into Step 2.

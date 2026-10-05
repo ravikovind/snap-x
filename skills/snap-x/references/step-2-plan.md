@@ -11,7 +11,7 @@ Answer these for the full pack:
 3. **Visual direction** — Any layout or style changes from the defaults? (centered vs left-aligned, large title vs balanced, etc.)
 4. **Colors** — The brand accent hex (and any other colors) to hardcode directly into each design file.
 5. **Fonts** — Confirmed Google Font family name(s) and weights — this becomes each file's `FONTS` export.
-6. **Brand assets** — Which logo/icon file (and which *variant* for the card's background) goes on which format, at what size, and where (header lockup, watermark, footer). Note the file's origin in `assets/SOURCES.md`. If none was found, say "text wordmark".
+6. **Brand assets** — Which logo/icon file (and which *variant* for the card's background) goes on which format, at what size, and where (header lockup, watermark, footer). Note the file's origin in `assets/SOURCES.md`. If none was found, say "text wordmark". A format whose archetype needs other imagery (a product photo, hero shot — e.g. **Split**, **Device mock**) follows the ask-first-then-search flow in `references/step-1-inspect.md` § Finding other imagery.
 7. **Facts ledger** — every number, quote or claim that will appear, with where it came from. Mark anything illustrative (mock notifications, sample names) as mock.
 8. **Every element has a purpose** — if a viewer would ask "what is that?", cut it. Prefer one strong idea per card over many small decorations.
 9. **Which formats** — only what the project needs. A CLI tool doesn't need a poster; a person needs a profile banner, not an OG card.
