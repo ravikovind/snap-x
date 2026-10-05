@@ -30,9 +30,10 @@ The source is a **repo**, a **website URL**, or a **written brief**. Answer all 
 curl -sL -A "Mozilla/5.0" https://example.com -o index.html
 grep -oE '<(title|meta)[^>]*(description|og:[a-z:]+|theme-color)[^>]*>' index.html   # copy + og:image
 grep -oE 'href="[^"]+\.css[^"]*"' index.html                                         # stylesheet URLs (relative? prefix the site origin)
-curl -sL "<css url>" | grep -oE '\-\-[a-zA-Z0-9-]+:#[0-9a-fA-F]{3,8}' | sort -u        # CSS variables: --accent, --background …
-curl -sL "<css url>" | grep -oE 'font-family:[^;}]{1,60}' | sort | uniq -c | sort -rn   # fonts
-curl -sL "<css url>" | grep -oE '#[0-9a-fA-F]{6}\b' | sort | uniq -c | sort -rn | head  # dominant colors
+curl -sL "<css url>" -o style.css
+grep -oE '\-\-[a-zA-Z0-9-]+:#[0-9a-fA-F]{3,8}' style.css | sort -u        # CSS variables: --accent, --background …
+grep -oE 'font-family:[^;}]{1,60}' style.css | sort | uniq -c | sort -rn   # fonts
+grep -oE '#[0-9a-fA-F]{6}\b' style.css | sort | uniq -c | sort -rn | head  # dominant colors
 ```
 
 Also get the exact headline and feature copy — with the WebFetch tool if you have it, or a quick text extract of the HTML: `python3 -c "import re,sys;print(re.sub(r'\s+',' ',re.sub(r'<(script|style)[^>]*>.*?</\1>|<[^>]+>',' ',open('index.html').read(),flags=re.S)))" | head -c 4000`. **Look at the `og:image`** (download + Read it) as a style reference — the new cards should feel like the same brand, not copy that image.
